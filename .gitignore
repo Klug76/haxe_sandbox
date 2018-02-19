@@ -2,3 +2,4 @@ haxe_swc_lib/as3_gen/
 *.swc
 *.swf
 as3_hx_swc/obj/
+haxe_as3_test/as3_gen/
