@@ -49,6 +49,10 @@ class RingBuf<T>
     {
         return tail - head;
     }
+    //public inline function get_capacity() : Int
+    //{
+        //return capacity;
+    //}
     //.............................................................................
     public function item(id : Int) : T
     {

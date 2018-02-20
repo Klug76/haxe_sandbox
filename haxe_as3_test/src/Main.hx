@@ -12,7 +12,6 @@ class TestRingBuf extends TestCase
 {
 	public function testFloat()
 	{
-		assertEquals("A", "A");
 		var r = new RingBuf<Float>(3);
 		assertEquals(0, r.length);
 		assertEquals(4, r.capacity);
@@ -25,7 +24,14 @@ class TestRingBuf extends TestCase
 		r.push(5.);
 		assertEquals(2., r.item(r.head));
 		assertEquals(2., r.item(r.tail));
-		assertEquals(4., r.length);
+		assertEquals(4, r.length);
+		r.clear();
+		assertEquals(0, r.length);
+		r.push(6.);
+		assertEquals(1, r.length);
+		assertEquals(6., r.item(r.head));
+		//r.length = 2;
+		//r.capacity = 2;
 	}
 }
 
@@ -38,12 +44,12 @@ class Main
 		stage.scaleMode = StageScaleMode.NO_SCALE;
 		stage.align = StageAlign.TOP_LEFT;
 		// Entry point
-		var r = new TestRunner();
-		r.add(new TestRingBuf());
+		var tr = new TestRunner();
+		tr.add(new TestRingBuf());
 		// add other TestCases here
 
 		// finally, run the tests
-		r.run();
+		tr.run();
 		//trace("OK");
 	}
 
