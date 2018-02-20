@@ -5,9 +5,26 @@ import haxe.ds.Vector;
 @:generic
 class RingBuf<T>
 {
-    public var head(default, null) : Int;
-    public var tail(default, null) : Int;
-    public var capacity(default, null) : Int;
+	private var head_: Int;
+    public var head(get, null) : Int;
+    public inline function get_head() : Int
+    {
+        return head_;
+    }
+
+	private var tail_: Int;
+    public var tail(get, null) : Int;
+    public inline function get_tail() : Int
+    {
+        return tail_;
+    }
+
+	private var capacity_: Int;
+    public var capacity(get, null) : Int;
+    public inline function get_capacity() : Int
+    {
+        return capacity_;
+    }
 
     private var data_ : Vector<T>;
     private var and_mask_ : Int;
@@ -20,7 +37,7 @@ class RingBuf<T>
     private function init(size : Int) : Void
     {
         size = Util.next_Power_Of_2(size);
-        capacity = size;
+        capacity_ = size;
         and_mask_ = size - 1;
         data_ = new Vector(size);
         clear();
@@ -29,16 +46,16 @@ class RingBuf<T>
     //.............................................................................
     public function clear() : Void
     {
-        head = tail;
+        head_ = tail_;
     }
     //.............................................................................
     public function push(n : T) : Void
     {
-        if (length == capacity)
+        if (length == capacity_)
 		{//:full
-            ++head;
+            ++head_;
         }
-        var idx : Int = tail++ & and_mask_;
+        var idx : Int = tail_++ & and_mask_;
         data_[idx] = n;
     }
     //.............................................................................
@@ -47,12 +64,8 @@ class RingBuf<T>
 	public var length(get, never) : Int;
     public inline function get_length() : Int
     {
-        return tail - head;
+        return tail_ - head_;
     }
-    //public inline function get_capacity() : Int
-    //{
-        //return capacity;
-    //}
     //.............................................................................
     public function item(id : Int) : T
     {
@@ -63,10 +76,10 @@ class RingBuf<T>
     public function dump() : String
     {
         var arr : Array<String> = [];
-        for (i in head...tail)
+        for (i in head_...tail_)
         {
             var idx: Int = i & and_mask_;
-            arr.push("" + data_[idx]);
+            arr.push(Std.string(data_[idx]));
         }
         return arr.join(",");
     }

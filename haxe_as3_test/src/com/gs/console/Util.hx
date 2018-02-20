@@ -17,4 +17,18 @@ class Util
 		return size;
 	}
 
+	public static inline function imin(x: Int, y: Int): Int
+	{
+		return (x < y) ? x : y;
+	}
+
+	public static inline function imax(x: Int, y: Int): Int
+	{
+		return (x > y) ? x : y;
+	}
+
+	public static inline function iabs(x: Int): Int
+	{
+		return (x ^ (x >> 31)) - (x >> 31);
+	}
 }

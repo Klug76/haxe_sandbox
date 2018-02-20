@@ -1,0 +1,9 @@
+- how to format Float to String with precision!?
+
+post build:
+haxe  -cp src -as3 as3_gen -swf-header 800:600:30:FFFFFF -swf-version 21.0 -D analyzer-optimize -main Main -dce full
+//analyzer-optimize - Directives
+//-dce full - Add. compiler options
+
+//fdb-debug - Directives
+
