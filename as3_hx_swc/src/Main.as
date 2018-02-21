@@ -20,6 +20,9 @@ package
 			haxe.initSwc(this);
 
 			trace(Foo.foo());
+			var f: Number = 0.2 + 0.1;
+			trace(f.toPrecision(4));
+
 		}
 
 	}

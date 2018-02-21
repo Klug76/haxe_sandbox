@@ -69,7 +69,9 @@ class TestAlchemy extends TestCase
 		for (i in 0...Util.imin(5, len - 1))
 		{
 			var f: Float = v[i];
-			arr.push(Std.string(f));
+			//?!?f.toPrecision(4);
+			var s: String = #if flash untyped f.toPrecision(4) #else Std.string(f) #end;
+			arr.push(s);
 		}
 		trace(arr.join(","));
 	}
@@ -109,7 +111,8 @@ class TestAlchemy extends TestCase
 		for (i in 0...Util.imin(5, len - 1))
 		{
 			var f: Float = flash.Memory.getFloat(i << 2);
-			arr.push(Std.string(f));
+			var s: String = #if flash untyped f.toPrecision(4) #else Std.string(f) #end;
+			arr.push(s);
 		}
 		trace(arr.join(","));
 	}

@@ -1,4 +1,14 @@
 - how to format Float to String with precision!?
+	var f: Number = 0.2 + 0.1;
+	trace(f.toPrecision(4));
+
+		#if flash9
+		var n:UInt = x;
+		var s:String = untyped x.toString(16);
+		s = s.toUpperCase();
+		#else
+polygonal-printf::eformat - compile-time!?
+- how to remove haxe::Boot classes from swc!? e.g. multiple swc + boot.swc with this boilerplate code
 
 post build:
 haxe  -cp src -as3 as3_gen -swf-header 800:600:30:FFFFFF -swf-version 21.0 -D analyzer-optimize -main Main -dce full
