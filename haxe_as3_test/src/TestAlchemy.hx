@@ -14,15 +14,14 @@ class TestAlchemy extends TestCase
 
 	public function test1()
 	{
+		trace("\n");
 		var begin_time: Int = Lib.getTimer();
 		var bytes: ByteArray = new ByteArray();
 		bytes.length = N * 4;
-		trace("enter: OK");
 		Memory.select(bytes);
-		trace("select: OK");
-		fill_Memory(bytes);
 		for (i in 0...M)
 		{
+			fill_Memory(bytes);
 			process_Memory(bytes);
 		}
 		trace("dt=" + (Lib.getTimer() - begin_time));
@@ -34,9 +33,9 @@ class TestAlchemy extends TestCase
 	{
 		var begin_time: Int = Lib.getTimer();
 		var v = new Vector<Float>(N);
-		fill_Vector(v);
 		for (i in 0...M)
 		{
+			fill_Vector(v);
 			process_Vector(v);
 		}
 		trace("dt=" + (Lib.getTimer() - begin_time));
@@ -66,12 +65,10 @@ class TestAlchemy extends TestCase
 	{
 		var len: Int = v.length;
 		var arr: Array<String> = [];
-		for (i in 0...Util.imin(5, len - 1))
+		for (i in 0...Util.imin(6, len - 1))
 		{
 			var f: Float = v[i];
-			//?!?f.toPrecision(4);
-			var s: String = #if flash untyped f.toPrecision(4) #else Std.string(f) #end;
-			arr.push(s);
+			arr.push(Util.ftoPrecision(f, 5));
 		}
 		trace(arr.join(","));
 	}
@@ -108,11 +105,10 @@ class TestAlchemy extends TestCase
 	{
 		var len: Int = bytes.length >> 2;
 		var arr: Array<String> = [];
-		for (i in 0...Util.imin(5, len - 1))
+		for (i in 0...Util.imin(6, len - 1))
 		{
 			var f: Float = flash.Memory.getFloat(i << 2);
-			var s: String = #if flash untyped f.toPrecision(4) #else Std.string(f) #end;
-			arr.push(s);
+			arr.push(Util.ftoPrecision(f, 5));
 		}
 		trace(arr.join(","));
 	}

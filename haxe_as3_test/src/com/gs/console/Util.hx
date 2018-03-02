@@ -2,6 +2,7 @@ package com.gs.console;
 
 class Util
 {
+	//TODO IntUtil, FloatUtil, StringUtil!?
 
 	public static function next_Power_Of_2(size : Int) : Int
 	{
@@ -30,5 +31,16 @@ class Util
 	public static inline function iabs(x: Int): Int
 	{
 		return (x ^ (x >> 31)) - (x >> 31);
+	}
+
+	public static inline function ftoPrecision(f: Float, precision: Int): String
+	{
+		//TODO fix me: js
+		#if flash
+			return untyped f.toPrecision(precision);
+		#else
+			var mult: Int = precision * 10;
+			return Std.string(Std.int(f * mult) / mult);
+		#end
 	}
 }

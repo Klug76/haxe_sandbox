@@ -1,19 +1,84 @@
-- how to format Float to String with precision!?
+.how to format Float to String with precision!?
 	var f: Number = 0.2 + 0.1;
 	trace(f.toPrecision(4));
 
+.toHex:
 		#if flash9
 		var n:UInt = x;
 		var s:String = untyped x.toString(16);
 		s = s.toUpperCase();
-		#else
-polygonal-printf::eformat - compile-time!?
-- how to remove haxe::Boot classes from swc!? e.g. multiple swc + boot.swc with this boilerplate code
+		#else...
 
+.polygonal-printf::eformat - compile-time!?
+.how to remove haxe::Boot classes from swc!? e.g. multiple swc + boot.swc with this boilerplate code
+
+.html5 build
+
+.move console to html5
+
+.starling + custom 3d test
+
+.obfuscation
+
+
+
+
+
+
+
+=========================
 post build:
 haxe  -cp src -as3 as3_gen -swf-header 800:600:30:FFFFFF -swf-version 21.0 -D analyzer-optimize -main Main -dce full
 //analyzer-optimize - Directives
 //-dce full - Add. compiler options
 
 //fdb-debug - Directives
+=========================
+.need 4 more ipa- targets!:
+http://community.openfl.org/t/official-support-for-adobe-air/9468
+project.xml:
+	<certificate path="cert/....p12" if="ios" />
+	<config:ios provisioning-profile="cert/....mobileprovision" />
+https://github.com/openfl/lime/blob/develop/lime/tools/helpers/AIRHelper.hx:
+					if (project.debug) {
+						
+						airTarget = "ipa-debug";
+						
+					} else {
+						
+						airTarget = "ipa-test";
+						
+					}
+Lime Command-Line Tools (6.2.0)
+
+Initializing project...
+Using project file: \haxe\haxelib_samples\PerelithKnightMD2/project.xml
+Reading Lime config: \.lime\config.xml
+Using target platform: AIR
+
+Running command: UPDATE
+ - Embedding asset: (IMAGE) Assets/floor_diffuse.jpg
+ - Embedding asset: (BINARY) Assets/pknight/pknight.md2
+ - Embedding asset: (IMAGE) Assets/pknight/pknight1.png
+ - Embedding asset: (IMAGE) Assets/pknight/pknight2.png
+ - Embedding asset: (IMAGE) Assets/pknight/pknight3.png
+ - Embedding asset: (IMAGE) Assets/pknight/pknight4.png
+ - Embedding asset: (MANIFEST) manifest/default.json
+ - Copying template file: /haxelib/openfl/7,1,2/assets/templates/haxe/ApplicationMain.hx -> Export/air/haxe/ApplicationMain.hx
+ - Copying template file: /haxelib/lime/6,2,0/templates/air/hxml/debug.hxml -> Export/air/haxe/debug.hxml
+ - Copying template file: /haxelib/lime/6,2,0/templates/air/hxml/final.hxml -> Export/air/haxe/final.hxml
+ - Copying template file: /haxelib/lime/6,2,0/templates/air/hxml/release.hxml -> Export/air/haxe/release.hxml
+ - Copying template file: /haxelib/lime/6,2,0/templates/air/template/application.xml -> Export/air/application.xml
+
+Running command: BUILD
+ - Running command: haxe Export/air/haxe/release.hxml
+ - Changing directory: Export/air
+ - Running command: \SDK_Air280/bin/adt -package -target ipa-test -storetype pkcs12 -keystore \haxe\haxelib_samples\PerelithKnightMD2\cert\....p12
+	 -provisioning-profile \Samples\github\haxe\haxelib_samples\PerelithKnightMD2\cert\....mobileprovision bin/PerelithKnightMD2.ipa
+ application.xml -C bin PerelithKnightMD2.swf _res/icon-16.png _res/icon-29.png _res/icon-32.png _res/icon-36.png _res/icon-40.png _res/icon-48.png
+ _res/icon-50.png _res/icon-57.png _res/icon-58.png _res/icon-60.png _res/icon-72.png _res/icon-75.png _res/icon-76.png _res/icon-80.png
+ _res/icon-87.png _res/icon-96.png _res/icon-100.png _res/icon-114.png _res/icon-120.png _res/icon-128.png _res/icon-144.png _res/icon-152.png
+ _res/icon-167.png _res/icon-180.png _res/icon-192.png _res/icon-512.png _res/icon-1024.png
+=========================
+
 
