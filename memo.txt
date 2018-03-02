@@ -1,39 +1,38 @@
-.how to format Float to String with precision!?
++. how to format Float to String with precision!?
 	var f: Number = 0.2 + 0.1;
 	trace(f.toPrecision(4));
-
-.toHex:
+. toHex:
 		#if flash9
 		var n:UInt = x;
 		var s:String = untyped x.toString(16);
 		s = s.toUpperCase();
-		#else...
+		#else
+		...
+. use polygonal-printf?!
+. how to remove haxe::Boot classes from swc!? e.g. multiple swc + boot.swc with this boilerplate code
 
-.polygonal-printf::eformat - compile-time!?
-.how to remove haxe::Boot classes from swc!? e.g. multiple swc + boot.swc with this boilerplate code
+. openfl: make apk with 3d test
++. openfl: can eat import flash.*
 
 .html5 build
-
 .move console to html5
-
 .starling + custom 3d test
+.obfuscation: how? 
 
-.obfuscation
-
-
-
-
-
-
-
-=========================
+==========================
+adt:
+https://forum.starling-framework.org/topic/whats-the-best-adt-target-to-use-when-creating-ipa-file
+ipa-app-store is the most optimized. You do not need a distribution certificate to use this target, as some believe.
+You can use it with development certificates too. ipa-ad-hoc is not as optimized as ipa-app-store.
+ipa-ad-hoc is supposed to be more optimized than ipa-test.
+==========================
 post build:
 haxe  -cp src -as3 as3_gen -swf-header 800:600:30:FFFFFF -swf-version 21.0 -D analyzer-optimize -main Main -dce full
 //analyzer-optimize - Directives
 //-dce full - Add. compiler options
 
 //fdb-debug - Directives
-=========================
+==========================
 .need 4 more ipa- targets!:
 http://community.openfl.org/t/official-support-for-adobe-air/9468
 project.xml:
@@ -79,6 +78,5 @@ Running command: BUILD
  _res/icon-50.png _res/icon-57.png _res/icon-58.png _res/icon-60.png _res/icon-72.png _res/icon-75.png _res/icon-76.png _res/icon-80.png
  _res/icon-87.png _res/icon-96.png _res/icon-100.png _res/icon-114.png _res/icon-120.png _res/icon-128.png _res/icon-144.png _res/icon-152.png
  _res/icon-167.png _res/icon-180.png _res/icon-192.png _res/icon-512.png _res/icon-1024.png
-=========================
-
+==========================
 
