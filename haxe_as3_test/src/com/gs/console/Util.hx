@@ -35,12 +35,10 @@ class Util
 
 	public static inline function ftoPrecision(f: Float, precision: Int): String
 	{
-		//TODO fix me: js
-		#if flash
+		#if (flash || js)
 			return untyped f.toPrecision(precision);
 		#else
-			var mult: Int = precision * 10;
-			return Std.string(Std.int(f * mult) / mult);
+			return Std.string(Math.round( f * Math.pow(10, precision) ) / Math.pow(10, precision));
 		#end
 	}
 }
