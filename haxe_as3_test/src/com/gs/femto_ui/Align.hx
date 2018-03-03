@@ -1,5 +1,3 @@
-// align enum, like in GDI+
-// $Id: Align.as 16 2017-12-05 19:51:23Z Klug76 $
 package com.gs.femto_ui;
 
 @:enum

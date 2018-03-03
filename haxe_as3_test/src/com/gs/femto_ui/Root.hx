@@ -12,7 +12,7 @@ class Root
 
     private static var instance_ : Root;
 
-    //public var frame_signal_ : EnterFrameSignal;
+    public var frame_signal_ : EnterFrameSignal;
     public var is_touch_supported_ : Bool;
     public var desktop_mode_ : Bool;
     public var stage_ : Stage;
@@ -39,20 +39,18 @@ class Root
     {
         init(owner);
     }
-    //.............................................................................
+//.............................................................................
     private function init(owner : DisplayObjectContainer) : Void
     {
 		#if debug
-        {
-            if (instance_ != null)
-            {
-                throw new Error("Root should be singleton!");
-            }
-            if ((null == owner) || (null == owner.stage))
-            {
-                throw new Error("Stage not found");
-            }
-        }
+		if (instance_ != null)
+		{
+			throw new Error("Root should be singleton!");
+		}
+		if ((null == owner) || (null == owner.stage))
+		{
+			throw new Error("Stage not found");
+		}
 		#end
         instance_ = this;
 
@@ -61,7 +59,7 @@ class Root
         desktop_mode_ = (os.indexOf("Windows") >= 0) || (os.indexOf("Mac OS") >= 0);
         stage_ = owner.stage;
 
-        //frame_signal_ = new EnterFrameSignal(stage_);
+        frame_signal_ = new EnterFrameSignal(stage_);
 
         var res_x : Float = Capabilities.screenResolutionX;
         var res_y : Float = Capabilities.screenResolutionY;
@@ -87,12 +85,12 @@ class Root
 			*/
         }
     }
-    //.............................................................................
-    private static function get_instance() : Root
+//.............................................................................
+    private static inline function get_instance() : Root
     {
         return instance_;
     }
-    //.............................................................................
+//.............................................................................
     public static function create(owner : DisplayObjectContainer) : Root
     {
         if (null == instance_)
