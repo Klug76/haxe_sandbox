@@ -15,6 +15,7 @@
 	
 .how to int *= float?
 .how to cast like 'as'?
+.js-target has no uint, but only int. sux :(
 
 +. how to format Float to String with precision!?
 	var f: Number = 0.2 + 0.1;
