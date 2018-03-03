@@ -20,6 +20,8 @@
 	var f: Number = 0.2 + 0.1;
 	trace(f.toPrecision(4));
 . toHex:
+	polygonal-printf on haxelib (github - old version!!!!)
+	StringTools.hx:
 		#if flash9
 		var n:UInt = x;
 		var s:String = untyped x.toString(16);
@@ -101,4 +103,40 @@ https://blog.zame-dev.org/8-things-i-dont-like-in-haxe/
 
 unsafe cast:
 (cast findViewById(R.id.myTextView):TextView).setText("Cool");
+==========================
+http://community.openfl.org/t/starling-and-away3d-together/9666
+private function initProxies():Void 
+{
+		trace("initProxies");
+		
+		_stage3DManager = Stage3DManager.getInstance(stage);
+		_stage3DProxy = _stage3DManager.getFreeStage3DProxy(false, _profile);
+		_stage3DProxy.addEventListener(Stage3DEvent.CONTEXT3D_CREATED, onContextCreated);
+		_stage3DProxy.antiAlias = _antiAliasing;
+		_stage3DProxy.color = 0x000000;
+}
+	
+private function onContextCreated(event : Stage3DEvent):Void 
+{
+		trace("onContextCreated");
+		
+		UiData.WIDTH = stage.stageWidth;
+		UiData.HEIGHT = stage.stageHeight;
+		
+		_stage3DProxy.context3D.configureBackBuffer(UiData.WIDTH, UiData.HEIGHT, _antiAliasing);
+		
+		initAway3D();
+		initStarling();
+		initListeners();
+}
+But in OpenFl, the “Stage3DEvent.CONTEXT3D_CREATED” never fire…
+
+Perhaps try something like:
+
+if (_stage3DProxy.context3D == null) {
+     _stage3DProxy.addEventListener(Stage3DEvent.CONTEXT3D_CREATED, onContextCreated);
+} else {
+    onContextCreated(null);
+}
+The context might already be created
 ==========================

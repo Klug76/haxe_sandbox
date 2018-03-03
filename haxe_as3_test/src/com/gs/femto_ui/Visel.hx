@@ -13,29 +13,29 @@ import flash.events.IEventDispatcher;
 class Visel extends Sprite
 {
     public var enabled(get, set) : Bool;
-    public var dummy_color(get, set) : UInt;
+    public var dummy_color(get, set) : Int;
 
     private var width_ : Float = 0;
     private var height_ : Float = 0;
     private var state_ : Int = 0;
     private var invalid_flags_ : Int = 0;
 
-    public static inline var STATE_DISPOSED : Int = 1;
-    public static inline var STATE_DISABLED : Int = 2;
-    public static inline var STATE_HOVER : Int = 4;
-    public static inline var STATE_DOWN : Int = 8;
-    public static inline var STATE_ACTIVE : Int = 0x10;
-    public static inline var STATE_DRAG : Int = 0x20;
+    public static inline var STATE_DISPOSED : Int	= 1;
+    public static inline var STATE_DISABLED : Int	= 2;
+    public static inline var STATE_HOVER : Int		= 4;
+    public static inline var STATE_DOWN : Int		= 8;
+    public static inline var STATE_ACTIVE : Int		= 0x10;
+    public static inline var STATE_DRAG : Int		= 0x20;
 
-    public static inline var INVALIDATION_FLAG_SIZE : Int = 1;
-    public static inline var INVALIDATION_FLAG_STATE : Int = 2;
-    public static inline var INVALIDATION_FLAG_SKIN : Int = 4;
-    public static inline var INVALIDATION_FLAG_DATA : Int = 8;
-    public static inline var INVALIDATION_FLAG_ALIGN : Int = 0x10;
-    public static inline var INVALIDATION_FLAG_SCROLL : Int = 0x20;
-    public static inline var INVALIDATION_FLAG_ALL : Int = ~0;
+    public static inline var INVALIDATION_FLAG_SIZE : Int	= 1;
+    public static inline var INVALIDATION_FLAG_STATE : Int	= 2;
+    public static inline var INVALIDATION_FLAG_SKIN : Int	= 4;
+    public static inline var INVALIDATION_FLAG_DATA : Int	= 8;
+    public static inline var INVALIDATION_FLAG_ALIGN : Int	= 0x10;
+    public static inline var INVALIDATION_FLAG_SCROLL : Int	= 0x20;
+    public static inline var INVALIDATION_FLAG_ALL : Int	= ~0;
 
-    public var dummy_color_ : UInt = 0;
+    public var dummy_color_ : Int = 0;
     public var dummy_alpha_ : Float = -1;
     public var tag_ : Int = 0;
 
@@ -44,7 +44,7 @@ class Visel extends Sprite
         super();
         create(owner);
     }
-    //.............................................................................
+//.............................................................................
     private function create(owner : DisplayObjectContainer) : Void
     {
         if (owner != null)
@@ -52,7 +52,7 @@ class Visel extends Sprite
             owner.addChild(this);
         }
     }
-    //.............................................................................
+//.............................................................................
     public function destroy_Children() : Void
     {
         var i : Int = numChildren - 1;
@@ -76,8 +76,8 @@ class Visel extends Sprite
             --i;
         }
     }
-    //.............................................................................
-    //.............................................................................
+//.............................................................................
+//.............................................................................
     public function destroy() : Void
     {
         if ((state_ & STATE_DISPOSED) != 0)
@@ -91,20 +91,8 @@ class Visel extends Sprite
             parent.removeChild(this);
         }
     }
-    //.............................................................................
-    override private function set_x(value : Float) : Float
-    {
-        super.x = Math.round(value);
-        return value;
-    }
-    //.............................................................................
-    override private function set_y(value : Float) : Float
-    {
-        super.y = Math.round(value);
-        return value;
-    }
-    //.............................................................................
-    public function invalidate(flags : Int) : Void
+//.............................................................................
+	public function invalidate(flags : Int) : Void
     {
         if ((state_ & STATE_DISPOSED) != 0)
         {
@@ -115,9 +103,9 @@ class Visel extends Sprite
 			//TODO fix me
             //Root.instance.frame_signal_.add(on_Invalidate);
         }
-        invalid_flags_ = invalid_flags_ | flags;
+        invalid_flags_ |= flags;
     }
-    //.............................................................................
+//.............................................................................
     private function on_Invalidate() : Void
     {
 		//TODO fix me:
@@ -129,19 +117,19 @@ class Visel extends Sprite
         draw();
         validate();
     }
-    //.............................................................................
+//.............................................................................
     public function validate() : Void
     {
         invalid_flags_ = 0;
     }
-    //.............................................................................
-    //.............................................................................
+//.............................................................................
+//.............................................................................
     public function move(nx : Float, ny : Float) : Void
     {
         x = nx;
         y = ny;
     }
-    //.............................................................................
+//.............................................................................
     public function resize(w : Float, h : Float) : Void
     {
         if (w < 0)
@@ -159,7 +147,7 @@ class Visel extends Sprite
             invalidate(INVALIDATION_FLAG_SIZE);
         }
     }
-    //.............................................................................
+//.............................................................................
     public function resize_(w : Float, h : Float) : Void
     {
         if (w < 0)
@@ -174,10 +162,10 @@ class Visel extends Sprite
         {
             width_ = w;
             height_ = h;
-            invalid_flags_ = invalid_flags_ | INVALIDATION_FLAG_SIZE;
+            invalid_flags_ |= INVALIDATION_FLAG_SIZE;
         }
     }
-    //.............................................................................
+//.............................................................................
     public function movesize(nx : Float, ny : Float, w : Float, h : Float) : Void
     {
         x = nx;
@@ -192,12 +180,33 @@ class Visel extends Sprite
         resize_(w, h);
     }
     //.............................................................................
-    override private function get_width() : Float
+	#if flash @:keep @:setter(x) #else override #end
+    public function set_x(value : Float) : #if flash Void #else Float #end
+    {
+        super.x = Math.round(value);
+		#if (!flash)
+		return value;
+		#end
+    }
+    //.............................................................................
+	#if flash @:keep @:setter(y) #else override #end
+    private function set_y(value : Float) : #if flash Void #else Float #end
+    {
+        super.y = Math.round(value);
+		#if (!flash)
+		return value;
+		#end
+    }
+    //.............................................................................
+	#if flash @:keep @:getter(width) #else override #end
+    private function get_width() : Float
     {
         return width_;
     }
-    override private function set_width(w : Float) : Float
+	#if flash @:keep @:setter(width) #else override #end
+    private function set_width(value : Float) : #if flash Void #else Float #end
     {
+		var w: Float = value;
         if (w < 0)
         {
             w = 0;
@@ -207,15 +216,20 @@ class Visel extends Sprite
             width_ = w;
             invalidate(INVALIDATION_FLAG_SIZE);
         }
-        return w;
+		#if (!flash)
+		return value;
+		#end
     }
     //.............................................................................
-    override private function get_height() : Float
+	#if flash @:keep @:getter(height) #else override #end
+    private function get_height() : Float
     {
         return height_;
     }
-    override private function set_height(h : Float) : Float
+	#if flash @:keep @:setter(height) #else override #end
+    private function set_height(value : Float) : #if flash Void #else Float #end
     {
+		var h: Float = value;
         if (h < 0)
         {
             h = 0;
@@ -225,7 +239,9 @@ class Visel extends Sprite
             height_ = h;
             invalidate(INVALIDATION_FLAG_SIZE);
         }
-        return h;
+		#if (!flash)
+		return value;
+		#end
     }
     //.............................................................................
     //.............................................................................
@@ -255,16 +271,16 @@ class Visel extends Sprite
     //.............................................................................
     //.............................................................................
     //.............................................................................
-    private function get_dummy_color() : UInt
+    private function get_dummy_color() : Int
     {
         return dummy_color_;
     }
-    private function set_dummy_color(value : UInt) : Int
+    private function set_dummy_color(value : Int) : Int
     {
         if (dummy_color_ != value)
         {
             dummy_color_ = value;
-			var a: UInt = value >>> 24;
+			var a: Int = value >>> 24;
             if (0 == a)
             {
                 dummy_alpha_ = 1;

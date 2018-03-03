@@ -17,9 +17,9 @@ class Root
     public var desktop_mode_ : Bool;
     public var stage_ : Stage;
 
-    public var color_gripper_ : UInt = 0x95D13A;
-    public var color_pressed_ : UInt = 0x00aaaa;
-    public var color_disabled_ : UInt = 0x808080;
+    public var color_gripper_ : Int = 0x95D13A;
+    public var color_pressed_ : Int = 0x00aaaa;
+    public var color_disabled_ : Int = 0x808080;
 
     public static inline var FONT_FAMILY : String = "Helvetica,Arial,_sans";
 
