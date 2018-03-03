@@ -14,6 +14,7 @@
 	}
 	
 .how to int *= float?
+.how to cast like 'as'?
 
 +. how to format Float to String with precision!?
 	var f: Number = 0.2 + 0.1;
@@ -96,4 +97,8 @@ Running command: BUILD
  _res/icon-87.png _res/icon-96.png _res/icon-100.png _res/icon-114.png _res/icon-120.png _res/icon-128.png _res/icon-144.png _res/icon-152.png
  _res/icon-167.png _res/icon-180.png _res/icon-192.png _res/icon-512.png _res/icon-1024.png
 ==========================
+https://blog.zame-dev.org/8-things-i-dont-like-in-haxe/
 
+unsafe cast:
+(cast findViewById(R.id.myTextView):TextView).setText("Cool");
+==========================
