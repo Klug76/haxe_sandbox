@@ -1,3 +1,6 @@
+.how to override flash.display.DisplayObject::x, width, etc?
+.how to int *= float?
+
 +. how to format Float to String with precision!?
 	var f: Number = 0.2 + 0.1;
 	trace(f.toPrecision(4));

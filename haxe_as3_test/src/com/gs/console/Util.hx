@@ -33,6 +33,16 @@ class Util
 		return (x ^ (x >> 31)) - (x >> 31);
 	}
 
+	public static inline function fmin(x: Float, y: Float): Float
+	{
+		return (x < y) ? x : y;
+	}
+
+	public static inline function fmax(x: Float, y: Float): Float
+	{
+		return (x > y) ? x : y;
+	}
+
 	public static inline function ftoPrecision(f: Float, precision: Int): String
 	{
 		#if (flash || js)
@@ -41,4 +51,29 @@ class Util
 			return Std.string(Math.round( f * Math.pow(10, precision) ) / Math.pow(10, precision));
 		#end
 	}
+	//.............................................................................
+    public static function Offset_Path(ppt : Array<Float>, offset : Float) : Void
+    //:stupid but work, lets threat bug as effect
+    {
+
+        var len : Int = ppt.length;
+        for (i in 0...len)
+        {
+            var d : Float = ppt[i];
+            if (d > 0)
+            {
+                d = offset;
+            }
+            else
+            {
+                d = -offset;
+            }
+            ppt[i] += d;
+        }
+    }
+    //.............................................................................
+    public static inline function fclamp(val : Float, min : Float, max : Float) : Float
+    {
+        return fmax(min, fmin(max, val));
+    }
 }
