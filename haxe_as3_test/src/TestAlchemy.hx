@@ -46,7 +46,7 @@ class TestAlchemy extends TestCase
 	function fill_Vector(v: Vector<Float>)
 	{
 		var len = v.length;
-		for (i in 0...len - 1)
+		for (i in 0...len)
 		{
 			v[i] = i;
 		}
@@ -55,7 +55,7 @@ class TestAlchemy extends TestCase
 	function process_Vector(v: Vector<Float>)
 	{
 		var len = v.length;
-		for (i in 0...len - 1)
+		for (i in 0...len)
 		{
 			v[i] = Math.sqrt(v[i]);
 		}
@@ -65,7 +65,7 @@ class TestAlchemy extends TestCase
 	{
 		var len: Int = v.length;
 		var arr: Array<String> = [];
-		for (i in 0...Util.imin(6, len - 1))
+		for (i in 0...Util.imin(6, len))
 		{
 			var f: Float = v[i];
 			arr.push(Util.ftoPrecision(f, 5));
@@ -76,7 +76,7 @@ class TestAlchemy extends TestCase
 	function process_Memory(bytes: ByteArray)
 	{
 		var len: Int = bytes.length >> 2;
-		for (i in 0...len - 1)
+		for (i in 0...len)
 		{//Quake Fast Inverse Square Root
 			var addr: Int = i << 2;
 			var f: Float = Memory.getFloat(addr);
@@ -95,7 +95,7 @@ class TestAlchemy extends TestCase
 	function fill_Memory(bytes: ByteArray)
 	{
 		var len: Int = bytes.length >> 2;
-		for (i in 0...len - 1)
+		for (i in 0...len)
 		{
 			flash.Memory.setFloat(i << 2, i);
 		}
@@ -105,7 +105,7 @@ class TestAlchemy extends TestCase
 	{
 		var len: Int = bytes.length >> 2;
 		var arr: Array<String> = [];
-		for (i in 0...Util.imin(6, len - 1))
+		for (i in 0...Util.imin(6, len))
 		{
 			var f: Float = flash.Memory.getFloat(i << 2);
 			arr.push(Util.ftoPrecision(f, 5));
