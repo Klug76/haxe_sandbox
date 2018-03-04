@@ -15,6 +15,7 @@ class Main extends Sprite
 {
 	var al_: Label;
 	var counter_: Int = 0;
+	var b2: Button;
 
 	public function new()
 	{
@@ -47,9 +48,9 @@ class Main extends Sprite
 		b.dummy_color = 0x0000c0;
 		b.movesize(250, 20, 220, 40);
 
-		b = new Button(stage, "align", on_Click2);
-		b.dummy_color = 0x0000c0;
-		b.movesize(250, 120, 220, 40);
+		b2 = new Button(stage, "align", on_Click2);
+		b2.dummy_color = 0x0000c0;
+		b2.movesize(250, 120, 220, 40);
 
 	}
 
@@ -70,6 +71,7 @@ class Main extends Sprite
 	{
 		trace("click!");
 		al_.text += "\nclick #" + counter_++;
+		b2.enabled = !b2.enabled;
 	}
 
 }
