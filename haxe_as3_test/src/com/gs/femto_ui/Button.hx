@@ -12,7 +12,7 @@ class Button extends Visel
     public var auto_repeat(get, set) : Bool;
 
     private var label_ : Label;
-    private var on_click_ : Event->Void;
+    private var on_click_ : Dynamic->Void;
     private var auto_repeat_ : Bool = false;
     private var repeat_time_ : Int = 0;
     private var repeat_event_ : Event = null;
@@ -25,13 +25,13 @@ class Button extends Visel
     public var content_down_offset_x_ : Int = 1;
     public var content_down_offset_y_ : Int = 1;
     //.............................................................................
-    public function new(owner : DisplayObjectContainer, txt : String, on_Click : Event->Void)
+    public function new(owner : DisplayObjectContainer, txt : String, on_Click : Dynamic->Void)
     {
         super(owner);
         init(txt, on_Click);
     }
     //.............................................................................
-    private function init(txt : String, on_Click : Event->Void) : Void
+    private function init(txt : String, on_Click : Dynamic->Void) : Void
     {
         buttonMode = true;
         label_ = new Label(this, txt);
