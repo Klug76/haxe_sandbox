@@ -17,6 +17,11 @@
 .how to cast like 'as'?
 .js-target has no uint, but only int. sux :(
 
+@:enum
+abstract GameColors( Int ) to Int from Int {
+    var Violet      = 0xFF9400D3;
+    var Indigo      = 0xFF4b0082;
+
 +. how to format Float to String with precision!?
 	var f: Number = 0.2 + 0.1;
 	trace(f.toPrecision(4));
