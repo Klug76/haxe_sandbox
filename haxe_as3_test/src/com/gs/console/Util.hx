@@ -1,5 +1,7 @@
 package com.gs.console;
 
+import flash.Vector;
+
 class Util
 {
 	//TODO IntUtil, FloatUtil, StringUtil!?
@@ -83,7 +85,7 @@ class Util
 //.............................................................................
 //.............................................................................
 //.............................................................................
-    public static function Offset_Path(ppt : Array<Float>, offset : Float) : Void
+    public static function Offset_Path(ppt : Vector<Float>, offset : Float) : Void
     //:stupid but work, lets threat bug as effect
     {
 

@@ -5,6 +5,7 @@ import com.gs.femto_ui.Align;
 import com.gs.femto_ui.Button;
 import com.gs.femto_ui.Label;
 import com.gs.femto_ui.Root;
+import com.gs.femto_ui.Viewport;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -13,9 +14,10 @@ import haxe.unit.TestRunner;
 
 class Main extends Sprite
 {
-	var al_: Label;
 	var counter_: Int = 0;
-	var b2: Button;
+	var al_: Label = null;
+	var b2: Button = null;
+	var vp: Viewport = null;
 
 	public function new()
 	{
@@ -52,6 +54,9 @@ class Main extends Sprite
 		b2.dummy_color = 0x0000c0;
 		b2.movesize(250, 120, 220, 40);
 
+		vp = new Viewport(stage);
+		vp.dummy_color = 0x80dFdF51;
+		vp.movesize(100, 250, 120, 120);
 	}
 
 	function on_Click2(e: MouseEvent)
@@ -72,6 +77,8 @@ class Main extends Sprite
 		trace("click!");
 		al_.text += "\nclick #" + counter_++;
 		b2.enabled = !b2.enabled;
+		if (!vp.visible)
+			vp.visible = true;
 	}
 
 }

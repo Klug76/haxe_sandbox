@@ -84,7 +84,7 @@ class Visel extends Sprite
     {
         if (disposed)
             return;
-        state_ = state_ | STATE_DISPOSED;
+        state_ |= STATE_DISPOSED;
         destroy_Children();
         if (parent != null)
             parent.removeChild(this);

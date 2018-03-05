@@ -1,5 +1,4 @@
 // js-like eval
-// $Id: Eval.as 29 2018-01-25 19:26:23Z Klug76 $
 package com.gs.console;
 
 import flash.errors.Error;

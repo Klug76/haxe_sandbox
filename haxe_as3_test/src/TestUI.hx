@@ -4,8 +4,13 @@ import com.gs.console.Util;
 import com.gs.femto_ui.Align;
 import com.gs.femto_ui.Button;
 import com.gs.femto_ui.Label;
+import com.gs.femto_ui.Mover;
+import com.gs.femto_ui.Resizer;
 import com.gs.femto_ui.Root;
+import com.gs.femto_ui.Toolbar;
+import com.gs.femto_ui.Viewport;
 import com.gs.femto_ui.Visel;
+import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 import flash.display.Stage;
 import flash.events.Event;
@@ -14,6 +19,7 @@ import haxe.unit.TestCase;
 class TestUI extends TestCase
 {
 	var stage_: Stage;
+	var vp:Viewport;
 
 	public function new(stage: Stage)
 	{
@@ -56,7 +62,7 @@ class TestUI extends TestCase
 		assertEquals(0, v.numChildren);
 		assertTrue(ch.disposed);
 		v.destroy_Children();
-		//v.destroy();
+		v.destroy();
 	}
 
 	public function _test3()
@@ -78,15 +84,68 @@ class TestUI extends TestCase
 	public function test4()
 	{
 		var r: Root = Root.create(stage_);
-		var b: Button = new Button(stage_, "foo", on_Click);
+		var b: Button = new Button(null, "foo", on_Click);
 		b.dummy_color = 0x0000c0;
-		b.movesize(100, 200, 220, 40);
+		b.resize(120, 40);
 		//assertEquals("foo", b.text);
 		assertFalse(b.auto_repeat);
+
+		var t: Toolbar = new Toolbar(stage_);
+		t.addChild(b);
+		t.movesize(10, 220, 420, 40);
+		t.dummy_color = 0x000040;
+		t.spacing_ = 8;
+
+		{
+			var b: Button = new Button(t, "foo2", on_Click);
+			b.dummy_color = 0x3D5E83;
+			b.resize(120, 40);
+		}
+		var v: SimpleViewport = new SimpleViewport(stage_);
+		v.dummy_color = 0x80008000;
+		v.movesize(103, 20, 200, 100);
+
+		var mo: Mover = new Mover(v);
+		mo.resize(r.small_tool_width_, r.small_tool_height_);
+		mo.dummy_color = 0x400000;
+
+		var re: Resizer = new Resizer(v);
+		re.resize(r.small_tool_width_, r.small_tool_height_);
+		re.dummy_color = 0x400000;
+		re.move(v.width - re.width, v.height - re.height);
+		v.resizer_ = re;
+
+		vp = new Viewport(stage_);
+		vp.dummy_color = 0x80FFFF51;
+		vp.movesize(100, 250, 120, 120);
 	}
 
 	function on_Click(e: Event)
 	{
 		trace("click!");
+		if (!vp.visible)
+			vp.visible = true;
+	}
+}
+
+class SimpleViewport extends Visel
+{
+	public var resizer_: Resizer;
+
+	public function new(owner: DisplayObjectContainer)
+	{
+		super(owner);
+	}
+
+    override public function draw() : Void
+    {
+        super.draw();
+		if (resizer_ != null)
+		{
+			if ((invalid_flags_ & Visel.INVALIDATION_FLAG_SIZE) != 0)
+			{
+				resizer_.move(width_ - resizer_.width, height_ - resizer_.height);
+			}
+		}
 	}
 }
