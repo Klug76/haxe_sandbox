@@ -8,6 +8,7 @@ import com.gs.femto_ui.Label;
 import com.gs.femto_ui.Mover;
 import com.gs.femto_ui.Resizer;
 import com.gs.femto_ui.Root;
+import com.gs.femto_ui.Scrollbar;
 import com.gs.femto_ui.Toolbar;
 import com.gs.femto_ui.Viewport;
 import com.gs.femto_ui.Visel;
@@ -21,6 +22,7 @@ class TestUI extends TestCase
 {
 	var stage_: Stage;
 	var vp:Viewport;
+	var sb:Scrollbar;
 
 	public function new(stage: Stage)
 	{
@@ -117,10 +119,20 @@ class TestUI extends TestCase
 		v.resizer_ = re;
 
 		vp = new Viewport(stage_);
-		vp.dummy_color = 0x80FFFF51;
-		vp.movesize(100, 250, 120, 120);
+		vp.dummy_color = 0x808F8F51;
+		vp.movesize(100, 250, 220, 220);
 
-		var ed: Edit;
+		var ed: Edit = new Edit(stage_);
+		ed.movesize(10, stage_.stageHeight - r.tool_height_, 220, r.tool_height_);
+		ed.dummy_color = 0x808F8F51;
+
+		sb = new Scrollbar(stage_, on_Scroll);
+		sb.movesize(stage_.stageWidth - r.small_tool_width_, 0, r.small_tool_width_, stage_.stageHeight);
+	}
+
+	function on_Scroll(f: Float): Void
+	{
+		trace("scroll: " + Math.round(f));
 	}
 
 	function on_Click(e: Event)
