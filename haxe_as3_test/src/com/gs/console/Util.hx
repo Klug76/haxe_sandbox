@@ -78,30 +78,30 @@ class Util
 		#end
 	}
 //.............................................................................
-    public static inline function fclamp(val : Float, min : Float, max : Float) : Float
-    {
-        return fmax(min, fmin(max, val));
-    }
+	public static inline function fclamp(val : Float, min : Float, max : Float) : Float
+	{
+		return fmax(min, fmin(max, val));
+	}
 //.............................................................................
 //.............................................................................
 //.............................................................................
-    public static function Offset_Path(ppt : Vector<Float>, offset : Float) : Void
-    //:stupid but work, lets threat bug as effect
-    {
+	public static function Offset_Path(ppt : Vector<Float>, offset : Float) : Void
+	//:stupid but work, lets threat bug as effect
+	{
 
-        var len : Int = ppt.length;
-        for (i in 0...len)
-        {
-            var d : Float = ppt[i];
-            if (d > 0)
-            {
-                d = offset;
-            }
-            else
-            {
-                d = -offset;
-            }
-            ppt[i] += d;
-        }
-    }
+		var len : Int = ppt.length;
+		for (i in 0...len)
+		{
+			var d : Float = ppt[i];
+			if (d > 0)
+			{
+				d = offset;
+			}
+			else
+			{
+				d = -offset;
+			}
+			ppt[i] += d;
+		}
+	}
 }

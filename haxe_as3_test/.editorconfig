@@ -1,0 +1,11 @@
+root = true
+[*.as]
+charset = utf-8
+trim_trailing_whitespace = true
+indent_style = tabs
+indent_size = 4
+[*.hx]
+charset = utf-8
+trim_trailing_whitespace = true
+indent_style = tabs
+indent_size = 4

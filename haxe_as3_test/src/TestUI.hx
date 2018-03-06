@@ -3,6 +3,7 @@ package;
 import com.gs.console.Util;
 import com.gs.femto_ui.Align;
 import com.gs.femto_ui.Button;
+import com.gs.femto_ui.Edit;
 import com.gs.femto_ui.Label;
 import com.gs.femto_ui.Mover;
 import com.gs.femto_ui.Resizer;
@@ -118,6 +119,8 @@ class TestUI extends TestCase
 		vp = new Viewport(stage_);
 		vp.dummy_color = 0x80FFFF51;
 		vp.movesize(100, 250, 120, 120);
+
+		var ed: Edit;
 	}
 
 	function on_Click(e: Event)
@@ -137,9 +140,9 @@ class SimpleViewport extends Visel
 		super(owner);
 	}
 
-    override public function draw() : Void
-    {
-        super.draw();
+	override public function draw() : Void
+	{
+		super.draw();
 		if (resizer_ != null)
 		{
 			if ((invalid_flags_ & Visel.INVALIDATION_FLAG_SIZE) != 0)
