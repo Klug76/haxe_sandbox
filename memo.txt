@@ -163,6 +163,8 @@ extern class Namebuilder {
     public function build(first:String, rest:haxe.extern.Rest<String>):String;
 }
 ==========================
+ "#".code // will compile as 35
 ==========================
+https://github.com/player-03/classic-for
 ==========================
 ==========================

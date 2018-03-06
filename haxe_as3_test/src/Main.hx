@@ -21,7 +21,8 @@ class Main
 		var tr = new TestRunner();
 		//tr.add(new TestRingBuf());
 		//tr.add(new TestAlchemy());
-		tr.add(new TestUI(stage));
+		//tr.add(new TestUI(stage));
+		tr.add(new TestConsole(stage));
 		// add other TestCases here
 
 		// finally, run the tests
