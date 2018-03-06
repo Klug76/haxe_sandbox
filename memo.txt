@@ -148,3 +148,21 @@ if (_stage3DProxy.context3D == null) {
 }
 The context might already be created
 ==========================
+Side note: in AS3, setter chaining is implicit. Regardless of what the setter function returns (because in AS3 setters don't return values), the rval is passed along:
+var n = obj.setter = 4
+n is always 4, regardless of what setter returns
+==========================
+// TypeScript
+function buildName(firstName: string, ...restOfName: string[]):string {
+    return firstName + " " + restOfName.join(" ");
+}
+// Haxe does not allow writing function of variable-lengthed parameters.
+// But it let us declare such functions when 
+// writing extern using the special `haxe.extern.Rest` type.
+extern class Namebuilder {
+    public function build(first:String, rest:haxe.extern.Rest<String>):String;
+}
+==========================
+==========================
+==========================
+==========================
