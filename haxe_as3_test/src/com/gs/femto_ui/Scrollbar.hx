@@ -7,18 +7,18 @@ import flash.events.MouseEvent;
 
 class Scrollbar extends Button
 {
-	public var min(get, set) : Float;
-	public var max(get, set) : Float;
-	public var value(get, set) : Float;
+	public var min(get, set) : Int;
+	public var max(get, set) : Int;
+	public var value(get, set) : Int;
 
-	private var min_ : Float = 0;
-	private var max_ : Float = 10;
-	private var value_ : Float = 0;
-	private var on_scroll_ : Float->Void;
+	private var min_ : Int = 0;
+	private var max_ : Int = 10;
+	private var value_ : Int = 0;
+	private var on_scroll_ : Int->Void;
 
 	public var thumb_ : Thumb;
 
-	public function new(owner : DisplayObjectContainer, callback : Float->Void)
+	public function new(owner : DisplayObjectContainer, callback : Int->Void)
 	{
 		super(owner, null, on_Area_Click);
 		on_scroll_ = callback;
@@ -38,7 +38,7 @@ class Scrollbar extends Button
 		thumb_.dummy_color = 0x008000;
 	}
 	//.............................................................................
-	public function reset(mn : Float, mx : Float, cur : Float) : Void
+	public function reset(mn : Int, mx : Int, cur : Int) : Void
 	{
 		min_ = mn;
 		max_ = mx;
@@ -53,24 +53,18 @@ class Scrollbar extends Button
 			return;
 		}
 		var ny : Float = thumb_.mouseY;
-		var v : Float = value_;
+		var v : Int = value_;
 		if (ny < 0)
-		{
 			--v;
-		}
 		else if (ny > thumb_.height)
-		{
 			++v;
-		}
 		else
-		{
 			return;
-		}
 		set_Value(v);
 		invalidate(Visel.INVALIDATION_FLAG_DATA);
 	}
 	//.............................................................................
-	private function set_Value(v : Float) : Void
+	private function set_Value(v : Int) : Void
 	{
 		v = clamp_Value(v);
 		if (value_ != v)
@@ -95,9 +89,9 @@ class Scrollbar extends Button
 		on_scroll_(-1);
 	}
 	//.............................................................................
-	private function calc_Value(ny : Float) : Float
+	private function calc_Value(ny : Float) : Int
 	{
-		var df : Float = max_ - min_;
+		var df : Int = max_ - min_;
 		var dh : Float = Math.floor(height_ - thumb_.height);
 		if ((df <= 0) || (dh <= 0))
 		{
@@ -106,20 +100,20 @@ class Scrollbar extends Button
 		return Math.round(ny * df / dh + min_);
 	}
 	//.............................................................................
-	private function clamp_Value(v : Float) : Float
+	private inline function clamp_Value(v : Int) : Int
 	{
-		return Util.fclamp(v, min_, max_);
+		return Util.iclamp(v, min_, max_);
 	}
 	//.............................................................................
 	//.............................................................................
 	//.............................................................................
 	//.............................................................................
-	private function get_min() : Float
+	private function get_min() : Int
 	{
 		return min_;
 	}
 	//.............................................................................
-	private function set_min(value : Float) : Float
+	private function set_min(value : Int) : Int
 	{
 		if (min_ != value)
 		{
@@ -129,12 +123,12 @@ class Scrollbar extends Button
 		return value;
 	}
 	//.............................................................................
-	private function get_max() : Float
+	private function get_max() : Int
 	{
 		return max_;
 	}
 	//.............................................................................
-	private function set_max(value : Float) : Float
+	private function set_max(value : Int) : Int
 	{
 		if (max_ != value)
 		{
@@ -144,12 +138,12 @@ class Scrollbar extends Button
 		return value;
 	}
 	//.............................................................................
-	private function get_value() : Float
+	private function get_value() : Int
 	{
 		return value_;
 	}
 	//.............................................................................
-	private function set_value(value : Float) : Float
+	private function set_value(value : Int) : Int
 	{
 		if (value_ != value)
 		{
@@ -176,7 +170,7 @@ class Scrollbar extends Button
 			return;
 		}
 		//trace("thumb::update pos, val = " + value_);
-		var df : Float = max_ - min_;
+		var df : Int = max_ - min_;
 		var dh : Float = Math.floor(height_ - thumb_.height);
 		if ((df <= 0) || (dh <= 0) || (value_ == min_))
 		{
@@ -191,8 +185,8 @@ class Scrollbar extends Button
 		//:calc pos
 		var ny : Float = Util.fclamp(Math.round((value_ - min_) * dh / df), 0, dh);
 		//:move if new y will change value
-		var v : Float = clamp_Value(calc_Value(thumb_.y));
-		var nv : Float = clamp_Value(calc_Value(ny));
+		var v : Int = clamp_Value(calc_Value(thumb_.y));
+		var nv : Int = clamp_Value(calc_Value(ny));
 		if (v == nv)
 		{
 			return;
