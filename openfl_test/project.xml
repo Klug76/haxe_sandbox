@@ -10,6 +10,8 @@
 
 	<assets path="Assets" rename="assets" />
 
+	<!--
 	<haxeflag name="--no-traces" if="html5"/>
 	<haxeflag name="-dce full" if="html5"/>
+	-->
 </project>

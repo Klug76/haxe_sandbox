@@ -1,6 +1,9 @@
 package;
 
 
+import com.gs.console.Konsole;
+import com.gs.console.KonsoleConfig;
+import com.gs.console.KonsoleView;
 import com.gs.femto_ui.Align;
 import com.gs.femto_ui.Button;
 import com.gs.femto_ui.Label;
@@ -9,6 +12,7 @@ import com.gs.femto_ui.Viewport;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
+import haxe.Timer;
 import haxe.unit.TestRunner;
 
 
@@ -18,6 +22,7 @@ class Main extends Sprite
 	var al_: Label = null;
 	var b2: Button = null;
 	var vp: Viewport = null;
+	var k: Konsole = null;
 
 	public function new()
 	{
@@ -26,7 +31,8 @@ class Main extends Sprite
 
 		//trace("Hello, OpenFL");
 		//test1();
-		test2();
+		//test2();
+		test3();
 	}
 
 	function test1()
@@ -79,6 +85,42 @@ class Main extends Sprite
 		b2.enabled = !b2.enabled;
 		if (!vp.visible)
 			vp.visible = true;
+	}
+
+	function test3()
+	{
+		var r: Root = Root.create(stage);
+
+		al_ = new Label(stage, "Hello, Мир!");
+		al_.movesize(10, 20, 220, 40);
+		al_.dummy_color = 0x40c00000;
+		al_.h_align = Align.CENTER;
+
+		var cfg: KonsoleConfig = new KonsoleConfig();
+		k = new Konsole(cfg);
+		k.set_View(KonsoleView);
+		k.start(stage);
+		k.add("foo");
+		k.add("bar");
+		k.toggle_View();
+		Timer.delay(append_Test1, 100);
+	}
+
+	function append_Test1()
+	{
+		for (i in 0...10)
+		{
+			k.add(i);
+		}
+		Timer.delay(append_Test2, 200);
+	}
+
+	function append_Test2()
+	{
+		for (i in 10...14)
+		{
+			k.add(i);
+		}
 	}
 
 }

@@ -167,4 +167,20 @@ extern class Namebuilder {
 ==========================
 https://github.com/player-03/classic-for
 ==========================
+https://try.haxe.org/#c6800
+class Test {
+    static function _foo(args:Array<Dynamic>)
+	{
+        return "Called with: " + args.join(", ");
+    }
+    
+    static var foo:Dynamic = Reflect.makeVarArgs(_foo);
+    
+    static function main() {
+        trace("Haxe is great!");
+        trace(foo(1));
+        trace(foo(1, 2));
+        trace(foo(1, 2, 3));
+    }
+}
 ==========================
