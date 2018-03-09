@@ -1,5 +1,6 @@
 package;
 
+import com.gs.KonsoleDemo;
 import com.gs.console.RingBuf;
 import flash.Lib;
 import flash.display.Stage;
@@ -18,15 +19,18 @@ class Main
 		stage.scaleMode = StageScaleMode.NO_SCALE;
 		stage.align = StageAlign.TOP_LEFT;
 		// Entry point
-		var tr = new TestRunner();
+
+		//var tr = new TestRunner();
 		//tr.add(new TestRingBuf());
 		//tr.add(new TestAlchemy());
 		//tr.add(new TestUI(stage));
-		tr.add(new TestConsole(stage));
+		//tr.add(new TestConsole(stage));
 		// add other TestCases here
 
 		// finally, run the tests
-		tr.run();
+		//tr.run();
+
+		new KonsoleDemo(stage);
 		//trace("OK");
 	}
 

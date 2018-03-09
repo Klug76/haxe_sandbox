@@ -1,6 +1,7 @@
 package;
 
 
+import com.gs.KonsoleDemo;
 import com.gs.console.Konsole;
 import com.gs.console.KonsoleConfig;
 import com.gs.console.KonsoleView;
@@ -96,31 +97,8 @@ class Main extends Sprite
 		al_.dummy_color = 0x40c00000;
 		al_.h_align = Align.CENTER;
 
-		var cfg: KonsoleConfig = new KonsoleConfig();
-		k = new Konsole(cfg);
-		k.set_View(KonsoleView);
-		k.start(stage);
-		k.add("foo");
-		k.add("bar");
-		k.toggle_View();
-		Timer.delay(append_Test1, 100);
+		new KonsoleDemo(stage);
 	}
 
-	function append_Test1()
-	{
-		for (i in 0...10)
-		{
-			k.add(i);
-		}
-		Timer.delay(append_Test2, 200);
-	}
-
-	function append_Test2()
-	{
-		for (i in 10...14)
-		{
-			k.add(i);
-		}
-	}
 
 }

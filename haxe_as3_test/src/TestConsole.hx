@@ -1,5 +1,6 @@
 package;
 
+import com.gs.KonsoleDemo;
 import com.gs.console.FpsMonitor;
 import com.gs.console.Konsole;
 import com.gs.console.KonsoleConfig;
@@ -45,31 +46,8 @@ class TestConsole extends TestCase
 
 	public function test2()
 	{
-		var cfg: KonsoleConfig = new KonsoleConfig();
-		assertTrue(cfg.max_lines_ > 0);
-		k = new Konsole(cfg);
-		k.set_View(KonsoleView);
-		k.start(stage_);
-		k.add("foo");
-		k.add("bar");
-		k.toggle_View();
-		Timer.delay(append_Test1, 100);
+		k = new KonsoleDemo(stage_).k;
+		assertTrue(k.cfg_.max_lines_ > 0);
 	}
 
-	function append_Test1()
-	{
-		for (i in 0...10)
-		{
-			k.add(i);
-		}
-		Timer.delay(append_Test2, 200);
-	}
-
-	function append_Test2()
-	{
-		for (i in 10...14)
-		{
-			k.add(i);
-		}
-	}
 }
