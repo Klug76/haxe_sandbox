@@ -16,6 +16,7 @@ class Visel extends Sprite
 	public var enabled(get, set) : Bool;
 	public var disposed(get, never) : Bool;
 	public var dummy_color(get, set) : Int;
+	public var dummy_alpha(get, set) : Float;
 
 	private var width_ : Float = 0;
 	private var height_ : Float = 0;
@@ -263,6 +264,19 @@ class Visel extends Sprite
 		return value;
 	}
 	//.............................................................................
+	private function get_dummy_alpha() : Float
+	{
+		return dummy_alpha_;
+	}
+	private function set_dummy_alpha(value : Float) : Float
+	{
+		if (dummy_alpha_ != value)
+		{
+			dummy_alpha_ = value;
+			invalidate(INVALIDATION_FLAG_SKIN);
+		}
+		return value;
+	}
 	//.............................................................................
 	//.............................................................................
 	public function draw() : Void

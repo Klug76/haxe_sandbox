@@ -30,7 +30,7 @@ class Main
 		// finally, run the tests
 		//tr.run();
 
-		new KonsoleDemo(stage);
+		KonsoleDemo.create_UI(stage);
 		//trace("OK");
 	}
 

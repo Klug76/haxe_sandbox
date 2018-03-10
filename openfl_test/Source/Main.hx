@@ -13,6 +13,7 @@ import com.gs.femto_ui.Viewport;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.text.TextField;
 import haxe.Timer;
 import haxe.unit.TestRunner;
 
@@ -20,8 +21,9 @@ import haxe.unit.TestRunner;
 class Main extends Sprite
 {
 	var counter_: Int = 0;
-	var al_: Label = null;
+	var tf_: TextField = null;
 	var b2: Button = null;
+	var al_: Label = null;
 	var vp: Viewport = null;
 	var k: Konsole = null;
 
@@ -48,6 +50,7 @@ class Main extends Sprite
 	function test2()
 	{
 		var r: Root = Root.create(stage);
+
 		al_ = new Label(stage, "Hello, Мир!");
 		al_.movesize(10, 20, 220, 140);
 		al_.dummy_color = 0xc00000;
@@ -92,12 +95,17 @@ class Main extends Sprite
 	{
 		var r: Root = Root.create(stage);
 
-		al_ = new Label(stage, "Hello, Мир!");
-		al_.movesize(10, 20, 220, 40);
-		al_.dummy_color = 0x40c00000;
-		al_.h_align = Align.CENTER;
+		tf_ = new TextField();
+		stage.addChild(tf_);
+		tf_.x = 10;
+		tf_.y = 20;
+		tf_.htmlText = "1<br>";
+		tf_.htmlText += "2<br>";
+		tf_.htmlText = "<p>1</p>";
+		tf_.htmlText += "<p>2</p>";
+		tf_.htmlText += "<p>1</p><p>2</p>";
 
-		new KonsoleDemo(stage);
+		KonsoleDemo.create_UI(stage);
 	}
 
 

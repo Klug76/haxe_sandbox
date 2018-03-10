@@ -28,9 +28,12 @@ class KonsoleView extends Viewport
     private var mem_view_ : Viewport;
 
     private var k_ : Konsole;
+	private var start_head_: Int = 0;
     private var last_seen_head_ : Int = 0;
     private var last_seen_tail_ : Int = 0;
-
+#if (!flash)
+	private var text__: String = "";
+#end
     public function new(k : Konsole)
     {
         k_ = k;
@@ -210,8 +213,7 @@ class KonsoleView extends Viewport
         else
         {
             Root.instance.frame_signal_.remove(on_Enter_Frame);
-            //TODO fix me: delay it:
-            last_seen_head_ = last_seen_tail_;
+            //TODO fix me: clear?
         }
         #if (!flash) return value; #end
     }
@@ -272,16 +274,21 @@ class KonsoleView extends Viewport
     {
         var cmd : Int = k_.query_Update(last_seen_head_, last_seen_tail_);
         if (0 == cmd)
-        {
+        {//:nop
             return;
         }
         var s : String;
-        if (cmd == Konsole.APPEND)
+        if (Konsole.APPEND == cmd)
         {
             if (!can_Append())
             {
                 return;
             }
+			if (k_.head >= start_head_ + k_.cfg_.max_lines_)
+				cmd = Konsole.REPLACE;//:clean up
+		}
+        if (Konsole.APPEND == cmd)
+		{
             s = k_.get_Html_From(last_seen_tail_);
             append_Text(s);
         }
@@ -289,6 +296,7 @@ class KonsoleView extends Viewport
         {
             s = k_.get_Html();
             replace_Text(s);
+			start_head_ = k_.head;
         }
         last_seen_head_ = k_.head;
         last_seen_tail_ = k_.tail;
@@ -296,6 +304,8 @@ class KonsoleView extends Viewport
 //.............................................................................
     private function can_Append() : Bool
     {
+		//TODO review
+		//if under selection!?
         if (scrollbar_.thumb_.is_drag_mode)
         {
             if (text_field_.scrollV < text_field_.maxScrollV)
@@ -308,7 +318,7 @@ class KonsoleView extends Viewport
 //.............................................................................
     private function append_Text(s : String) : Void
     {
-		trace("Append " + s);
+		trace("Append '" + s + "'");
         if (s.length <= 0)
         {
             return;
@@ -321,7 +331,13 @@ class KonsoleView extends Viewport
         var temp : String = aux_.getXMLText();
         text_field_.insertXMLText(ins_idx, ins_idx, temp, false);
 #else
-        text_field_.htmlText += s;
+		//trace("***** before: '" + text_field_.htmlText + "'");
+		text__ += s;
+        text_field_.htmlText = text__;
+		//:BUGBUG: get_htmlText doesn't work in openfl (yet)
+        //:text_field_.htmlText += s;
+		//trace("***** after: '" + text_field_.htmlText + "'");
+		//text_field_.appendText(s);
 #end
 
         if (in_tail)
@@ -333,7 +349,7 @@ class KonsoleView extends Viewport
     //.............................................................................
     private function replace_Text(s : String) : Void
     {
-		trace("Replace " + s);
+		trace("Replace '" + s + "'");
         if (s.length > 0)
         {
             var ins_idx : Int = text_field_.length;
@@ -343,13 +359,18 @@ class KonsoleView extends Viewport
             var temp : String = aux_.getXMLText();
             text_field_.insertXMLText(0, ins_idx, temp, false);
 #else
+			text__ = s;
             text_field_.htmlText = s;
+			//text_field_.text = s;
 #end
 
             text_field_.scrollV = text_field_.maxScrollV;
         }
         else
         {
+#if (!flash)
+			text__ = "";
+#end
             text_field_.text = "";
         }
         invalidate(Visel.INVALIDATION_FLAG_SCROLL);

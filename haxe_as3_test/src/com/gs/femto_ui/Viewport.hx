@@ -95,7 +95,7 @@ class Viewport extends Visel
 		min_content_width_ = value.width;
 		min_content_height_ = value.height;
 		addChildAt(value, 0);
-		mover_.dummy_alpha_ = 0;
+		mover_.dummy_alpha = 0;
 		resizer_.min_width_ = min_content_width_ + Root.instance.small_tool_width_;
 		resizer_.min_height_ = min_content_height_;
 		invalidate(Visel.INVALIDATION_FLAG_DATA);

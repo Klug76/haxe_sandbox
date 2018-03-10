@@ -154,23 +154,21 @@ class Konsole extends RingBuf<LogLine>
 //.............................................................................
     public function query_Update(last_seen_head : Int, last_seen_tail : Int) : Int
     {
-        if (last_seen_head != head_)
-        {//:head changed (clear)
-            return REPLACE;//:BUGBUG
-        }
+		if ((last_seen_head == head_) && (last_seen_tail == tail_))
+		{//:nop
+			return 0;
+		}
         if (head_ == tail_)
-        {
-            if (last_seen_tail != tail_)
-            {//:to clear
-                return REPLACE;
-            }
-            return 0;
+        {//:to clear
+			return REPLACE;
         }
-        if (last_seen_tail != tail_)
-        {
-            return APPEND;
+        if (head_ > last_seen_tail)
+        {//:unable to close gap between last_seen_tail & new head_
+			return REPLACE;
         }
-        return 0;
+        //if (head_ == last_seen_tail)
+			//trace("***** " + head_);
+        return APPEND;
     }
     //.............................................................................
     //.............................................................................
