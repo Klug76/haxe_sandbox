@@ -1,6 +1,6 @@
 package com.gs.console;
 
-import haxe.ds.Vector;
+import flash.Vector;
 
 @:generic
 class RingBuf<T>
@@ -71,12 +71,30 @@ class RingBuf<T>
 		return tail_ - head_;
 	}
 	//.............................................................................
-	public function item(id : Int) : T
+	public inline function item(id : Int) : T
 	{
 		return data_[id & and_mask_];
 	}
 	//.............................................................................
+	public var front(get, never) : T;
+	public function get_front(): T
+	{//:assume tail_ > head_
+		return data_[head_ & and_mask_];
+	}
 	//.............................................................................
+	public var back(get, never) : T;
+	public function get_back(): T
+	{//:assume tail_ > head_
+		return data_[(tail_ - 1) & and_mask_];
+	}
+	//.............................................................................
+	//:0-based, -1 if not found
+	public inline function index_Of(v: T): Int
+	{
+		return data_.indexOf(v);
+	}
+	//.............................................................................
+	#if debug
 	public function dump() : String
 	{
 		var arr : Array<String> = [];
@@ -87,4 +105,5 @@ class RingBuf<T>
 		}
 		return arr.join(",");
 	}
+	#end
 }

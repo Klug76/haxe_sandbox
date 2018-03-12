@@ -174,19 +174,19 @@ class Konsole extends RingBuf<LogLine>
     //.............................................................................
     //.............................................................................
     //.............................................................................
-	/*
     public function eval(s : String) : Void
     {
         if (s.charCodeAt(0) == '/'.code)
 		{
-			if (eval_Command(s.substr(1)))
+			//if (eval_Command(s.substr(1)))
 			{
 				return;
 			}
         }
-        add(eval_.parse(s));
+        //add(eval_.parse(s));
     }
     //.............................................................................
+	/*
     private function eval_Command(s : String) : Bool
     {
         var word_end : Int = s.search(new as3hx.Compat.Regex('[^\\w]', ""));

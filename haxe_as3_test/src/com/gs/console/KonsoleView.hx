@@ -15,6 +15,8 @@ class KonsoleView extends Viewport
 {
 #if flash
     private var aux_ : TextField;
+#else
+	private var text__: String = "";
 #end
     private var text_field_ : TextField;
     private var scrollbar_ : Scrollbar;
@@ -23,7 +25,7 @@ class KonsoleView extends Viewport
     private var toolbar_ : Toolbar;
     private var btn_copy_ : Button;
     private var btn_clear_ : Button;
-    //private var cmdline_ : CmdLine;
+    private var cmdline_ : CmdLine;
     private var fps_view_ : Viewport;
     private var mem_view_ : Viewport;
 
@@ -31,9 +33,7 @@ class KonsoleView extends Viewport
 	private var start_head_: Int = 0;
     private var last_seen_head_ : Int = 0;
     private var last_seen_tail_ : Int = 0;
-#if (!flash)
-	private var text__: String = "";
-#end
+
     public function new(k : Konsole)
     {
         k_ = k;
@@ -119,9 +119,9 @@ class KonsoleView extends Viewport
         b.resize(80, r.tool_height_);
         btn_clear_ = b;
 
-        //cmdline_ = new CmdLine(this, k_);
-        //cmdline_.height = k_.cfg_.cmd_height_;
-        //cmdline_.dummy_color = 0xc0ffc0;
+        cmdline_ = new CmdLine(this, k_);
+        cmdline_.height = k_.cfg_.cmd_height_;
+        cmdline_.dummy_color = 0xc0ffc0;
 
         mover_.resize(r.tool_width_, r.tool_height_);
         mover_.dummy_color = 0xFF0040c0;
@@ -235,8 +235,8 @@ class KonsoleView extends Viewport
 
             toolbar_.width = width_ - r.small_tool_width_ * 2 - r.spacing_;
 
-            //cmdline_.y = height_ - k_.cfg_.cmd_height_;
-            //cmdline_.width = width_ - r.small_tool_width_ - r.spacing_;
+            cmdline_.y = height_ - k_.cfg_.cmd_height_;
+            cmdline_.width = width_ - r.small_tool_width_ - r.spacing_;
         }
         else if ((invalid_flags_ & Visel.INVALIDATION_FLAG_SCROLL) != 0)
 		{//:INVALIDATION_FLAG_SCROLL frame after INVALIDATION_FLAG_SIZE
@@ -316,26 +316,24 @@ class KonsoleView extends Viewport
 //.............................................................................
     private function append_Text(s : String) : Void
     {
-		trace("Append '" + s + "'");
         if (s.length <= 0)
         {
             return;
         }
         var in_tail : Bool = text_field_.scrollV == text_field_.maxScrollV;
-        var ins_idx : Int = text_field_.length;
 
 #if flash
+        var ins_idx : Int = text_field_.length;
         aux_.htmlText = s;
         var temp : String = aux_.getXMLText();
         text_field_.insertXMLText(ins_idx, ins_idx, temp, false);
+		aux_.htmlText = "";
 #else
-		//trace("***** before: '" + text_field_.htmlText + "'");
 		text__ += s;
         text_field_.htmlText = text__;
-		//:BUGBUG: get_htmlText doesn't work in openfl (yet)
+		//:BUGBUG: get_htmlText doesn't work in openfl (yet, v.7,1,2)
         //:text_field_.htmlText += s;
-		//trace("***** after: '" + text_field_.htmlText + "'");
-		//text_field_.appendText(s);
+
 #end
 
         if (in_tail)
@@ -347,19 +345,17 @@ class KonsoleView extends Viewport
     //.............................................................................
     private function replace_Text(s : String) : Void
     {
-		trace("Replace '" + s + "'");
         if (s.length > 0)
         {
-            var ins_idx : Int = text_field_.length;
-
 #if flash
+            var len : Int = text_field_.length;
             aux_.htmlText = s;
             var temp : String = aux_.getXMLText();
-            text_field_.insertXMLText(0, ins_idx, temp, false);
+            text_field_.insertXMLText(0, len, temp, false);
+			aux_.htmlText = "";
 #else
 			text__ = s;
             text_field_.htmlText = s;
-			//text_field_.text = s;
 #end
 
             text_field_.scrollV = text_field_.maxScrollV;
@@ -369,7 +365,7 @@ class KonsoleView extends Viewport
 #if (!flash)
 			text__ = "";
 #end
-            text_field_.text = "";
+            text_field_.htmlText = "";
         }
         invalidate(Visel.INVALIDATION_FLAG_SCROLL);
     }

@@ -25,8 +25,10 @@ class Edit extends Visel
 		tf_.defaultTextFormat = new TextFormat(null, Root.instance.input_text_size_);
 		tf_.selectable = true;
 		tf_.mouseEnabled = true;
-		tf_.tabEnabled = true;
+		tf_.tabEnabled = false;//?
+#if flash
 		tf_.condenseWhite = false;
+#end
 		tf_.width = width_;
 		tf_.height = height_;
 
