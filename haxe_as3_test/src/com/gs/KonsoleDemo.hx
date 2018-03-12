@@ -23,6 +23,7 @@ class KonsoleDemo extends Visel
 	private var aux_: TextField;
 	private var counter_: Int = 0;
 	private static var k: Konsole;
+	private var arr_: Array<Int>;
 
 	public function new(owner : DisplayObjectContainer)
 	{
@@ -45,6 +46,7 @@ class KonsoleDemo extends Visel
 		add_Tool_Button(0x0000c0, "~", toggle_Konsole);
 		add_Tool_Button(0x00c0c0, "test1", test1);
 		add_Tool_Button(0x00c0c0, "test2", test2);
+		add_Tool_Button(0xc00020, "eat", eat_Mem);
 
 		stage.addEventListener(Event.RESIZE, on_Stage_Resize);
 		invalidate(Visel.INVALIDATION_FLAG_SIZE);
@@ -135,4 +137,8 @@ class KonsoleDemo extends Visel
 		k.add_Html(s);
 	}
 
+	function eat_Mem(v: Dynamic): Void
+	{
+		arr_ = [for (i in 0...1000000) i];
+	}
 }

@@ -6,8 +6,6 @@ import com.gs.femto_ui.Visel;
 import flash.Lib;
 import flash.display.DisplayObjectContainer;
 import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
-import flash.text.TextFieldType;
 import flash.text.TextFormat;
 
 class FpsMonitor extends Graph

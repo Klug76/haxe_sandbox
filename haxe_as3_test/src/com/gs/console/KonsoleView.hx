@@ -180,7 +180,6 @@ class KonsoleView extends Viewport
 //.............................................................................
     private function on_Mem_Click(e : Event) : Void
     {
-		/*
         if (null == mem_view_)
         {
             mem_view_ = new Viewport(stage);
@@ -197,7 +196,6 @@ class KonsoleView extends Viewport
         {
             mem_view_.bring_To_Top();
         }
-		*/
     }
 //.............................................................................
 	#if flash @:keep @:setter(visible) #else override #end
