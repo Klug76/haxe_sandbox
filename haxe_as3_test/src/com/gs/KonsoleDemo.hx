@@ -6,16 +6,21 @@ import com.gs.femto_ui.Label;
 import com.gs.femto_ui.Root;
 import com.gs.femto_ui.Toolbar;
 import com.gs.femto_ui.Visel;
+import flash.Vector;
 import flash.display.DisplayObjectContainer;
 import flash.display.Stage;
 import com.gs.console.Konsole;
 import com.gs.console.KonsoleConfig;
 import com.gs.console.KonsoleView;
+import flash.errors.Error;
 import flash.events.Event;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 import haxe.Timer;
+#if flash
+import flash.xml.XML;
+#end
 
 class KonsoleDemo extends Visel
 {
@@ -47,6 +52,13 @@ class KonsoleDemo extends Visel
 		add_Tool_Button(0x00c0c0, "test1", test1);
 		add_Tool_Button(0x00c0c0, "test2", test2);
 		add_Tool_Button(0xc00020, "eat", eat_Mem);
+		add_Tool_Button(0xc00020, "err", log_Error);
+		add_Tool_Button(0x00c0d0, "cmd", eval_Command);
+		add_Tool_Button(0x00c0d0, "xml", log_Xml);
+		add_Tool_Button(0x00c0d0, "arr", log_Array);
+
+		k.register_Command("foo", cmd_Foo, "test command");
+
 
 		stage.addEventListener(Event.RESIZE, on_Stage_Resize);
 		invalidate(Visel.INVALIDATION_FLAG_SIZE);
@@ -99,6 +111,11 @@ class KonsoleDemo extends Visel
 		new KonsoleDemo(stage);
 	}
 
+	private function cmd_Foo(dummy: Array<String>): Void
+	{
+		k.add("command::foo()");
+	}
+
 	function test1(v: Dynamic): Void
 	{
 		add_Counter();
@@ -140,5 +157,78 @@ class KonsoleDemo extends Visel
 	function eat_Mem(v: Dynamic): Void
 	{
 		arr_ = [for (i in 0...1000000) i];
+	}
+
+	function log_Error(v: Dynamic): Void
+	{
+		try
+		{
+			throw_String();
+		}
+		catch (err: Dynamic)
+		{
+			k.add(err);
+		}
+		try
+		{
+			throw_Error();
+		}
+		catch (err: Dynamic)
+		{
+			//TODO fix me:
+			/*
+			if (Reflect.hasField(err, "getStackTrace"))
+			{
+				var err_text = err.getStackTrace();
+				if (err_text != null)
+				{
+					k.add(err_text);
+					return;
+				}
+			}
+			*/
+			k.add(err);
+		}
+	}
+
+	function throw_Error()
+	{
+		throw new Error("flash::error");
+	}
+
+	function throw_String()
+	{
+		throw "string::error";
+	}
+
+	function eval_Command(v: Dynamic): Void
+	{
+		var cmd = "/foo";
+		k.eval(cmd);
+	}
+
+	function log_Xml(v: Dynamic): Void
+	{
+		var s: String = '<root><hello name="world!">Haxe is suxx!</hello><hello name="world!">Haxe is sux!</hello></root>';
+#if flash
+		var x: XML = new XML(s);
+		XML.prettyPrinting = true;
+		XML.prettyIndent = 4;
+#else
+		var x = Xml.parse(s);
+#end
+		k.add(x);//TODO fix me
+	}
+
+	function log_Array(v: Dynamic): Void
+	{
+		var ai: Array<Int> = [for (i in 1...11) i];
+		k.add(ai);
+		var vi: Vector<Int> = new Vector<Int>();
+		k.add(vi);
+		vi.push(1);
+		vi.push(8);
+		vi.push(2);
+		k.add(vi);
 	}
 }

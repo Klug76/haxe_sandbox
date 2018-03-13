@@ -1,7 +1,8 @@
 package com.gs.console;
 
+import flash.Lib;
+import flash.Vector;
 import flash.errors.Error;
-import haxe.Constraints.Function;
 import flash.desktop.Clipboard;
 import flash.desktop.ClipboardFormats;
 import flash.display.DisplayObject;
@@ -9,6 +10,9 @@ import flash.display.Stage;
 import flash.events.KeyboardEvent;
 import flash.system.System;
 import flash.utils.ByteArray;
+#if flash
+import flash.xml.XML;
+#end
 
 class Konsole extends RingBuf<LogLine>
 {
@@ -16,12 +20,11 @@ class Konsole extends RingBuf<LogLine>
     //private var eval_ : Eval;
 
     private var default_view_class_ : Class<Dynamic>;
-    private var default_view_ : DisplayObject;
+    private var default_view_ : DisplayObject = null;
 
-    //public var cmd_list_ : Dynamic = { };
-    //public var cmd_hint_ : Dynamic = { };
+    public var cmd_map_ : Map<String, Command> = new Map<String, Command>();
     public var cfg_ : KonsoleConfig;
-    public var stage_ : Stage;
+    public var stage_ : Stage = null;
 
     public static inline var APPEND : Int = 1;
     public static inline var REPLACE : Int = 2;
@@ -45,46 +48,100 @@ class Konsole extends RingBuf<LogLine>
                     //Number : Float,
                     //Math : Math
                 //};
-        //add_Command("commands", list_All_Commands, "Show a list of all slash commands");
+        register_Command("commands", list_All_Commands, "Show a list of all slash commands");
     }
 //.............................................................................
-/*
-    public function add_Command(cmd : String, f : Function, hint : String = null) : Void
+    public function register_Command(cmd : String, f : Array<String>->Void, hint : String = null) : Void
     {
 		#if debug
         {
-            if (cmd in cmd_list_)
+            if (cmd_map_.exists(cmd))
             {
-                throw new Error("command " + cmd + " already exist");
+                throw "command " + cmd + " already exist";
             }
         }
-        Reflect.setField(cmd_list_, cmd, f);
-        if (hint != null)
-        {
-            Reflect.setField(cmd_hint_, cmd, hint);
-        }
+		#end
+		var c: Command = new Command(f, hint);
+		cmd_map_.set(cmd, c);
     }
-*/
-    //.............................................................................
-/*
-    public function add_Scope(id : String, obj : Dynamic) : Void
+//.............................................................................
+    public function start(stage : Stage) : Void
     {
-        eval_.const_context_[id] = obj;
+        stage_ = stage;
+        stage.addEventListener(KeyboardEvent.KEY_DOWN, on_Key_Down_Stage, false, 1);
+        stage.addEventListener(KeyboardEvent.KEY_UP, on_Key_Up_Stage, false, 1);
     }
-*/
-    //.............................................................................
-    //.............................................................................
-    //.............................................................................
-    //.............................................................................
-    //.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
     public function add(v: Dynamic) : Void
     {
-        var s: String = Std.string(v);
+        var s: String = to_String(v);
         trace(s);
         var it : LogLine = add_Line();
         it.html_ = null;
         it.text_ = s;
     }
+//.............................................................................
+	function to_String(v : Dynamic): String
+	{
+		var t = Type.typeof(v);
+		switch (t)
+		{
+			case Type.ValueType.TClass(Error):
+				{
+					var err: Error = Lib.as(v, Error);
+					var s: String = err.getStackTrace();
+					if (s != null)
+						return s;
+				}
+#if flash
+			case Type.ValueType.TClass(XML):
+				{
+					var x: XML = Lib.as(v, XML);
+					return print_XML(x);
+				}
+#else
+			case Type.ValueType.TClass(Xml):
+				{
+					var x: Xml = Lib.as(v, Xml);
+					return haxe.xml.Printer.print(x, true);
+				}
+#end
+			case Type.ValueType.TClass(Vector):
+				{
+					return print_Vector(v);
+				}
+			default:
+		}
+		//else if (Std.is(v, Vector))
+		//{
+		//}
+		return Std.string(v);
+	}
+
+#if flash
+	function print_XML(x: XML): String
+	{
+		var old_pri = XML.prettyPrinting;
+		var old_idn = XML.prettyIndent;
+		XML.prettyPrinting = true;
+		XML.prettyIndent = 4;
+		var s: String = x.toXMLString();
+		XML.prettyPrinting = old_pri;
+		XML.prettyIndent = old_idn;
+		return s;
+	}
+#end
+
+	function print_Vector<T>(v: Vector<T>): String
+	{
+		//TODO fix me
+		return "Vector: " + v.join(",");
+	}
 //.............................................................................
 //html must be in simple format surrounded by <p> tag
     public function add_Html(html : String) : Void
@@ -170,88 +227,79 @@ class Konsole extends RingBuf<LogLine>
 			//trace("***** " + head_);
         return APPEND;
     }
-    //.............................................................................
-    //.............................................................................
-    //.............................................................................
-    //.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
     public function eval(s : String) : Void
     {
         if (s.charCodeAt(0) == '/'.code)
 		{
-			//if (eval_Command(s.substr(1)))
+			if (eval_Command(s.substr(1)))
 			{
 				return;
 			}
         }
+		add("fixme " + s);
         //add(eval_.parse(s));
     }
-    //.............................................................................
-	/*
+//.............................................................................
     private function eval_Command(s : String) : Bool
     {
-        var word_end : Int = s.search(new as3hx.Compat.Regex('[^\\w]', ""));
-        var cmd : String;
-        var argv : String;
-        if (word_end > 0)
+		var arr: Array<String> = s.split(' ');
+        var cmd : String = arr[0];
+        if (cmd_map_.exists(cmd))
         {
-            cmd = s.substring(0, word_end);
-            argv = s.substr(word_end + 1);
-        }
-        else
-        {
-            cmd = s;
-            argv = "";
-        }
-        if (Lambda.has(cmd_list_, cmd))
-        {
-            var f : Function = try cast(Reflect.field(cmd_list_, cmd), Function) catch(e:Dynamic) null;
-            if (argv.length > 0)
-            {
-                f(argv);
-            }
-            else
-            {
-                f();
-            }
+            var it: Command = cmd_map_[cmd];
+			var f: Array<String>->Void = it.func_;
+			arr.shift();
+            f(arr);
             return true;
         }
         return false;
     }
-    //.............................................................................
-    //.............................................................................
-    //.............................................................................
-    //.............................................................................
-    private function list_All_Commands() : Void
+//.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
+    private function list_All_Commands(dummy: Array<String>) : Void
     {
         var s : String = "<p>command list:</p>";
-        var v : Array<String> = new Array<String>();
-        for (key in Reflect.fields(cmd_list_))
+        var v : Vector<String> = new Vector<String>();
+        for (key in cmd_map_.keys())
         {
+			var it: Command = cmd_map_[key];
             var t : String = "<p>/";
             t += key;
-            if (Lambda.has(cmd_hint_, key))
+            if (it.hint_ != null)
             {
                 t += " <font color='#0000ff'>";
-                t += Reflect.field(cmd_hint_, key);
+                t += it.hint_;
                 t += "</font></p>";
             }
             v.push(t);
         }
-        v.sort(0);  //:Array.ascending not defined but mentioned in help
+        v.sort(sort_Ascending);  //:Array.ascending not defined but mentioned in help
         s += v.join("");
         add_Html(s);
     }
-	*/
-    //.............................................................................
-    //.............................................................................
-    //.............................................................................
+//.............................................................................
+	function sort_Ascending(a: String, b: String): Int
+	{
+		if (a < b) return -1;
+		if (a > b) return 1;
+		return 0;
+	}
+//.............................................................................
+//.............................................................................
+//.............................................................................
     public function copy() : Void
     {
         var text : String = get_Text();
         if (text.length <= 0)
         {
             return;
-        }  //?
+        }
         //?System.setClipboard(text);//:ios - doesn't work
         Clipboard.generalClipboard.clear();
         Clipboard.generalClipboard.setData(ClipboardFormats.TEXT_FORMAT, text);
@@ -259,21 +307,15 @@ class Konsole extends RingBuf<LogLine>
         Clipboard.generalClipboard.setData(ClipboardFormats.HTML_FORMAT, html);
         add_Html("<p><font color='#0080C0' size='-2'>Copied log to clipboard.</font></p>");
     }
-    //.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
     public function set_View(viewClass : Class<Dynamic>) : Void
     {
         default_view_class_ = viewClass;
     }
-    //.............................................................................
-    //.............................................................................
-    //.............................................................................
-    public function start(stage : Stage) : Void
-    {
-        stage_ = stage;
-        stage.addEventListener(KeyboardEvent.KEY_DOWN, on_Key_Down_Stage, false, 1);
-        stage.addEventListener(KeyboardEvent.KEY_UP, on_Key_Up_Stage, false, 1);
-    }
-    //.............................................................................
+//.............................................................................
     public function toggle_View() : Void
     {
         if (null == default_view_)
@@ -283,11 +325,11 @@ class Konsole extends RingBuf<LogLine>
         }
         default_view_.visible = !default_view_.visible;
     }
-    //.............................................................................
-    //.............................................................................
+//.............................................................................
+//.............................................................................
     private function on_Key_Down_Stage(e : KeyboardEvent) : Void
     {
-        trace("stage::key down: 0x" + Std.string(e.keyCode));
+        //trace("stage::key down: 0x" + Std.string(e.keyCode));
         if (null != cfg_.password_)
         {
             return;
@@ -298,10 +340,10 @@ class Konsole extends RingBuf<LogLine>
                 e.preventDefault();
         }
     }
-    //.............................................................................
+//.............................................................................
     private function on_Key_Up_Stage(e : KeyboardEvent) : Void
     {
-        trace("stage::key up: 0x" + Std.string(e.keyCode));
+        //trace("stage::key up: 0x" + Std.string(e.keyCode));
         if (null != cfg_.password_)
         {
             if (e.keyCode == cfg_.password_.charCodeAt(password_idx_))
@@ -324,4 +366,16 @@ class Konsole extends RingBuf<LogLine>
                 toggle_View();
         }
     }
+}
+//.............................................................................
+class Command
+{
+	public var func_: Array<String>->Void;
+	public var hint_: String;
+
+	public function new(f: Array<String>->Void, h: String)
+	{
+		func_ = f;
+		hint_ = h;
+	}
 }
