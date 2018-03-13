@@ -117,6 +117,12 @@ class Konsole extends RingBuf<LogLine>
 				}
 			default:
 		}
+		//TODO refactor because typeof is slow and cause allocs
+		//add may be compile-time!? if !flash
+		//if (Std.is(v, Error))
+		//{
+			//
+		//}
 		//else if (Std.is(v, Vector))
 		//{
 		//}
