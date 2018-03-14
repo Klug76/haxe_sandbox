@@ -125,7 +125,7 @@ class Resizer extends Visel
 				}
 				if ((state_ & Visel.STATE_HOVER) == 0)
 				{
-					Util.Offset_Path(ppt, -r.hover_inflation_);
+					Util.offset_Vector(ppt, -r.hover_inflation_);
 				}
 
 				graphics.beginFill(cl & 0xffffff, dummy_alpha_);

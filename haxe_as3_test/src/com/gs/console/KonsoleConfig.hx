@@ -10,9 +10,9 @@ import flash.text.StyleSheet;
 class KonsoleConfig
 {
     public var make_links_ : Bool = false;
-    public var max_lines_: Int = 8;//:must be 2^N
+    //public var max_lines_: Int = 8;//:must be 2^N
     //public var max_lines_: Int = 128;//:must be 2^N
-    //public var max_lines_ : Int = 2048;  //:must be 2^N
+    public var max_lines_ : Int = 2048;  //:must be 2^N
 
     public var bg_color_ : Int = 0x008040;
 

@@ -17,6 +17,7 @@ import flash.text.TextField;
 import haxe.Timer;
 import haxe.unit.TestRunner;
 
+//TODO fix me: \Pictures\bug_bug.png
 
 class Main extends Sprite
 {

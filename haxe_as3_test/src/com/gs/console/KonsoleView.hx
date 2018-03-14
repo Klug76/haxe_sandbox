@@ -316,6 +316,7 @@ class KonsoleView extends Viewport
 //.............................................................................
     private function append_Text(s : String) : Void
     {
+		trace("** console::append '" + s + "'");
         if (s.length <= 0)
         {
             return;
@@ -333,7 +334,6 @@ class KonsoleView extends Viewport
         text_field_.htmlText = text__;
 		//:BUGBUG: get_htmlText doesn't work in openfl (yet, v.7,1,2)
         //:text_field_.htmlText += s;
-
 #end
 
         if (in_tail)
@@ -347,8 +347,9 @@ class KonsoleView extends Viewport
     {
         if (s.length > 0)
         {
+			trace("** console::replace '" + s + "'");
 #if flash
-            var len : Int = text_field_.length;
+			var len : Int = text_field_.length;
             aux_.htmlText = s;
             var temp : String = aux_.getXMLText();
             text_field_.insertXMLText(0, len, temp, false);
@@ -362,10 +363,21 @@ class KonsoleView extends Viewport
         }
         else
         {
-#if (!flash)
-			text__ = "";
+			trace("** console::clear");
+#if flash
+			var len : Int = text_field_.length;
+			if (len > 0)
+			{
+				text_field_.text = "";
+			}
+#else
+			if (text__.length > 0)
+			{
+				text__ = s;
+				text_field_.text = s;
+				text_field_.scrollV = 0;
+			}
 #end
-            text_field_.htmlText = "";
         }
         invalidate(Visel.INVALIDATION_FLAG_SCROLL);
     }

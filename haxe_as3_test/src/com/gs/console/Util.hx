@@ -35,28 +35,6 @@ class Util
 		return (x ^ (x >> 31)) - (x >> 31);
 	}
 //.............................................................................
-	public static inline function toHex(n: Int, ?digits : Int): String
-	{
-		var s : String;
-		#if flash
-			var x : UInt = n;
-			s = untyped x.toString(16);
-			s = s.toUpperCase();
-		#else
-			s = "";
-			var hexChars = "0123456789ABCDEF";
-			do
-			{
-				s = hexChars.charAt(n & 15) + s;
-				n >>>= 4;
-			} while ( n > 0 );
-		#end
-		if ( digits != null )
-			while ( s.length < digits )
-				s = "0" + s;
-		return s;
-	}
-//.............................................................................
 //.............................................................................
 //.............................................................................
 	public static inline function fmin(x: Float, y: Float): Float
@@ -118,11 +96,9 @@ class Util
 	}
 //.............................................................................
 //.............................................................................
-//.............................................................................
-	public static function Offset_Path(ppt : Vector<Float>, offset : Float) : Void
-	//:stupid but work, lets threat bug as effect
+	public static function offset_Vector(ppt : Vector<Float>, offset : Float) : Void
 	{
-
+		//:stupid but work, lets threat bug as effect
 		var len : Int = ppt.length;
 		for (i in 0...len)
 		{
@@ -138,4 +114,5 @@ class Util
 			ppt[i] += d;
 		}
 	}
+//.............................................................................
 }

@@ -51,11 +51,12 @@ class KonsoleDemo extends Visel
 		add_Tool_Button(0x0000c0, "~", toggle_Konsole);
 		add_Tool_Button(0x00c0c0, "test1", test1);
 		add_Tool_Button(0x00c0c0, "test2", test2);
-		add_Tool_Button(0xc00020, "eat", eat_Mem);
-		add_Tool_Button(0xc00020, "err", log_Error);
+		add_Tool_Button(0x8080FF, "eat", eat_Mem);
+		add_Tool_Button(0x8080FF, "err", log_Error);
 		add_Tool_Button(0x00c0d0, "cmd", eval_Command);
 		add_Tool_Button(0x00c0d0, "xml", log_Xml);
-		add_Tool_Button(0x00c0d0, "arr", log_Array);
+		add_Tool_Button(0x00c0d0, "data", log_Data);
+		add_Tool_Button(0xc00020, "clear", clear);
 
 		k.register_Command("foo", cmd_Foo, "test command");
 
@@ -67,6 +68,11 @@ class KonsoleDemo extends Visel
 	function toggle_Konsole(v: Dynamic): Void
 	{
 		k.toggle_View();
+	}
+
+	function clear(v: Dynamic): Void
+	{
+		k.clear();
 	}
 
 	function add_Tool_Button(cl: Int, txt: String, f: Dynamic->Void): Button
@@ -220,9 +226,31 @@ class KonsoleDemo extends Visel
 		k.add(x);//TODO fix me
 	}
 
-	function log_Array(v: Dynamic): Void
+	function log_Data(ev: Dynamic): Void
 	{
-		var ai: Array<Int> = [for (i in 1...11) i];
+		var b: Bool = true;
+		k.add("Bool:");
+		k.add(Type.typeof(b));
+		k.add(b);
+		k.add(!b);
+
+		var n: Int = 1100101;
+		k.add("Int:");
+		k.add(Type.typeof(n));
+		k.add(n);
+
+
+		var u: UInt = 0xdeadbeaf;
+		k.add("UInt:");
+		k.add(Type.typeof(u));
+		k.add(u);
+
+		var f: Float = 1. / 3;
+		k.add("Float:");
+		k.add(Type.typeof(f));
+		k.add(f);
+
+		var ai: Array<Int> = [for (i in 1...41) i];
 		k.add(ai);
 		var vi: Vector<Int> = new Vector<Int>();
 		k.add(vi);
@@ -230,5 +258,16 @@ class KonsoleDemo extends Visel
 		vi.push(8);
 		vi.push(2);
 		k.add(vi);
+
+		var vf: Vector<Float> = new Vector<Float>();
+		vf.push(f);
+		vf.push(f);
+		k.add(vf);
+
+		var vs: Vector<String> = new Vector<String>();
+		vs.push("foo");
+		vs.push("bar");
+		k.add(vs);
+
 	}
 }

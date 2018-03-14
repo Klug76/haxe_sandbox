@@ -1,7 +1,40 @@
 package com.gs.console;
 
+import flash.Lib;
+import flash.Vector;
+import flash.errors.Error;
+
+#if flash
+import flash.xml.XML;
+#end
+
 class StrUtil
 {
+	static private inline var MAX_LEN: Int = 32;
+
+//.............................................................................
+	public static inline function toHex(n: Int, ?digits : Int): String
+	{
+		var s : String;
+		#if flash
+			var x : UInt = n;
+			s = untyped x.toString(16);
+			s = s.toUpperCase();
+		#else
+			s = "";
+			var hexChars = "0123456789ABCDEF";
+			do
+			{
+				s = hexChars.charAt(n & 15) + s;
+				n >>>= 4;
+			} while ( n > 0 );
+		#end
+		if ( digits != null )
+			while ( s.length < digits )
+				s = "0" + s;
+		return s;
+	}
+//.............................................................................
 	static private var regexp_amp = ~/&/g;
 	static private var regexp_lt = ~/</g;
 	static private var regexp_gt = ~/>/g;
@@ -9,7 +42,7 @@ class StrUtil
 	static private var regexp_apos = ~/'/g;
 	static private var regexp_lspace = ~/^[ \t]+/gm;
 	static private var regexp_br = ~/\n/g;
-
+//.............................................................................
 	static public function encode_Plain_Text(s: String): String
 	{
         if (s.indexOf("&") >= 0)
@@ -39,7 +72,7 @@ class StrUtil
         }
         return s;
 	}
-
+//.............................................................................
 	static private function escape_LSpace(re: EReg): String
 	{
 		var s: String = re.matched(0);
@@ -47,7 +80,7 @@ class StrUtil
         var temp: Array<String> = [for (i in 0...s.length + 1) ""];
         return temp.join("&nbsp;");
 	}
-
+//.............................................................................
 	static private var regexp_new_line = ~/<\/p>|<br>/g;
 	static private var regexp_tag = ~/<.*?>/g;
 	static private var regexp_lt_code = ~/&lt;/g;
@@ -55,7 +88,7 @@ class StrUtil
 	static private var regexp_quot_code = ~/&quot;/g;
 	static private var regexp_apos_code = ~/&apos;/g;
 	static private var regexp_amp_code = ~/&amp;/g;
-
+//.............................................................................
 	static public function strip_Tags(s: String): String
 	{
 		s = regexp_new_line.replace(s, '\n');
@@ -68,11 +101,127 @@ class StrUtil
 		s = regexp_amp_code.replace(s, '&');
 		return s;
 	}
-
+//.............................................................................
 	static private var regexp_last_lf = ~/\n$/;
-
+//.............................................................................
 	static public function remove_Last_Lf(s: String): String
 	{
 		return regexp_last_lf.replace(s, "");
 	}
+//.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
+	static public function dump_Dynamic(v : Dynamic): String
+	{
+#if flash
+		if (untyped __is__(v, String))
+		{//:usual case - no additional allocs required
+			return Lib.as(v, String);
+		}
+		else if (untyped __is__(v, Bool))
+		{
+			var b: Bool = cast v;
+			return b ? "true" : "false";
+		}
+		else if (untyped __is__(v, Int))
+		{
+			var n: Int = cast v;
+			return untyped n.toString();
+		}
+		else if (untyped __is__(v, untyped __global__ ["uint"]))
+		{
+			var u: UInt = cast v;
+			var s: String = untyped u.toString();
+			s += "u == 0x";
+			s += untyped u.toString(16);
+			return s;
+		}
+		else if (untyped __is__(v, Float))
+		{
+			var f: Float = cast v;
+			var s: String = untyped f.toString();
+			return s + "f";
+		}
+		else if (untyped __is__(v, Error))
+		{
+			var err: Error = Lib.as(v, Error);
+			var s: String = err.getStackTrace();
+			if (s != null)
+				return s;
+		}
+		else if (untyped __is__(v, Array))
+		{
+			return dump_Array(v);
+		}
+		else if (untyped __is__(v, XML))
+		{
+			var x: XML = Lib.as(v, XML);
+			return dump_XML(x);
+		}
+		//else if (Util.fast_Flash_Is(v, Vector<Dynamic>)
+		//{
+			//return dump_Vector(v);
+		//}
+#else
+		if (Std.is(v, Error))
+		{
+			var err: Error = Lib.as(v, Error);
+			var s: String = err.getStackTrace();
+			if (s != null)
+				return s;
+		}
+		else if (Std.is(v, Array))
+		{
+			return dump_Array(v);
+		}
+		else if (Std.is(v, Xml))
+		{
+			var x: Xml = Lib.as(v, Xml);
+			return haxe.xml.Printer.print(x, /*pretty=*/true);
+		}
+#end
+		return Std.string(v);
+	}
+//.............................................................................
+#if flash
+	static private function dump_XML(x: XML): String
+	{
+		var old_pri = XML.prettyPrinting;
+		var old_idn = XML.prettyIndent;
+		XML.prettyPrinting = true;
+		XML.prettyIndent = 4;
+		var s: String = x.toXMLString();
+		XML.prettyPrinting = old_pri;
+		XML.prettyIndent = old_idn;
+		return s;
+	}
+#end
+//.............................................................................
+	static private function dump_Array(arr: Array<Dynamic>): String
+	{
+		var len: Int = arr.length;
+		var len0: Int = len;
+		if (len > MAX_LEN)
+			len = MAX_LEN;
+		var s: String = "Array: [";
+		for (i in 0...len)
+		{
+			if (i > 0)
+				s += ", ";
+			s += dump_Dynamic(arr[i]);
+		}
+		if (len != len0)
+			s += ", ..";
+		s += "], length=" + len0;
+		return s;
+	}
+//.............................................................................
+	static private function dump_Vector(v: Vector<Dynamic>): String
+	{
+		return "v";
+	}
+//.............................................................................
+//.............................................................................
+//.............................................................................
 }

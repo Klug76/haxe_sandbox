@@ -1,18 +1,11 @@
 package com.gs.console;
 
-import flash.Lib;
 import flash.Vector;
-import flash.errors.Error;
 import flash.desktop.Clipboard;
 import flash.desktop.ClipboardFormats;
 import flash.display.DisplayObject;
 import flash.display.Stage;
 import flash.events.KeyboardEvent;
-import flash.system.System;
-import flash.utils.ByteArray;
-#if flash
-import flash.xml.XML;
-#end
 
 class Konsole extends RingBuf<LogLine>
 {
@@ -79,75 +72,15 @@ class Konsole extends RingBuf<LogLine>
 //.............................................................................
     public function add(v: Dynamic) : Void
     {
-        var s: String = to_String(v);
+        var s: String = StrUtil.dump_Dynamic(v);
+		if (null == s)
+			s = "";
         trace(s);
         var it : LogLine = add_Line();
         it.html_ = null;
         it.text_ = s;
     }
 //.............................................................................
-	function to_String(v : Dynamic): String
-	{
-		var t = Type.typeof(v);
-		switch (t)
-		{
-			case Type.ValueType.TClass(Error):
-				{
-					var err: Error = Lib.as(v, Error);
-					var s: String = err.getStackTrace();
-					if (s != null)
-						return s;
-				}
-#if flash
-			case Type.ValueType.TClass(XML):
-				{
-					var x: XML = Lib.as(v, XML);
-					return print_XML(x);
-				}
-#else
-			case Type.ValueType.TClass(Xml):
-				{
-					var x: Xml = Lib.as(v, Xml);
-					return haxe.xml.Printer.print(x, true);
-				}
-#end
-			case Type.ValueType.TClass(Vector):
-				{
-					return print_Vector(v);
-				}
-			default:
-		}
-		//TODO refactor because typeof is slow and cause allocs
-		//add may be compile-time!? if !flash
-		//if (Std.is(v, Error))
-		//{
-			//
-		//}
-		//else if (Std.is(v, Vector))
-		//{
-		//}
-		return Std.string(v);
-	}
-
-#if flash
-	function print_XML(x: XML): String
-	{
-		var old_pri = XML.prettyPrinting;
-		var old_idn = XML.prettyIndent;
-		XML.prettyPrinting = true;
-		XML.prettyIndent = 4;
-		var s: String = x.toXMLString();
-		XML.prettyPrinting = old_pri;
-		XML.prettyIndent = old_idn;
-		return s;
-	}
-#end
-
-	function print_Vector<T>(v: Vector<T>): String
-	{
-		//TODO fix me
-		return "Vector: " + v.join(",");
-	}
 //.............................................................................
 //html must be in simple format surrounded by <p> tag
     public function add_Html(html : String) : Void
@@ -309,8 +242,11 @@ class Konsole extends RingBuf<LogLine>
         //?System.setClipboard(text);//:ios - doesn't work
         Clipboard.generalClipboard.clear();
         Clipboard.generalClipboard.setData(ClipboardFormats.TEXT_FORMAT, text);
-        var html : String = get_Html();
-        Clipboard.generalClipboard.setData(ClipboardFormats.HTML_FORMAT, html);
+//#if flash
+		////TODO if desktop mode!?
+        //var html : String = get_Html();
+        //Clipboard.generalClipboard.setData(ClipboardFormats.HTML_FORMAT, html);
+//#end
         add_Html("<p><font color='#0080C0' size='-2'>Copied log to clipboard.</font></p>");
     }
 //.............................................................................
