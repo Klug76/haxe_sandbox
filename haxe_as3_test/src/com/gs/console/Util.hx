@@ -47,6 +47,28 @@ class Util
 		return (x > y) ? x : y;
 	}
 //.............................................................................
+	public static inline function toHex(n: Int, ?digits : Int): String
+	{
+		var s : String;
+		#if flash
+			var x : UInt = n;
+			s = untyped x.toString(16);
+			s = s.toUpperCase();
+		#else
+			s = "";
+			var hexChars = "0123456789ABCDEF";
+			do
+			{
+				s = hexChars.charAt(n & 15) + s;
+				n >>>= 4;
+			} while ( n > 0 );
+		#end
+		if ( digits != null )
+			while ( s.length < digits )
+				s = "0" + s;
+		return s;
+	}
+//.............................................................................
 	public static inline function ftoPrecision(f: Float, precision: Int): String
 	{
 		#if (flash || js)

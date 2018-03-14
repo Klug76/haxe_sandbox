@@ -33,6 +33,7 @@ class KonsoleDemo extends Visel
 	public function new(owner : DisplayObjectContainer)
 	{
 		super(owner);
+		visible = false;
 		create_Children();
 	}
 
@@ -59,6 +60,7 @@ class KonsoleDemo extends Visel
 		add_Tool_Button(0xc00020, "clear", clear);
 
 		k.register_Command("foo", cmd_Foo, "test command");
+		k.register_Command("zoo", cmd_Zoo, "test command #2");
 
 
 		stage.addEventListener(Event.RESIZE, on_Stage_Resize);
@@ -100,6 +102,7 @@ class KonsoleDemo extends Visel
 			resize(stage.stageWidth, stage.stageHeight);
 			var r: Root = Root.instance;
 			tb_.movesize(0, height_ - r.tool_height_, width_, r.tool_height_);
+			visible = true;
 		}
 	}
 
@@ -120,6 +123,11 @@ class KonsoleDemo extends Visel
 	private function cmd_Foo(dummy: Array<String>): Void
 	{
 		k.add("command::foo()");
+	}
+
+	private function cmd_Zoo(dummy: Array<String>): Void
+	{
+		k.add("command::zoo()");
 	}
 
 	function test1(v: Dynamic): Void
@@ -181,18 +189,6 @@ class KonsoleDemo extends Visel
 		}
 		catch (err: Dynamic)
 		{
-			//TODO fix me:
-			/*
-			if (Reflect.hasField(err, "getStackTrace"))
-			{
-				var err_text = err.getStackTrace();
-				if (err_text != null)
-				{
-					k.add(err_text);
-					return;
-				}
-			}
-			*/
 			k.add(err);
 		}
 	}
@@ -228,15 +224,21 @@ class KonsoleDemo extends Visel
 
 	function log_Data(ev: Dynamic): Void
 	{
+		k.add("null:");
+		k.add(null);
+
+		k.add("NaN:");
+		k.add(Math.sqrt( -1));
+
 		var b: Bool = true;
 		k.add("Bool:");
-		k.add(Type.typeof(b));
+		//k.add(Type.typeof(b));
 		k.add(b);
 		k.add(!b);
 
 		var n: Int = 1100101;
 		k.add("Int:");
-		k.add(Type.typeof(n));
+		//k.add(Type.typeof(n));
 		k.add(n);
 
 
@@ -247,11 +249,14 @@ class KonsoleDemo extends Visel
 
 		var f: Float = 1. / 3;
 		k.add("Float:");
-		k.add(Type.typeof(f));
+		//k.add(Type.typeof(f));
 		k.add(f);
 
 		var ai: Array<Int> = [for (i in 1...41) i];
+		k.add("Array:");
 		k.add(ai);
+
+		k.add("Vector<Int>:");
 		var vi: Vector<Int> = new Vector<Int>();
 		k.add(vi);
 		vi.push(1);
@@ -259,11 +264,13 @@ class KonsoleDemo extends Visel
 		vi.push(2);
 		k.add(vi);
 
+		k.add("Vector<Float>:");
 		var vf: Vector<Float> = new Vector<Float>();
 		vf.push(f);
 		vf.push(f);
 		k.add(vf);
 
+		k.add("Vector<String>:");
 		var vs: Vector<String> = new Vector<String>();
 		vs.push("foo");
 		vs.push("bar");

@@ -138,13 +138,12 @@ class KonsoleView extends Viewport
 //.............................................................................
     //private function on_Text_Change(e: Event): void
     //{
-    //trace("text::change");
+    //	trace("text::change");
     //}
 //.............................................................................
     private function on_Text_Scroll(e : Event) : Void
-    //trace("text::scroll " + text_field_.scrollV + " of " + text_field_.maxScrollV);
     {
-
+		//trace("text::scroll " + text_field_.scrollV + " of " + text_field_.maxScrollV);
         invalidate(Visel.INVALIDATION_FLAG_SCROLL);
     }
 //.............................................................................
@@ -211,7 +210,7 @@ class KonsoleView extends Viewport
         else
         {
             Root.instance.frame_signal_.remove(on_Enter_Frame);
-            //TODO fix me: clear?
+            //TODO fix me: do clean up!?
         }
         #if (!flash) return value; #end
     }
@@ -316,7 +315,7 @@ class KonsoleView extends Viewport
 //.............................................................................
     private function append_Text(s : String) : Void
     {
-		trace("** console::append '" + s + "'");
+		//trace("** console::append '" + s + "'");
         if (s.length <= 0)
         {
             return;
@@ -347,7 +346,7 @@ class KonsoleView extends Viewport
     {
         if (s.length > 0)
         {
-			trace("** console::replace '" + s + "'");
+			//trace("** console::replace '" + s + "'");
 #if flash
 			var len : Int = text_field_.length;
             aux_.htmlText = s;
@@ -363,19 +362,20 @@ class KonsoleView extends Viewport
         }
         else
         {
-			trace("** console::clear");
+			//trace("** console::clear");
 #if flash
 			var len : Int = text_field_.length;
 			if (len > 0)
 			{
 				text_field_.text = "";
+				text_field_.scrollV = 0;//:?
 			}
 #else
 			if (text__.length > 0)
 			{
 				text__ = s;
 				text_field_.text = s;
-				text_field_.scrollV = 0;
+				text_field_.scrollV = 0;//:BUG - scrollV doesn't reset to 0 in openfl (yet, v.7,1,2)
 			}
 #end
         }

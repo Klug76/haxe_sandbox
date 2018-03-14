@@ -13,28 +13,6 @@ class StrUtil
 	static private inline var MAX_LEN: Int = 32;
 
 //.............................................................................
-	public static inline function toHex(n: Int, ?digits : Int): String
-	{
-		var s : String;
-		#if flash
-			var x : UInt = n;
-			s = untyped x.toString(16);
-			s = s.toUpperCase();
-		#else
-			s = "";
-			var hexChars = "0123456789ABCDEF";
-			do
-			{
-				s = hexChars.charAt(n & 15) + s;
-				n >>>= 4;
-			} while ( n > 0 );
-		#end
-		if ( digits != null )
-			while ( s.length < digits )
-				s = "0" + s;
-		return s;
-	}
-//.............................................................................
 	static private var regexp_amp = ~/&/g;
 	static private var regexp_lt = ~/</g;
 	static private var regexp_gt = ~/>/g;
@@ -149,6 +127,7 @@ class StrUtil
 			var s: String = err.getStackTrace();
 			if (s != null)
 				return s;
+			return err.message;
 		}
 		else if (untyped __is__(v, Array))
 		{
@@ -159,9 +138,13 @@ class StrUtil
 			var x: XML = Lib.as(v, XML);
 			return dump_XML(x);
 		}
-		//else if (Util.fast_Flash_Is(v, Vector<Dynamic>)
+		//else if (untyped __is__(v, untyped __global__ ["Vector.<int>"]))
 		//{
 			//return dump_Vector(v);
+		//}
+		//else if ()
+		//{
+//
 		//}
 #else
 		if (Std.is(v, Error))
