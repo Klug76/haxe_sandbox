@@ -138,9 +138,10 @@ class StrUtil
 			var x: XML = Lib.as(v, XML);
 			return dump_XML(x);
 		}
-		//else if (untyped __is__(v, untyped __global__ ["Vector.<int>"]))
+		//else if (untyped __is__(v, untyped __global__ ['__AS3__.vec.Vector.<*>']))
 		//{
-			//return dump_Vector(v);
+			//var vi: Vector<Dynamic> = cast v;
+			//return dump_Vector(vi);
 		//}
 		//else if ()
 		//{
