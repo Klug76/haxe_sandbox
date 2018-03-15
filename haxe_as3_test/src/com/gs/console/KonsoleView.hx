@@ -96,6 +96,7 @@ class KonsoleView extends Viewport
 
 		toolbar_ = new Toolbar(this);
 		toolbar_.spacing_ = r.tool_spacing_;
+		toolbar_.width = width_ - r.small_tool_width_ * 2 - r.spacing_;
 		toolbar_.height = r.tool_height_;
 		toolbar_.x = r.tool_width_ + r.tool_spacing_;
 
@@ -120,6 +121,9 @@ class KonsoleView extends Viewport
 		btn_clear_ = b;
 
 		cmdline_ = new CmdLine(this, k_);
+		cmdline_.y = height_ - k_.cfg_.cmd_height_;
+		cmdline_.width = width_ - r.small_tool_width_ - r.spacing_;//:html5 crash without this line:
+		//:HTML5GLRenderContext.hx:2545 WebGL: INVALID_VALUE: texImage2D: no canvas
 		cmdline_.height = k_.cfg_.cmd_height_;
 		cmdline_.dummy_color = r.color_edit_;
 
