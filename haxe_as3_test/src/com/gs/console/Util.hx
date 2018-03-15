@@ -78,34 +78,34 @@ class Util
 		#end
 	}
 //.............................................................................
-    public static inline function ftoFixed(v: Float, digits: Int): String
+	public static inline function ftoFixed(v: Float, digits: Int): String
 	{
-        #if (flash || js)
-            return untyped v.toFixed(digits);
-        #else
+		#if (flash || js)
+			return untyped v.toFixed(digits);
+		#else
 			#if debug
-            if (digits < 0 || digits > 20)
+			if (digits < 0 || digits > 20)
 				throw 'toFixed have a range of 0 to 20. Specified value is not within expected range.';
 			#end
-            var b = Math.pow(10, digits);
-            var s = Std.string(v);
-            var dotIndex = s.indexOf('.');
-            if (dotIndex >= 0)
+			var b = Math.pow(10, digits);
+			var s = Std.string(v);
+			var dotIndex = s.indexOf('.');
+			if (dotIndex >= 0)
 			{
-                var diff = digits - (s.length - (dotIndex + 1));
-                if (diff > 0)
-                    s = StringTools.rpad(s, "0", s.length + diff);
+				var diff = digits - (s.length - (dotIndex + 1));
+				if (diff > 0)
+					s = StringTools.rpad(s, "0", s.length + diff);
 				else
-                    s = Std.string(Math.round(v * b) / b);
-            }
+					s = Std.string(Math.round(v * b) / b);
+			}
 			else
 			{
-                s += ".";
-                s = StringTools.rpad(s, "0", s.length + digits);
-            }
-            return s;
-        #end
-    }
+				s += ".";
+				s = StringTools.rpad(s, "0", s.length + digits);
+			}
+			return s;
+		#end
+	}
 //.............................................................................
 	public static inline function fclamp(val : Float, min : Float, max : Float) : Float
 	{

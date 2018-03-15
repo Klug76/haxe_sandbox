@@ -19,8 +19,8 @@ class Thumb extends Visel
 	//.............................................................................
 	private function create_Listeners() : Void
 	{
-		addEventListener(MouseEvent.ROLL_OVER, on_Mouse_Over, false, 0, true);
-		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down, false, 0, true);
+		addEventListener(MouseEvent.ROLL_OVER, on_Mouse_Over);
+		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
 	}
 	//.............................................................................
 	private function on_Mouse_Down(e : MouseEvent) : Void
@@ -38,7 +38,7 @@ class Thumb extends Visel
 		state_ |= Visel.STATE_DRAG;
 		e.stopPropagation();
 		invalidate(Visel.INVALIDATION_FLAG_STATE);
-		stage.addEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage, false, 1);  //:set capture
+		stage.addEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage, false, 1);
 		stage.addEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move_Stage, false, 1);
 		if (null == drag_rect_)
 		{
@@ -97,7 +97,7 @@ class Thumb extends Visel
 		}
 		state_ |= Visel.STATE_HOVER;
 		invalidate(Visel.INVALIDATION_FLAG_STATE);
-		addEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out, false, 0, true);
+		addEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out);
 	}
 	//.............................................................................
 	private function on_Mouse_Out(e : MouseEvent) : Void
@@ -118,7 +118,7 @@ class Thumb extends Visel
 			{
 				var r : Root = Root.instance;
 				var cl : Int = dummy_color_;
-				var frame : Int = 0;
+				var frame : Float = 0;
 				if ((state_ & Visel.STATE_DISABLED) != 0)
 				{
 					cl = r.color_disabled_;

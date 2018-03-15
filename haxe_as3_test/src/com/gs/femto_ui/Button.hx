@@ -17,23 +17,24 @@ class Button extends Visel
 	private var repeat_time_ : Int = 0;
 	private var repeat_event_ : Event = null;
 	private var repeat_count_ : Int = 0;
+	private var hover_inflation_: Float;
 
 	private static var repeat_button_ : Button = null;
 
 	public var repeat_delay_ : Int = 400;
-	public var hover_inflation_ : Int = 2;
-	public var content_down_offset_x_ : Int = 1;
-	public var content_down_offset_y_ : Int = 1;
 
 	public function new(owner : DisplayObjectContainer, txt : String, on_Click : Dynamic->Void)
 	{
 		super(owner);
-		init(txt, on_Click);
+		init_Ex(txt, on_Click);
 	}
 //.............................................................................
-	private function init(txt : String, on_Click : Dynamic->Void) : Void
+	private function init_Ex(txt : String, on_Click : Dynamic->Void) : Void
 	{
 		buttonMode = true;
+
+		hover_inflation_ = Root.instance.hover_inflation_;
+
 		label_ = new Label(this, txt);
 		label_.h_align =
 		label_.v_align = Align.CENTER;
@@ -82,22 +83,24 @@ class Button extends Visel
 	{
 		//if (1100101 == tag_)
 			//trace("***");
+		var r : Root = Root.instance;
 		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_SKIN | Visel.INVALIDATION_FLAG_SIZE | Visel.INVALIDATION_FLAG_STATE)) != 0)
 		{
 			graphics.clear();
 			if (dummy_alpha_ >= 0)
 			{
-				var r : Root = Root.instance;
 				var cl : Int = dummy_color_;
-				var frame : Int = 0;
+				var frame : Float = 0;
 				if ((state_ & Visel.STATE_DISABLED) != 0)
+				{
 					cl = r.color_disabled_;
+				}
 				else
 				{
 					if ((state_ & Visel.STATE_DOWN) != 0)
 						cl = r.color_pressed_;
 					if ((state_ & Visel.STATE_HOVER) != 0)
-						frame = r.hover_inflation_;
+						frame = hover_inflation_;
 				}
 				graphics.beginFill(cl, dummy_alpha_);
 				graphics.drawRect(-frame, -frame, width_ + 2 * frame, height_ + 2 * frame);
@@ -108,8 +111,8 @@ class Button extends Visel
 		{
 			if ((state_ & Visel.STATE_DOWN) != 0)
 			{
-				label_.movesize_(content_down_offset_x_, content_down_offset_y_,
-						width_ + content_down_offset_x_, height_ + content_down_offset_y_);
+				label_.movesize_(r.content_down_offset_x_, r.content_down_offset_y_,
+						width_ + r.content_down_offset_x_, height_ + r.content_down_offset_y_);
 			}
 			else
 			{
@@ -122,9 +125,9 @@ class Button extends Visel
 //.............................................................................
 	private function add_Mouse_Listeners() : Void
 	{
-		addEventListener(MouseEvent.CLICK, on_Mouse_Click, false, 0, true);
-		addEventListener(MouseEvent.ROLL_OVER, on_Mouse_Over, false, 0, true);
-		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down, false, 0, true);
+		addEventListener(MouseEvent.CLICK, on_Mouse_Click);
+		addEventListener(MouseEvent.ROLL_OVER, on_Mouse_Over);
+		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
 	}
 //.............................................................................
 	private function on_Mouse_Down(e : MouseEvent) : Void
@@ -134,7 +137,7 @@ class Button extends Visel
 		state_ |= Visel.STATE_DOWN;
 		e.stopPropagation();
 		invalidate(Visel.INVALIDATION_FLAG_STATE);
-		stage.addEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage, false, 1);  //:set capture
+		stage.addEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage, false, 1);//TODO review: how to handle out-of window event!?
 		if (auto_repeat_)
 		{
 			repeat_count_ = 0;
@@ -143,16 +146,15 @@ class Button extends Visel
 			repeat_button_ = this;
 			Root.instance.frame_signal_.add(on_Enter_Frame);
 		}
-		//:touch another button
 		else
-		{
+		{//:replace anyway
 			repeat_button_ = null;
 		}
 	}
 //.............................................................................
 	private function on_Mouse_Up_Stage(e : MouseEvent) : Void
 	{
-		stage.removeEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage);
+		stage.removeEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage, false);
 		if ((state_ & Visel.STATE_DISPOSED) != 0)
 			return;
 		if ((state_ & Visel.STATE_DOWN) != 0)
@@ -168,7 +170,7 @@ class Button extends Visel
 			return;
 		state_ |= Visel.STATE_HOVER;
 		invalidate(Visel.INVALIDATION_FLAG_STATE);
-		addEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out, false, 0, true);
+		addEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out);
 	}
 //.............................................................................
 	private function on_Mouse_Out(e : MouseEvent) : Void

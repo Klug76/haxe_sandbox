@@ -17,6 +17,8 @@ import flash.events.Event;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
+import flash.utils.ByteArray;
+import haxe.Json;
 import haxe.Timer;
 #if flash
 import flash.xml.XML;
@@ -43,7 +45,7 @@ class KonsoleDemo extends Visel
 
 		aux_ = new TextField();
 		aux_.autoSize = TextFieldAutoSize.LEFT;
-		aux_.defaultTextFormat = new TextFormat(null, r.def_text_size_);
+		aux_.defaultTextFormat = new TextFormat(null, Std.int(r.def_text_size_));
 
 		tb_ = new Toolbar(this);
 		tb_.spacing_ = 6;
@@ -54,9 +56,10 @@ class KonsoleDemo extends Visel
 		add_Tool_Button(0x00c0c0, "test2", test2);
 		add_Tool_Button(0x8080FF, "eat", eat_Mem);
 		add_Tool_Button(0x8080FF, "err", log_Error);
-		add_Tool_Button(0x00c0d0, "cmd", eval_Command);
+		add_Tool_Button(0x00c0d0, "cmd", do_Command);
 		add_Tool_Button(0x00c0d0, "xml", log_Xml);
 		add_Tool_Button(0x00c0d0, "data", log_Data);
+		add_Tool_Button(0x5E5EFF, "eval", eval_Test);
 		add_Tool_Button(0xc00020, "clear", clear);
 
 		k.register_Command("foo", cmd_Foo, "test command");
@@ -137,6 +140,10 @@ class KonsoleDemo extends Visel
 
 	function test2(v: Dynamic): Void
 	{
+		k.add_Html("<p>Hello, <font color='#FFFF00'>World</font>! Тест!</p>");
+		k.add("1 < 2 & 6\n  4 > 1 & 0");
+		k.add("\n");
+		k.add('');
 		Timer.delay(append_Test1, 100);
 	}
 
@@ -203,23 +210,26 @@ class KonsoleDemo extends Visel
 		throw "string::error";
 	}
 
-	function eval_Command(v: Dynamic): Void
+	function do_Command(ev: Dynamic): Void
 	{
 		var cmd = "/foo";
 		k.eval(cmd);
+	}
+
+	function eval_Test(ev: Dynamic): Void
+	{
+		k.eval("2+3");
 	}
 
 	function log_Xml(v: Dynamic): Void
 	{
 		var s: String = '<root><hello name="world!">Haxe is suxx!</hello><hello name="world!">Haxe is sux!</hello></root>';
 #if flash
-		var x: XML = new XML(s);
-		XML.prettyPrinting = true;
-		XML.prettyIndent = 4;
+		var x = new XML(s);
 #else
 		var x = Xml.parse(s);
 #end
-		k.add(x);//TODO fix me
+		k.add(x);
 	}
 
 	function log_Data(ev: Dynamic): Void
@@ -276,5 +286,17 @@ class KonsoleDemo extends Visel
 		vs.push("bar");
 		k.add(vs);
 
+		k.add("ByteArray:");
+		var ba: ByteArray = new ByteArray();
+		//ba.writeByte('0'.code);
+		//ba.writeByte('1'.code);
+		//k.add(ba);
+		for (i in 0...100)
+			ba.writeByte(i & 0xFF);
+		k.add(ba);
+
+		var ob: Dynamic = Json.parse('{"key1":[{"key2":5},67,null,"test"],"key3":[true,false]}');
+		k.add("Object:");
+		k.add(ob);
 	}
 }

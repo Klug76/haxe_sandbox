@@ -14,14 +14,14 @@ class Mover extends Visel
 	public function new(owner : DisplayObjectContainer)
 	{
 		super(owner);
-		init();
+		init_Ex();
 	}
 	//.............................................................................
-	private function init() : Void
+	private function init_Ex() : Void
 	{
 		buttonMode = true;
-		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down, false, 0, true);
-		addEventListener(MouseEvent.ROLL_OVER, on_Mouse_Over, false, 0, true);
+		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
+		addEventListener(MouseEvent.ROLL_OVER, on_Mouse_Over);
 	}
 	//.............................................................................
 	private function on_Mouse_Down(e : MouseEvent) : Void
@@ -35,7 +35,7 @@ class Mover extends Visel
 		start_x_ = parent.x - e.stageX;
 		start_y_ = parent.y - e.stageY;
 		invalidate(Visel.INVALIDATION_FLAG_STATE);
-		stage.addEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage, false, 1);  //:set capture
+		stage.addEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage, false, 1);
 		stage.addEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move_Stage, false, 1);
 	}
 	//.............................................................................
@@ -78,7 +78,7 @@ class Mover extends Visel
 		}
 		state_ |= Visel.STATE_HOVER;
 		invalidate(Visel.INVALIDATION_FLAG_STATE);
-		addEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out, false, 0, true);
+		addEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out);
 	}
 	//.............................................................................
 	private function on_Mouse_Out(e : MouseEvent) : Void

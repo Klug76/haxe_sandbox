@@ -6,9 +6,9 @@ import flash.events.Event;
 
 class Toolbar extends Visel
 {
-	public var spacing_ : Int = 0;
-	public var x_border_ : Int = 0;
-	public var y_border_ : Int = 0;
+	public var spacing_ : Float = 0;
+	public var x_border_ : Float = 0;
+	public var y_border_ : Float = 0;
 	public var align_ : Int = Align.NEAR;
 
 	public function new(owner : DisplayObjectContainer)

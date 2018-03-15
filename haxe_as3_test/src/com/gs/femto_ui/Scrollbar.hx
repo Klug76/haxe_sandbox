@@ -22,20 +22,20 @@ class Scrollbar extends Button
 	{
 		super(owner, null, on_Area_Click);
 		on_scroll_ = callback;
-		create_Thumb();
+		init_Ex_Ex();
 	}
 	//.............................................................................
-	private function create_Thumb() : Void
+	private function init_Ex_Ex() : Void
 	{
 		var r : Root = Root.instance;
 
-		hover_inflation_ = 0;
 		auto_repeat_ = true;
+		hover_inflation_ = 0;
 
 		thumb_ = new Thumb(this);
 		thumb_.width = r.small_tool_width_;
 		thumb_.height = r.tool_height_;
-		thumb_.dummy_color = 0x008000;
+		thumb_.dummy_color = r.color_thumb_;
 	}
 	//.............................................................................
 	public function reset(mn : Int, mx : Int, cur : Int) : Void

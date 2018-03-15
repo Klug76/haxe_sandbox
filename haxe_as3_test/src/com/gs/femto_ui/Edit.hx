@@ -15,14 +15,14 @@ class Edit extends Visel
 	public function new(owner : DisplayObjectContainer, txt : String = "")
 	{
 		super(owner);
-		init(txt);
+		init_Ex(txt);
 	}
-	//.............................................................................
-	private function init(txt : String) : Void
+//.............................................................................
+	private function init_Ex(txt : String) : Void
 	{
 		tf_ = new TextField();
 		tf_.type = TextFieldType.INPUT;
-		tf_.defaultTextFormat = new TextFormat(null, Root.instance.input_text_size_);
+		tf_.defaultTextFormat = get_Default_Text_Format();
 		tf_.selectable = true;
 		tf_.mouseEnabled = true;
 		tf_.tabEnabled = false;//?
@@ -36,16 +36,21 @@ class Edit extends Visel
 
 		addChild(tf_);
 	}
-	//.............................................................................
+//.............................................................................
+	public function get_Default_Text_Format() : TextFormat
+	{
+		return new TextFormat(null, Std.int(Root.instance.input_text_size_));
+	}
+//.............................................................................
 	private function get_text_Field() : TextField
 	{
 		return tf_;
 	}
-	//.............................................................................
+//.............................................................................
 	//textField.maxChars
 	//textField.restrict
 	//textField.displayAsPassword
-	//.............................................................................
+//.............................................................................
 	override public function draw() : Void
 	{
 		if ((invalid_flags_ & Visel.INVALIDATION_FLAG_SIZE) != 0)
@@ -55,12 +60,12 @@ class Edit extends Visel
 		}
 		super.draw();
 	}
-	//.............................................................................
+//.............................................................................
 	public function set_Focus() : Void
 	{
 		stage.focus = tf_;
 	}
-	//.............................................................................
+//.............................................................................
 	private function get_text() : String
 	{
 		return tf_.text;

@@ -26,22 +26,30 @@ class Viewport extends Visel
 		var r : Root = Root.instance;
 
 		mover_ = new Mover(this);
-		//mover_.dummy_alpha_ = 0;
 
 		mover_.resize(r.tool_width_, r.tool_height_);
-		mover_.dummy_color = 0xFF0040c0;
+		mover_.dummy_color = r.color_movesize_;
 
 		resizer_ = new Resizer(this);
-		//resizer_.tag_ = 1100101;
-		resizer_.dummy_color = 0xFF0040c0;
+		resizer_.dummy_color = r.color_movesize_;
 		resizer_.resize(r.small_tool_width_, r.small_tool_height_);
 
 		min_content_width_ = r.small_tool_width_;
 		min_content_height_ = r.small_tool_height_;
 
 		button_close_ = new Button(this, "x", on_Close_Click);
-		button_close_.dummy_color = 0xE6E600;
+		button_close_.dummy_color = r.color_close_;
 		button_close_.resize(r.small_tool_width_, r.small_tool_height_);
+
+		if (visible)
+			add_Listeners();
+	}
+//.............................................................................
+	override public function destroy() : Void
+	{
+		if (stage != null)
+			remove_Listeners();
+		super.destroy();
 	}
 //.............................................................................
 	private function on_Close_Click(e : Event) : Void
@@ -50,6 +58,80 @@ class Viewport extends Visel
 	}
 //.............................................................................
 //.............................................................................
+	private function add_Listeners() : Void
+	{
+		stage.addEventListener(Event.RESIZE, on_Stage_Resize);
+		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down, true, 100);
+	}
+//.............................................................................
+	private function remove_Listeners() : Void
+	{
+		stage.removeEventListener(Event.RESIZE, on_Stage_Resize);
+		removeEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down, true);
+	}
+//.............................................................................
+	private function on_Mouse_Down(e: Event): Void
+	{
+		bring_To_Top();
+	}
+//.............................................................................
+	private function on_Stage_Resize(e: Event): Void
+	{
+		safe_Position();
+	}
+//.............................................................................
+	private function safe_Position() : Void
+	{
+		var min_w: Float = min_content_width_ + Root.instance.small_tool_width_;
+		var min_h: Float = min_content_height_;
+		var stage_x: Float = stage.x;
+		var stage_y: Float = stage.y;
+		var stage_w: Float = stage.stageWidth;
+		var stage_h: Float = stage.stageHeight;
+		if (x < stage_x)
+			x = stage_x;
+		else if (x + min_w > stage_x + stage_w)
+			x = stage_x + stage_w - min_w;
+		if (y < stage_y)
+			y = stage_y;
+		else if (y + min_h > stage_y + stage_h)
+			y = stage_y + stage_h - min_h;
+		if (width_ > stage_w)
+			width = stage_w;
+		if (height_ > stage_h)
+			height = stage_h;
+	}
+//.............................................................................
+//.............................................................................
+	#if flash @:keep @:setter(visible) #else override #end
+	private function set_visible(value : Bool) : #if flash Void #else Bool #end
+	{
+		super.visible = value;
+		if (value)
+		{
+			show();
+			add_Listeners();
+			safe_Position();
+			bring_To_Top();
+		}
+		else
+		{
+			hide();
+			remove_Listeners();
+			//TODO fix me: do clean up!?
+		}
+		#if (!flash) return value; #end
+	}
+//.............................................................................
+	public function show() : Void
+	{
+
+	}
+//.............................................................................
+	public function hide() : Void
+	{
+
+	}
 //.............................................................................
 //.............................................................................
 	override public function draw() : Void
@@ -89,6 +171,9 @@ class Viewport extends Visel
 	{
 		if (content_ != null)
 		{//:one-shoot
+			#if debug
+				throw "Viewport::content is already set";
+			#end
 			return value;
 		}
 		content_ = value;

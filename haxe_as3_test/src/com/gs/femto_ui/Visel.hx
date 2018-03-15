@@ -45,10 +45,10 @@ class Visel extends Sprite
 	public function new(owner : DisplayObjectContainer)
 	{
 		super();
-		create(owner);
+		init(owner);
 	}
 //.............................................................................
-	private function create(owner : DisplayObjectContainer) : Void
+	private function init(owner : DisplayObjectContainer) : Void
 	{
 		if (owner != null)
 		{

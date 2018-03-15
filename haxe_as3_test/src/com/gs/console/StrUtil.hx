@@ -3,6 +3,7 @@ package com.gs.console;
 import flash.Lib;
 import flash.Vector;
 import flash.errors.Error;
+import flash.utils.ByteArray;
 
 #if flash
 import flash.xml.XML;
@@ -23,40 +24,40 @@ class StrUtil
 //.............................................................................
 	static public function encode_Plain_Text(s: String): String
 	{
-        if (s.indexOf("&") >= 0)
-        {
-            s = regexp_amp.replace(s, "&amp;");
-        }
-        if (s.indexOf("<") >= 0)
-        {
-            s = regexp_lt.replace(s, "&lt;");
-        }
-        if (s.indexOf(">") >= 0)
-        {
-            s = regexp_gt.replace(s, "&gt;");
-        }
-        if (s.indexOf('"') >= 0)
-        {
-            s = regexp_quot.replace(s, "&quot;");
-        }
-        if (s.indexOf("'") >= 0)
-        {
-            s = regexp_apos.replace(s, "&apos;");
-        }
-        if (s.indexOf("\n") >= 0)
-        {//:looks like a code
-            s = regexp_lspace.map(s, escape_LSpace);
-            s = regexp_br.replace(s, "<br>");
-        }
-        return s;
+		if (s.indexOf("&") >= 0)
+		{
+			s = regexp_amp.replace(s, "&amp;");
+		}
+		if (s.indexOf("<") >= 0)
+		{
+			s = regexp_lt.replace(s, "&lt;");
+		}
+		if (s.indexOf(">") >= 0)
+		{
+			s = regexp_gt.replace(s, "&gt;");
+		}
+		if (s.indexOf('"') >= 0)
+		{
+			s = regexp_quot.replace(s, "&quot;");
+		}
+		if (s.indexOf("'") >= 0)
+		{
+			s = regexp_apos.replace(s, "&apos;");
+		}
+		if (s.indexOf("\n") >= 0)
+		{//:looks like a code
+			s = regexp_lspace.map(s, escape_LSpace);
+			s = regexp_br.replace(s, "<br>");
+		}
+		return s;
 	}
 //.............................................................................
 	static private function escape_LSpace(re: EReg): String
 	{
 		var s: String = re.matched(0);
 		var i: Int;
-        var temp: Array<String> = [for (i in 0...s.length + 1) ""];
-        return temp.join("&nbsp;");
+		var temp: Array<String> = [for (i in 0...s.length + 1) ""];
+		return temp.join("&nbsp;");
 	}
 //.............................................................................
 	static private var regexp_new_line = ~/<\/p>|<br>/g;
@@ -133,10 +134,13 @@ class StrUtil
 		{
 			return dump_Array(v);
 		}
+		else if (untyped __is__(v, ByteArray))
+		{
+			return dump_ByteArray(Lib.as(v, ByteArray));
+		}
 		else if (untyped __is__(v, XML))
 		{
-			var x: XML = Lib.as(v, XML);
-			return dump_XML(x);
+			return dump_XML(Lib.as(v, XML));
 		}
 		else
 		{
@@ -170,7 +174,7 @@ class StrUtil
 			//trace("***** type==" + cname);
 		//}
 #end
-		return Std.string(v);
+		return Std.string(v);//:if flash - call flash.Boot.__string_rec
 	}
 //.............................................................................
 #if flash
@@ -193,7 +197,7 @@ class StrUtil
 		var len0: Int = len;
 		if (len > MAX_LEN)
 			len = MAX_LEN;
-		var s: String = "Array: [";
+		var s: String = "[";
 		for (i in 0...len)
 		{
 			if (i > 0)
@@ -204,6 +208,11 @@ class StrUtil
 			s += ", ..";
 		s += "], length=" + len0;
 		return s;
+	}
+//.............................................................................
+	static private function dump_ByteArray(ba: ByteArray): String
+	{
+		return "ByteArray: position=" + ba.position + ", length=" + ba.length;
 	}
 //.............................................................................
 	static private function dump_Vector(v: Dynamic, cname: String): String

@@ -15,27 +15,38 @@ class Root
 	public var frame_signal_ : EnterFrameSignal;
 	public var is_touch_supported_ : Bool;
 	public var desktop_mode_ : Bool;
-	public var stage_ : Stage;
 	public var os_: String;
+	public var stage_ : Stage;
 
-	public var color_gripper_ : Int = 0x95D13A;
-	public var color_pressed_ : Int = 0x00aaaa;
-	public var color_disabled_ : Int = 0x808080;
+	public var color_gripper_	: Int = 0x95D13A;
+	public var color_pressed_	: Int = 0x00aaaa;
+	public var color_disabled_	: Int = 0x808080;
+	public var color_text_		: Int = 0xffFFff;
+    public var color_graph_		: Int = 0x408080;
+    public var color_bg_graph_	: Int = 0x202080;
+	public var color_thumb_		: Int = 0x008000;
+	public var color_close_		: Int = 0xE6E600;
+	public var color_movesize_	: Int = 0x0040c0;
+	public var color_edit_		: Int = 0x0070A6;
+	public var color_scroller_	: Int = 0x0c4c40;
 
-	public var font_family_ : String = "Helvetica,Arial,_sans";
-	public var con_font_ : String = null;
+    public var graph_width_ : Int = 256;
+    //public var graph_width_: int = 16;
+    public var graph_height_ : Int = 128;
 
 	public var ui_factor_ : Float = 1;
 
-	public var def_text_size_ : Int = 14;
-	public var input_text_size_ : Int = 16;
-	public var small_tool_width_ : Int = 36;
-	public var small_tool_height_ : Int = 32;
-	public var tool_width_ : Int = 48;
-	public var tool_height_ : Int = 42;
-	public var tool_spacing_ : Int = 8;
-	public var spacing_ : Int = 2;
-	public var hover_inflation_ : Int = 2;
+	public var def_text_size_			: Float = 14;
+	public var input_text_size_			: Float = 18;
+	public var small_tool_width_		: Float = 36;
+	public var small_tool_height_		: Float = 32;
+	public var tool_width_				: Float = 48;
+	public var tool_height_				: Float = 42;
+	public var tool_spacing_			: Float = 8;
+	public var spacing_					: Float = 2;
+	public var hover_inflation_			: Float = 2;
+	public var content_down_offset_x_	: Float = 1;
+	public var content_down_offset_y_	: Float = 1;
 
 	public function new(owner : DisplayObjectContainer)
 	{
@@ -57,15 +68,11 @@ class Root
 		instance_ = this;
 
 		is_touch_supported_ = Multitouch.supportsTouchEvents;
+
 		os_ = Capabilities.os;
-		var win: Bool = (os_.indexOf("Windows") == 0);
 		//trace("*** os = " + os_);
-		desktop_mode_ = win || (os_.indexOf("Mac OS") == 0);
-		if (win || (os_.indexOf("HTML5") == 0))
-		{//TODO fix me: how to detect desktop mode !!??
-			con_font_ = "Consolas";
-			font_family_ = con_font_;
-		}
+		desktop_mode_ = (os_.indexOf("Windows") == 0) || (os_.indexOf("Mac OS") == 0) || (os_.indexOf("HTML5") == 0);
+
 		stage_ = owner.stage;
 
 		frame_signal_ = new EnterFrameSignal(stage_);
@@ -80,18 +87,18 @@ class Root
 		var m : Float = Math.min(res_x, res_y);
 		if (m >= 1080)
 		{
-			ui_factor_ = 2;
-			/* TODO fix me
-			def_text_size_		*= ui_factor_;
-			input_text_size_	*= ui_factor_;
-			small_tool_width_	*= ui_factor_;
-			small_tool_height_	*= ui_factor_;
-			tool_width_			*= ui_factor_;
-			tool_height_		*= ui_factor_;
-			tool_spacing_		*= ui_factor_;
-			spacing_			*= ui_factor_;
-			hover_inflation_	*= ui_factor_;
-			*/
+			ui_factor_ = 2;//TODO fix me: 4K?
+			def_text_size_			*= ui_factor_;
+			input_text_size_		*= ui_factor_;
+			small_tool_width_		*= ui_factor_;
+			small_tool_height_		*= ui_factor_;
+			tool_width_				*= ui_factor_;
+			tool_height_			*= ui_factor_;
+			tool_spacing_			*= ui_factor_;
+			spacing_				*= ui_factor_;
+			hover_inflation_		*= ui_factor_;
+			content_down_offset_x_	*= ui_factor_;
+			content_down_offset_y_	*= ui_factor_;
 		}
 	}
 //.............................................................................
