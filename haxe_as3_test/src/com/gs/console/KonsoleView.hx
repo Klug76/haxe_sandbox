@@ -60,7 +60,7 @@ class KonsoleView extends Viewport
 
         text_field_ = new TextField();
         text_field_.type = TextFieldType.DYNAMIC;
-        text_field_.defaultTextFormat = new TextFormat(null, r.def_text_size_);
+        text_field_.defaultTextFormat = new TextFormat(r.con_font_, r.def_text_size_);
         //:text_field_.styleSheet = k.cfg_.get_Css();
         text_field_.wordWrap = true;
         text_field_.multiline = true;

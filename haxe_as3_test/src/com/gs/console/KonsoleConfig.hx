@@ -56,9 +56,10 @@ class KonsoleConfig
         if (null == css_)
         {
             css_ = new StyleSheet();
-            var def_text_size : Int = Root.instance.def_text_size_;
+			var r: Root = Root.instance;
+            var def_text_size : Int = r.def_text_size_;
             css_.setStyle("p", {
-						fontFamily : Root.FONT_FAMILY,
+						fontFamily : r.font_family_,
                         fontSize : def_text_size,
                         color : "#000000"
                     });

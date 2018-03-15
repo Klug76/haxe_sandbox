@@ -29,8 +29,7 @@ class FpsMonitor extends Graph
     {
         var r : Root = Root.instance;
 
-        var cl : Int = 0xffFFff;
-		var fmt: TextFormat = new TextFormat(null, r.def_text_size_, cl);
+		var fmt: TextFormat = new TextFormat(r.con_font_, r.def_text_size_, 0xffFFff);
 
         tf_min_	= add_Text_Field("0", "0", fmt);
         tf_max_	= add_Text_Field("120x120", "0", fmt);

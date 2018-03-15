@@ -16,12 +16,14 @@ class Root
 	public var is_touch_supported_ : Bool;
 	public var desktop_mode_ : Bool;
 	public var stage_ : Stage;
+	public var os_: String;
 
 	public var color_gripper_ : Int = 0x95D13A;
 	public var color_pressed_ : Int = 0x00aaaa;
 	public var color_disabled_ : Int = 0x808080;
 
-	public static inline var FONT_FAMILY : String = "Helvetica,Arial,_sans";
+	public var font_family_ : String = "Helvetica,Arial,_sans";
+	public var con_font_ : String = null;
 
 	public var ui_factor_ : Float = 1;
 
@@ -55,8 +57,15 @@ class Root
 		instance_ = this;
 
 		is_touch_supported_ = Multitouch.supportsTouchEvents;
-		var os: String = Capabilities.os;
-		desktop_mode_ = (os.indexOf("Windows") >= 0) || (os.indexOf("Mac OS") >= 0);
+		os_ = Capabilities.os;
+		var win: Bool = (os_.indexOf("Windows") == 0);
+		//trace("*** os = " + os_);
+		desktop_mode_ = win || (os_.indexOf("Mac OS") == 0);
+		if (win || (os_.indexOf("HTML5") == 0))
+		{//TODO fix me: how to detect desktop mode !!??
+			con_font_ = "Consolas";
+			font_family_ = con_font_;
+		}
 		stage_ = owner.stage;
 
 		frame_signal_ = new EnterFrameSignal(stage_);

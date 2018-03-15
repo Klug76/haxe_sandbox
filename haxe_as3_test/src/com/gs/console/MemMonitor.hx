@@ -37,7 +37,7 @@ class MemMonitor extends Graph
         mem_max_ = mem_min_ + dm_;
 
         var s: String = "0 bytes";
-        tf_ = add_Text_Field(s, s, new TextFormat(null, r.def_text_size_, 0xffFFff));
+        tf_ = add_Text_Field(s, s, new TextFormat(r.con_font_, r.def_text_size_, 0xffFFff));
     }
 //.............................................................................
 	static inline private function get_Used_Memory(): Float

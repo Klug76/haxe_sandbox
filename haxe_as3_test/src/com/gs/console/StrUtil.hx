@@ -119,7 +119,7 @@ class StrUtil
 		{
 			var f: Float = cast v;
 			var s: String = untyped f.toString();
-			return s + "f";
+			return s;
 		}
 		else if (untyped __is__(v, Error))
 		{
@@ -138,15 +138,15 @@ class StrUtil
 			var x: XML = Lib.as(v, XML);
 			return dump_XML(x);
 		}
-		//else if (untyped __is__(v, untyped __global__ ['__AS3__.vec.Vector.<*>']))
-		//{
-			//var vi: Vector<Dynamic> = cast v;
-			//return dump_Vector(vi);
-		//}
-		//else if ()
-		//{
-//
-		//}
+		else
+		{
+			var cname: String = untyped __global__["flash.utils.getQualifiedClassName"](v);
+			//trace("***** type==" + cname);
+			if (cname.indexOf("__AS3__.vec::Vector.") == 0)
+			{
+				return dump_Vector(v, cname);
+			}
+		}
 #else
 		if (Std.is(v, Error))
 		{
@@ -164,6 +164,11 @@ class StrUtil
 			var x: Xml = Lib.as(v, Xml);
 			return haxe.xml.Printer.print(x, /*pretty=*/true);
 		}
+		//else
+		//{
+			//var cname = Type.typeof(v);
+			//trace("***** type==" + cname);
+		//}
 #end
 		return Std.string(v);
 	}
@@ -201,9 +206,23 @@ class StrUtil
 		return s;
 	}
 //.............................................................................
-	static private function dump_Vector(v: Vector<Dynamic>): String
+	static private function dump_Vector(v: Dynamic, cname: String): String
 	{
-		return "v";
+		var len: Int = v.length;
+		var len0: Int = len;
+		if (len > MAX_LEN)
+			len = MAX_LEN;
+		var s: String = cname.substr(13) + ": [";
+		for (i in 0...len)
+		{
+			if (i > 0)
+				s += ", ";
+			s += dump_Dynamic(v[i]);
+		}
+		if (len != len0)
+			s += ", ..";
+		s += "], length=" + len0;
+		return s;
 	}
 //.............................................................................
 //.............................................................................
