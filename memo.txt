@@ -1,3 +1,5 @@
+.bug: html5 scrollbar may be messed up after resizing
+
 .how to override flash.display.DisplayObject::x, width, etc?
 	.http://community.openfl.org/t/what-is-stupid-problem-with-getters-and-setters/7518
 	.see \lib\openfl\7,1,2\src\format\swf\instance\MovieClip.hx
@@ -12,7 +14,7 @@
 		}
 		#if (!flash) return val; #end
 	}
-	
+.how to detect desktop system!?	
 .how to int *= float?
 .how to cast like 'as'?
 .js-target has no uint, but only int. sux :(
