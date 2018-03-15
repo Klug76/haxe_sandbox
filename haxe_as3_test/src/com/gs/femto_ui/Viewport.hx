@@ -1,6 +1,8 @@
 package com.gs.femto_ui;
 
 import flash.display.DisplayObjectContainer;
+import flash.display.Sprite;
+import flash.display.Stage;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
@@ -14,10 +16,16 @@ class Viewport extends Visel
 	private var content_ : Visel;
 	private var min_content_width_ : Float;
 	private var min_content_height_ : Float;
+	static private var layer_: Sprite = null;
 
-	public function new(owner : DisplayObjectContainer)
+	public function new(st : Stage)
 	{
-		super(owner);
+		if (null == layer_)
+		{
+			layer_ = new Sprite();
+			st.addChild(layer_);
+		}
+		super(layer_);
 		create_Children();
 	}
 //.............................................................................
@@ -72,7 +80,7 @@ class Viewport extends Visel
 //.............................................................................
 	private function on_Mouse_Down(e: Event): Void
 	{
-		bring_To_Top();
+		activate();
 	}
 //.............................................................................
 	private function on_Stage_Resize(e: Event): Void
@@ -102,6 +110,13 @@ class Viewport extends Visel
 			height = stage_h;
 	}
 //.............................................................................
+	public function activate() : Void
+	{
+		if (stage != null)
+		{
+			stage.addChild(layer_);
+		}
+	}
 //.............................................................................
 	#if flash @:keep @:setter(visible) #else override #end
 	private function set_visible(value : Bool) : #if flash Void #else Bool #end
@@ -112,7 +127,7 @@ class Viewport extends Visel
 			show();
 			add_Listeners();
 			safe_Position();
-			bring_To_Top();
+			activate();
 		}
 		else
 		{

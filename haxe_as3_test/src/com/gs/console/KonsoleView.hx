@@ -185,7 +185,7 @@ class KonsoleView extends Viewport
 		fps_view_.visible = !fps_view_.visible;
 		if (fps_view_.visible)
 		{
-			fps_view_.bring_To_Top();
+			fps_view_.activate();
 		}
 	}
 //.............................................................................
@@ -204,7 +204,7 @@ class KonsoleView extends Viewport
 		mem_view_.visible = !mem_view_.visible;
 		if (mem_view_.visible)
 		{
-			mem_view_.bring_To_Top();
+			mem_view_.activate();
 		}
 	}
 //.............................................................................
