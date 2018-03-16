@@ -28,10 +28,12 @@ class Label extends Visel
 //.............................................................................
 	private function init_Ex(txt : String) : Void
 	{
+		var r : Root = Root.instance;
+
 		text_ = txt;
 		text_field_ = new TextField();
 		text_field_.type = TextFieldType.DYNAMIC;
-		text_field_.defaultTextFormat = new TextFormat(null, Std.int(Root.instance.def_text_size_));
+		text_field_.defaultTextFormat = new TextFormat(null, Std.int(r.def_text_size_), r.color_ui_text_);
 		text_field_.selectable = false;
 		//text_field_.background = true;
 		//text_field_.backgroundColor = 0xc080f0;

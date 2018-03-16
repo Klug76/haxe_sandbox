@@ -1,10 +1,12 @@
 package com.gs.femto_ui;
 
+import flash.Lib;
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 import flash.display.Stage;
 import flash.events.Event;
 import flash.events.MouseEvent;
+import haxe.Timer;
 
 class Viewport extends Visel
 {
@@ -110,6 +112,27 @@ class Viewport extends Visel
 			height = stage_h;
 	}
 //.............................................................................
+//.............................................................................
+	private function pause(): Void
+	{
+		if (visible || (null == content_))
+			return;
+		var fi = Lib.as(content_, IViewportContent);
+		if (fi != null)
+			fi.pause();
+	}
+//.............................................................................
+	public function resume() : Void
+	{
+		activate();
+		if (content_ != null)
+		{
+			var fi = Lib.as(content_, IViewportContent);
+			if (fi != null)
+				fi.resume();
+		}
+	}
+//.............................................................................
 	public function activate() : Void
 	{
 		if (stage != null)
@@ -117,6 +140,7 @@ class Viewport extends Visel
 			stage.addChild(layer_);
 		}
 	}
+//.............................................................................
 //.............................................................................
 	#if flash @:keep @:setter(visible) #else override #end
 	private function set_visible(value : Bool) : #if flash Void #else Bool #end
@@ -127,13 +151,14 @@ class Viewport extends Visel
 			show();
 			add_Listeners();
 			safe_Position();
-			activate();
+			resume();
 		}
 		else
 		{
 			hide();
 			remove_Listeners();
-			//TODO fix me: do clean up!?
+			Timer.delay(pause, 1000 * 30);
+			//:4debug pause();
 		}
 		#if (!flash) return value; #end
 	}
@@ -147,7 +172,6 @@ class Viewport extends Visel
 	{
 
 	}
-//.............................................................................
 //.............................................................................
 	override public function draw() : Void
 	{

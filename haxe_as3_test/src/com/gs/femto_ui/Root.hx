@@ -19,16 +19,17 @@ class Root
 	public var stage_ : Stage;
 
 	public var color_gripper_	: Int = 0x95D13A;
+	public var color_movesize_	: Int = 0x0040c0;
 	public var color_pressed_	: Int = 0x00aaaa;
-	public var color_disabled_	: Int = 0x808080;
-	public var color_text_		: Int = 0xffFFff;
+	public var color_disabled_	: Int = 0x505050;
+	public var color_ui_text_	: Int = 0xFAC8D9;
     public var color_graph_		: Int = 0x408080;
     public var color_bg_graph_	: Int = 0x202080;
-	public var color_thumb_		: Int = 0x008000;
-	public var color_close_		: Int = 0xE6E600;
-	public var color_movesize_	: Int = 0x0040c0;
+	public var color_close_		: Int = 0xFF9800;
 	public var color_edit_		: Int = 0x0070A6;
-	public var color_scroller_	: Int = 0x0c4c40;
+	public var color_scroller_	: Int = 0x414c74;
+	public var color_thumb_		: Int = 0x20207a;
+	public var color_updown_	: Int = 0x20407a;
 
     public var graph_width_ : Int = 256;
     //public var graph_width_: int = 16;
@@ -43,8 +44,10 @@ class Root
 	public var tool_width_				: Float = 48;
 	public var tool_height_				: Float = 42;
 	public var tool_spacing_			: Float = 8;
+	public var btn_width_				: Float = 80;
 	public var spacing_					: Float = 2;
 	public var hover_inflation_			: Float = 2;
+	public var round_frame_				: Float = 6;
 	public var content_down_offset_x_	: Float = 1;
 	public var content_down_offset_y_	: Float = 1;
 
@@ -95,8 +98,10 @@ class Root
 			tool_width_				*= ui_factor_;
 			tool_height_			*= ui_factor_;
 			tool_spacing_			*= ui_factor_;
+			btn_width_				*= ui_factor_;
 			spacing_				*= ui_factor_;
 			hover_inflation_		*= ui_factor_;
+			round_frame_			*= ui_factor_;
 			content_down_offset_x_	*= ui_factor_;
 			content_down_offset_y_	*= ui_factor_;
 		}

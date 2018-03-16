@@ -135,7 +135,7 @@ class Thumb extends Visel
 					}
 				}
 				graphics.beginFill(cl, dummy_alpha_);
-				graphics.drawRect(-frame, -frame, width_ + 2 * frame, height_ + 2 * frame);
+				graphics.drawRoundRect(-frame, -frame, width_ + 2 * frame, height_ + 2 * frame, r.round_frame_, r.round_frame_);
 				graphics.endFill();
 			}
 		}

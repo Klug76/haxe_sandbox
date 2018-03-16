@@ -19,6 +19,10 @@ class KonsoleConfig
 	public var con_text_color_	: Int = 0xFFFF80;//TODO fix me: how to set selection color!?
 	public var con_hint_color_	: Int = 0xFFFFCA;
 	public var cmd_text_color_	: Int = 0xFFFF80;
+	public var btn_copy_color_	: Int = 0x009688;
+	public var btn_fps_color_	: Int = 0x673AB7;
+	public var btn_mem_color_	: Int = 0x3F51B5;
+	public var btn_clear_color_	: Int = 0xc00020;
 
 	public var min_width_		: Float = 128;
 	public var min_height_		: Float = 128;

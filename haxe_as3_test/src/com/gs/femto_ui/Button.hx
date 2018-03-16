@@ -103,7 +103,7 @@ class Button extends Visel
 						frame = hover_inflation_;
 				}
 				graphics.beginFill(cl, dummy_alpha_);
-				graphics.drawRect(-frame, -frame, width_ + 2 * frame, height_ + 2 * frame);
+				graphics.drawRoundRect(-frame, -frame, width_ + 2 * frame, height_ + 2 * frame, r.round_frame_, r.round_frame_);
 				graphics.endFill();
 			}
 		}
@@ -211,7 +211,7 @@ class Button extends Visel
 			return;
 		}
 		if (this == repeat_button_)
-			repeat_button_ = null;
+			repeat_button_ = null;//:clear static var
 		repeat_event_ = null;
 		Root.instance.frame_signal_.remove(on_Enter_Frame);
 	}

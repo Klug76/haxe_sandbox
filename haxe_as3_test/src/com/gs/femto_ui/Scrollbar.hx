@@ -36,6 +36,8 @@ class Scrollbar extends Button
 		thumb_.width = r.small_tool_width_;
 		thumb_.height = r.tool_height_;
 		thumb_.dummy_color = r.color_thumb_;
+
+		dummy_color = r.color_scroller_;
 	}
 	//.............................................................................
 	public function reset(mn : Int, mx : Int, cur : Int) : Void

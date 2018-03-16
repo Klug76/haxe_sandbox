@@ -1,6 +1,7 @@
 package com.gs.console;
 
 import com.gs.femto_ui.Graph;
+import com.gs.femto_ui.IViewportContent;
 import com.gs.femto_ui.Root;
 import com.gs.femto_ui.Visel;
 import flash.Lib;
@@ -29,7 +30,7 @@ class FpsMonitor extends Graph
 	{
 		var r : Root = Root.instance;
 
-		var fmt: TextFormat = new TextFormat(null, Std.int(r.def_text_size_), r.color_text_);
+		var fmt: TextFormat = new TextFormat(null, Std.int(r.def_text_size_), r.color_ui_text_);
 
 		tf_min_	= add_Text_Field("0", "0", fmt);
 		tf_max_	= add_Text_Field("120x120", "0", fmt);
@@ -44,6 +45,15 @@ class FpsMonitor extends Graph
 			tf_min_.y = height_ - tf_min_.height;
 		}
 		super.draw();
+	}
+//.............................................................................
+	override public function start() : Void
+	{
+		super.start();
+		frames_ = 0;
+		timer_ = Lib.getTimer();
+		tf_.text = "0";
+		prev_fps_ = 0;
 	}
 //.............................................................................
 	override public function on_Enter_Frame() : Void

@@ -22,6 +22,7 @@ class MemMonitor extends Graph
 	private var mem_max_ : Float = 0;
 	private var dm_ : Float = 0xA000;
 	private var tf_ : TextField;
+	private var def_text_: String = "0 bytes";
 
 	public function new(owner : DisplayObjectContainer)
 	{
@@ -33,11 +34,7 @@ class MemMonitor extends Graph
 	{
 		var r : Root = Root.instance;
 
-		mem_min_ = Util.fmax(0, get_Used_Memory() - dm_ * .5);
-		mem_max_ = mem_min_ + dm_;
-
-		var s: String = "0 bytes";
-		tf_ = add_Text_Field(s, s, new TextFormat(null, Std.int(r.def_text_size_), r.color_text_));
+		tf_ = add_Text_Field(def_text_, def_text_, new TextFormat(null, Std.int(r.def_text_size_), r.color_ui_text_));
 	}
 //.............................................................................
 	static inline private function get_Used_Memory(): Float
@@ -60,7 +57,23 @@ class MemMonitor extends Graph
 		}
 		super.draw();
 	}
-	//.............................................................................
+//.............................................................................
+	override public function start() : Void
+	{
+		super.start();
+		timer_ = Lib.getTimer();
+
+		mem_ = get_Used_Memory();
+		mem_min_ = Util.fmax(0, mem_ - dm_ * .5);
+		mem_max_ = mem_min_ + dm_;
+
+		if (prev_mem_ != mem_)
+		{
+			prev_mem_ = mem_;
+			tf_.text = Std.string(mem_) + "==" + format_Mem(mem_);
+		}
+	}
+//.............................................................................
 	override public function on_Enter_Frame() : Void
 	{
 		var t : Int = Lib.getTimer();

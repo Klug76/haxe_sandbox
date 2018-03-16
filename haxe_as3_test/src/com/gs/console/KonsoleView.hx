@@ -77,20 +77,19 @@ class KonsoleView extends Viewport
 
 		btn_scroll_up_ = new Button(this, "\u02c4", on_Scroll_Up);
 		btn_scroll_up_.auto_repeat = true;
-		btn_scroll_up_.dummy_color = 0x008000;
+		btn_scroll_up_.dummy_color = r.color_updown_;
 		btn_scroll_up_.y = r.small_tool_height_ + r.spacing_;
 		btn_scroll_up_.width = r.small_tool_width_;
 		btn_scroll_up_.height = r.small_tool_height_;
 
 		scrollbar_ = new Scrollbar(this, on_Scrollbar_Scroll);
-		scrollbar_.dummy_color = r.color_scroller_;
 		scrollbar_.y = r.small_tool_height_ * 2 + r.spacing_ * 2;
 		scrollbar_.width = r.small_tool_width_;
 		scrollbar_.reset(1, 1, 1);
 
 		btn_scroll_down_ = new Button(this, "\u02c5", on_Scroll_Down);
 		btn_scroll_down_.auto_repeat = true;
-		btn_scroll_down_.dummy_color = 0x008000;
+		btn_scroll_down_.dummy_color = r.color_updown_;
 		btn_scroll_down_.width = r.small_tool_width_;
 		btn_scroll_down_.height = r.small_tool_height_;
 
@@ -103,21 +102,21 @@ class KonsoleView extends Viewport
 		var b : Button;
 
 		b = new Button(toolbar_, "copy", on_Copy_Click);
-		b.dummy_color = 0x008000;
-		b.resize(80, r.tool_height_);
+		b.dummy_color = k_.cfg_.btn_copy_color_;
+		b.resize(r.btn_width_, r.tool_height_);
 		btn_copy_ = b;
 
 		b = new Button(toolbar_, "fps", on_Fps_Click);
-		b.dummy_color = 0x0000FF;
-		b.resize(80, r.tool_height_);
+		b.dummy_color = k_.cfg_.btn_fps_color_;
+		b.resize(r.btn_width_, r.tool_height_);
 
 		b = new Button(toolbar_, "mem", on_Mem_Click);
-		b.dummy_color = 0x00FF00;
-		b.resize(80, r.tool_height_);
+		b.dummy_color = k_.cfg_.btn_mem_color_;
+		b.resize(r.btn_width_, r.tool_height_);
 
 		b = new Button(toolbar_, "clear", on_Clear_Click);
-		b.dummy_color = 0xff0000;
-		b.resize(80, r.tool_height_);
+		b.dummy_color = k_.cfg_.btn_clear_color_;
+		b.resize(r.btn_width_, r.tool_height_);
 		btn_clear_ = b;
 
 		cmdline_ = new CmdLine(this, k_);
@@ -187,10 +186,6 @@ class KonsoleView extends Viewport
 			return;
 		}
 		fps_view_.visible = !fps_view_.visible;
-		if (fps_view_.visible)
-		{
-			fps_view_.activate();
-		}
 	}
 //.............................................................................
 	private function on_Mem_Click(e : Event) : Void
@@ -206,10 +201,6 @@ class KonsoleView extends Viewport
 			return;
 		}
 		mem_view_.visible = !mem_view_.visible;
-		if (mem_view_.visible)
-		{
-			mem_view_.activate();
-		}
 	}
 //.............................................................................
 //.............................................................................
@@ -222,7 +213,6 @@ class KonsoleView extends Viewport
 	override public function hide() : Void
 	{
 		remove_Signals();
-		//TODO fix me: do clean up!?
 	}
 //.............................................................................
 //.............................................................................

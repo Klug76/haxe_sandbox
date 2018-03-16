@@ -52,14 +52,14 @@ class KonsoleDemo extends Visel
 		tb_.dummy_color = 0xd0d0d0;
 
 		add_Tool_Button(0x0000c0, "~", toggle_Konsole);
-		add_Tool_Button(0x00c0c0, "test1", test1);
-		add_Tool_Button(0x00c0c0, "test2", test2);
-		add_Tool_Button(0x8080FF, "eat", eat_Mem);
-		add_Tool_Button(0x8080FF, "err", log_Error);
-		add_Tool_Button(0x00c0d0, "cmd", do_Command);
-		add_Tool_Button(0x00c0d0, "xml", log_Xml);
-		add_Tool_Button(0x00c0d0, "data", log_Data);
-		add_Tool_Button(0x5E5EFF, "eval", eval_Test);
+		add_Tool_Button(0x9C27B0, "test1", test1);
+		add_Tool_Button(0xDB4437, "test2", test2);
+		add_Tool_Button(0x3F51B5, "eat", eat_Mem);
+		add_Tool_Button(0x9C27B0, "err", log_Error);
+		add_Tool_Button(0xFF9800, "cmd", do_Command);
+		add_Tool_Button(0x3F51B5, "xml", log_Xml);
+		add_Tool_Button(0xDB4437, "data", log_Data);
+		add_Tool_Button(0xFF9800, "eval", eval_Test);
 		add_Tool_Button(0xc00020, "clear", clear);
 
 		k.register_Command("foo", cmd_Foo, "test command");

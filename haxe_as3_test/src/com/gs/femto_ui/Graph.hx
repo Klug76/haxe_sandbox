@@ -16,7 +16,7 @@ import flash.utils.ByteArray;
 //see
 //https://github.com/MindScriptAct/Advanced-hi-res-stats.git
 //https://github.com/mrdoob/Hi-ReS-Stats
-class Graph extends Visel
+class Graph extends Visel implements IViewportContent
 {
 	public static var aux_mat_ : Matrix = new Matrix();
 	public static var aux_rect_ : Rectangle = new Rectangle();
@@ -46,56 +46,56 @@ class Graph extends Visel
 	override public function destroy() : Void
 	{
 		stop();
-		super.destroy();
-	}
-//.............................................................................
-	private function dispose_Graph() : Void
-	{
 		if (graph_ != null)
 		{
-			graphics.clear();
 			graph_.dispose();
 			graph_ = null;
 		}
+		super.destroy();
 	}
 //.............................................................................
-	private function init_Graph() : Void
-	{
-		if (graph_ != null)
-			return;
-		graph_ = new BitmapData(graph_width_, graph_height_, false, color_bg_);
-	}
+//.............................................................................
 //.............................................................................
 	public function start() : Void
 	{
-		if ((state_ & Visel.STATE_ACTIVE) != 0)
-		{
-			return;
-		}
 		state_ |= Visel.STATE_ACTIVE;
 		var r: Root = Root.instance;
 		if (width_ <= 0)
-		{
 			resize(graph_width_ * r.ui_factor_, graph_height_ * r.ui_factor_);
-		}
 		if (null == history_)
-		{
 			history_ = new RingBuf<Float>(graph_width_);
-		}
-		init_Graph();
+		if (null == graph_)
+			graph_ = new BitmapData(graph_width_, graph_height_, false, color_bg_);
 		r.frame_signal_.add(on_Enter_Frame);
 	}
 //.............................................................................
 	public function stop() : Void
 	{
+		state_ &= ~Visel.STATE_ACTIVE;
+		var r: Root = Root.instance;
+		if (history_ != null)
+			history_.clear();
+		if (graph_ != null)
+			graph_.fillRect(graph_.rect, color_bg_);
+		r.frame_signal_.remove(on_Enter_Frame);
+	}
+//.............................................................................
+	public function pause(): Void
+	{
 		if ((state_ & Visel.STATE_ACTIVE) == 0)
 		{
 			return;
 		}
-		state_ &= ~Visel.STATE_ACTIVE;
-		history_.clear();
-		dispose_Graph();
-		Root.instance.frame_signal_.remove(on_Enter_Frame);
+		stop();
+	}
+//.............................................................................
+	public function resume(): Void
+	{
+		if ((state_ & Visel.STATE_ACTIVE) != 0)
+		{
+			return;
+		}
+		start();
 	}
 //.............................................................................
 	override public function invalidate(flags : Int) : Void
