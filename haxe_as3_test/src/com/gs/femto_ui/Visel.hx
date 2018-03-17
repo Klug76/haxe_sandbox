@@ -30,13 +30,14 @@ class Visel extends Sprite
 	public static inline var STATE_ACTIVE : Int		= 0x10;
 	public static inline var STATE_DRAG : Int		= 0x20;
 
-	public static inline var INVALIDATION_FLAG_SIZE : Int	= 1;
-	public static inline var INVALIDATION_FLAG_STATE : Int	= 2;
-	public static inline var INVALIDATION_FLAG_SKIN : Int	= 4;
-	public static inline var INVALIDATION_FLAG_DATA : Int	= 8;
-	public static inline var INVALIDATION_FLAG_ALIGN : Int	= 0x10;
-	public static inline var INVALIDATION_FLAG_SCROLL : Int	= 0x20;
-	public static inline var INVALIDATION_FLAG_ALL : Int	= ~0;
+	public static inline var INVALIDATION_FLAG_SIZE : Int		= 1;
+	public static inline var INVALIDATION_FLAG_STATE : Int		= 2;
+	public static inline var INVALIDATION_FLAG_SKIN : Int		= 4;
+	public static inline var INVALIDATION_FLAG_DATA : Int		= 8;
+	public static inline var INVALIDATION_FLAG_ALIGN : Int		= 0x10;
+	public static inline var INVALIDATION_FLAG_SCROLL : Int		= 0x20;
+	public static inline var INVALIDATION_FLAG_HISTORY : Int	= 0x40;
+	public static inline var INVALIDATION_FLAG_ALL : Int		= ~0;
 
 	public var dummy_color_ : Int = 0;
 	public var dummy_alpha_ : Float = -1;
@@ -157,28 +158,28 @@ class Visel extends Sprite
 		y = ny;
 		resize(w, h);
 	}
-	//.............................................................................
+//.............................................................................
 	public function movesize_(nx : Float, ny : Float, w : Float, h : Float) : Void
 	{
 		x = nx;
 		y = ny;
 		resize_(w, h);
 	}
-	//.............................................................................
+//.............................................................................
 	#if flash @:keep @:setter(x) #else override #end
 	public function set_x(value : Float) : #if flash Void #else Float #end
 	{
 		super.x = Math.round(value);
 		#if (!flash) return value; #end
 	}
-	//.............................................................................
+//.............................................................................
 	#if flash @:keep @:setter(y) #else override #end
 	private function set_y(value : Float) : #if flash Void #else Float #end
 	{
 		super.y = Math.round(value);
 		#if (!flash) return value; #end
 	}
-	//.............................................................................
+//.............................................................................
 	#if flash @:keep @:getter(width) #else override #end
 	private function get_width() : Float
 	{
@@ -197,7 +198,7 @@ class Visel extends Sprite
 		}
 		#if (!flash) return value; #end
 	}
-	//.............................................................................
+//.............................................................................
 	#if flash @:keep @:getter(height) #else override #end
 	private function get_height() : Float
 	{
@@ -216,13 +217,38 @@ class Visel extends Sprite
 		}
 		#if (!flash) return value; #end
 	}
-	//.............................................................................
-	//.............................................................................
+//.............................................................................
+	#if flash @:keep @:setter(visible) #else override #end
+	private function set_visible(value : Bool) : #if flash Void #else Bool #end
+	{
+		super.visible = value;
+		if (value)
+		{
+			on_Show();
+		}
+		else
+		{
+			on_Hide();
+		}
+		#if (!flash) return value; #end
+	}
+//.............................................................................
+	public function on_Show() : Void
+	{
+
+	}
+//.............................................................................
+	public function on_Hide() : Void
+	{
+
+	}
+//.............................................................................
+//.............................................................................
 	private inline function get_disposed() : Bool
 	{
 		return (state_ & STATE_DISPOSED) != 0;
 	}
-	//.............................................................................
+//.............................................................................
 	private inline function get_enabled() : Bool
 	{
 		return (state_ & STATE_DISABLED) == 0;
@@ -240,11 +266,11 @@ class Visel extends Sprite
 		}
 		return value;
 	}
-	//.............................................................................
-	//.............................................................................
-	//.............................................................................
-	//.............................................................................
-	//.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
 	private function get_dummy_color() : Int
 	{
 		return dummy_color_;
@@ -263,7 +289,7 @@ class Visel extends Sprite
 		}
 		return value;
 	}
-	//.............................................................................
+//.............................................................................
 	private function get_dummy_alpha() : Float
 	{
 		return dummy_alpha_;
@@ -277,8 +303,8 @@ class Visel extends Sprite
 		}
 		return value;
 	}
-	//.............................................................................
-	//.............................................................................
+//.............................................................................
+//.............................................................................
 	public function draw() : Void
 	{
 		//if (1100101 === tag_)
@@ -296,9 +322,9 @@ class Visel extends Sprite
 			}
 		}
 	}
-	//.............................................................................
-	//.............................................................................
-	//.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
 	public function bring_To_Top() : Void
 	{
 		if (parent != null)
@@ -306,6 +332,6 @@ class Visel extends Sprite
 			parent.addChild(this);
 		}
 	}
-	//.............................................................................
-	//.............................................................................
+//.............................................................................
+//.............................................................................
 }

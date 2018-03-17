@@ -6,7 +6,6 @@ import flash.display.Sprite;
 import flash.display.Stage;
 import flash.events.Event;
 import flash.events.MouseEvent;
-import haxe.Timer;
 
 class Viewport extends Visel
 {
@@ -113,25 +112,7 @@ class Viewport extends Visel
 	}
 //.............................................................................
 //.............................................................................
-	private function pause(): Void
-	{
-		if (visible || (null == content_))
-			return;
-		var fi = Lib.as(content_, IViewportContent);
-		if (fi != null)
-			fi.pause();
-	}
 //.............................................................................
-	public function resume() : Void
-	{
-		activate();
-		if (content_ != null)
-		{
-			var fi = Lib.as(content_, IViewportContent);
-			if (fi != null)
-				fi.resume();
-		}
-	}
 //.............................................................................
 	public function activate() : Void
 	{
@@ -142,35 +123,21 @@ class Viewport extends Visel
 	}
 //.............................................................................
 //.............................................................................
-	#if flash @:keep @:setter(visible) #else override #end
-	private function set_visible(value : Bool) : #if flash Void #else Bool #end
+//.............................................................................
+	override public function on_Show() : Void
 	{
-		super.visible = value;
-		if (value)
-		{
-			show();
-			add_Listeners();
-			safe_Position();
-			resume();
-		}
-		else
-		{
-			hide();
-			remove_Listeners();
-			Timer.delay(pause, 1000 * 30);
-			//:4debug pause();
-		}
-		#if (!flash) return value; #end
+		add_Listeners();
+		safe_Position();
+		activate();
+		if (content_ != null)
+			content_.visible = true;
 	}
 //.............................................................................
-	public function show() : Void
+	override public function on_Hide() : Void
 	{
-
-	}
-//.............................................................................
-	public function hide() : Void
-	{
-
+		remove_Listeners();
+		if (content_ != null)
+			content_.visible = false;
 	}
 //.............................................................................
 	override public function draw() : Void
@@ -218,7 +185,6 @@ class Viewport extends Visel
 		content_ = value;
 		min_content_width_ = value.width;
 		min_content_height_ = value.height;
-		addChildAt(value, 0);
 		mover_.dummy_alpha = 0;
 		resizer_.min_width_ = min_content_width_ + Root.instance.small_tool_width_;
 		resizer_.min_height_ = min_content_height_;

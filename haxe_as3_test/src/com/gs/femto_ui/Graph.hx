@@ -2,6 +2,7 @@ package com.gs.femto_ui;
 
 import com.gs.console.RingBuf;
 import com.gs.console.Util;
+import flash.Lib;
 import flash.display.BitmapData;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
@@ -16,7 +17,7 @@ import flash.utils.ByteArray;
 //see
 //https://github.com/MindScriptAct/Advanced-hi-res-stats.git
 //https://github.com/mrdoob/Hi-ReS-Stats
-class Graph extends Visel implements IViewportContent
+class Graph extends Visel
 {
 	public static var aux_mat_ : Matrix = new Matrix();
 	public static var aux_rect_ : Rectangle = new Rectangle();
@@ -24,6 +25,8 @@ class Graph extends Visel implements IViewportContent
 	public var graph_ : BitmapData = null;
 	public var graph_width_ : Int;
 	public var graph_height_ : Int;
+	public var suspend_timeout_: Int = 60 * 1000;//:ms
+	public var suspend_timer_: Int = 0;
 	public var history_ : RingBuf<Float> = null;
 	public var color_graph_ : Int;
 	public var color_bg_ : Int;
@@ -31,17 +34,29 @@ class Graph extends Visel implements IViewportContent
 	public function new(owner : DisplayObjectContainer)
 	{
 		super(owner);
-		init_Ex();
 	}
 //.............................................................................
-	private function init_Ex() : Void
+	override private function init(owner : DisplayObjectContainer) : Void
 	{
 		var r: Root = Root.instance;
 		color_graph_ = r.color_graph_;
 		color_bg_ = r.color_bg_graph_;
 		graph_width_ = r.graph_width_;
 		graph_height_ = r.graph_height_;
+		resize_(graph_width_ * r.ui_factor_, graph_height_ * r.ui_factor_);//:set size
+		if (owner != null)
+		{
+			owner.addChildAt(this, 0);
+
+			var v: Viewport = Lib.as(owner, Viewport);
+			if (v != null)
+			{
+				v.content = this;//:use size
+				start();
+			}
+		}
 	}
+//.............................................................................
 //.............................................................................
 	override public function destroy() : Void
 	{
@@ -55,13 +70,29 @@ class Graph extends Visel implements IViewportContent
 	}
 //.............................................................................
 //.............................................................................
+	override public function on_Show() : Void
+	{
+		trace("******** Graph::show");
+		invalidate(Visel.INVALIDATION_FLAG_HISTORY);
+		start();
+	}
+//.............................................................................
+	override public function on_Hide() : Void
+	{
+		trace("******** Graph::hide");
+		suspend_timer_ = Lib.getTimer();
+	}
+//.............................................................................
 //.............................................................................
 	public function start() : Void
 	{
+		if ((state_ & Visel.STATE_ACTIVE) != 0)
+		{
+			return;
+		}
+		trace("******** Graph::start");
 		state_ |= Visel.STATE_ACTIVE;
 		var r: Root = Root.instance;
-		if (width_ <= 0)
-			resize(graph_width_ * r.ui_factor_, graph_height_ * r.ui_factor_);
 		if (null == history_)
 			history_ = new RingBuf<Float>(graph_width_);
 		if (null == graph_)
@@ -71,6 +102,11 @@ class Graph extends Visel implements IViewportContent
 //.............................................................................
 	public function stop() : Void
 	{
+		if ((state_ & Visel.STATE_ACTIVE) == 0)
+		{
+			return;
+		}
+		trace("******** Graph::stop");
 		state_ &= ~Visel.STATE_ACTIVE;
 		var r: Root = Root.instance;
 		if (history_ != null)
@@ -78,24 +114,6 @@ class Graph extends Visel implements IViewportContent
 		if (graph_ != null)
 			graph_.fillRect(graph_.rect, color_bg_);
 		r.frame_signal_.remove(on_Enter_Frame);
-	}
-//.............................................................................
-	public function pause(): Void
-	{
-		if ((state_ & Visel.STATE_ACTIVE) == 0)
-		{
-			return;
-		}
-		stop();
-	}
-//.............................................................................
-	public function resume(): Void
-	{
-		if ((state_ & Visel.STATE_ACTIVE) != 0)
-		{
-			return;
-		}
-		start();
 	}
 //.............................................................................
 	override public function invalidate(flags : Int) : Void
@@ -106,7 +124,8 @@ class Graph extends Visel implements IViewportContent
 //.............................................................................
 	override public function draw() : Void
 	{
-		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_SIZE | Visel.INVALIDATION_FLAG_DATA)) != 0)
+		//:INVALIDATION_FLAG_SCROLL used to fix openfl bug
+		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_SIZE | Visel.INVALIDATION_FLAG_SCROLL)) != 0)
 		{
 			paint();
 		}
@@ -124,13 +143,28 @@ class Graph extends Visel implements IViewportContent
 		g.endFill();
 	}
 //.............................................................................
-	public function on_Enter_Frame() : Void
+	private function on_Enter_Frame() : Void
 	{
-		if (invalid_flags_ != 0)
+		var t : Int = Lib.getTimer();
+		collect_Data(t);
+		if (visible)
 		{
-			draw();
-			invalid_flags_ = 0;
+			if (invalid_flags_ != 0)
+			{
+				draw();
+				invalid_flags_ = 0;
+			}
 		}
+		else
+		{
+			if (t - suspend_timer_ >= suspend_timeout_)
+				stop();
+		}
+	}
+//.............................................................................
+	public function collect_Data(timer: Int): Void
+	{
+
 	}
 //.............................................................................
 	public function draw_Column(nx : Int, norm_value : Float) : Void

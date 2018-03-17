@@ -179,9 +179,7 @@ class KonsoleView extends Viewport
 		if (null == fps_view_)
 		{
 			fps_view_ = new Viewport(stage);
-			var m : FpsMonitor = new FpsMonitor(null);
-			m.start();  //:set size
-			fps_view_.content = m;  //:use size
+			var m : FpsMonitor = new FpsMonitor(fps_view_);
 			fps_view_.movesize(100 * r.ui_factor_, 100 * r.ui_factor_, m.width + r.small_tool_width_, m.height);
 			return;
 		}
@@ -194,9 +192,7 @@ class KonsoleView extends Viewport
 		if (null == mem_view_)
 		{
 			mem_view_ = new Viewport(stage);
-			var m : MemMonitor = new MemMonitor(null);
-			m.start();  //:set size
-			mem_view_.content = m;  //:use size
+			var m : MemMonitor = new MemMonitor(mem_view_);
 			mem_view_.movesize(100 * r.ui_factor_, 120 * r.ui_factor_ + m.height, m.width + r.small_tool_width_, m.height);
 			return;
 		}
@@ -204,15 +200,17 @@ class KonsoleView extends Viewport
 	}
 //.............................................................................
 //.............................................................................
-	override public function show() : Void
+	override public function on_Show() : Void
 	{
+		super.on_Show();
 		add_Signals();
 		on_Enter_Frame();
 	}
 //.............................................................................
-	override public function hide() : Void
+	override public function on_Hide() : Void
 	{
 		remove_Signals();
+		super.on_Hide();
 	}
 //.............................................................................
 //.............................................................................

@@ -67,7 +67,9 @@ class KonsoleDemo extends Visel
 
 
 		stage.addEventListener(Event.RESIZE, on_Stage_Resize);
-		invalidate(Visel.INVALIDATION_FLAG_SIZE);
+		stage.addEventListener(Event.ACTIVATE, on_Stage_Activate);
+		stage.addEventListener(Event.DEACTIVATE, on_Stage_Deactivate);
+ 		invalidate(Visel.INVALIDATION_FLAG_SIZE);
 	}
 
 	function toggle_Konsole(v: Dynamic): Void
@@ -92,9 +94,22 @@ class KonsoleDemo extends Visel
 		return b;
 	}
 
-	private function on_Stage_Resize(e:Event):Void
+	private function on_Stage_Resize(e: Event): Void
 	{
 		invalidate(Visel.INVALIDATION_FLAG_SIZE);
+	}
+
+	private function on_Stage_Activate(e: Event): Void
+	{
+		trace("demo::activate");
+		if (stage.frameRate <= 15)
+			stage.frameRate = 30;
+	}
+
+	private function on_Stage_Deactivate(e: Event): Void
+	{
+		trace("demo::deactivate");
+		stage.frameRate = 15;
 	}
 
 	override public function draw(): Void

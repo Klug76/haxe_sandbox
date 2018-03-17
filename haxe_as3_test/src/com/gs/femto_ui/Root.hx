@@ -47,7 +47,7 @@ class Root
 	public var btn_width_				: Float = 80;
 	public var spacing_					: Float = 2;
 	public var hover_inflation_			: Float = 2;
-	public var round_frame_				: Float = 6;
+	public var round_frame_				: Float = 5;
 	public var content_down_offset_x_	: Float = 1;
 	public var content_down_offset_y_	: Float = 1;
 
