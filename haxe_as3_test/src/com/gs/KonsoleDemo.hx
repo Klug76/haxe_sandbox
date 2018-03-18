@@ -101,14 +101,15 @@ class KonsoleDemo extends Visel
 
 	private function on_Stage_Activate(e: Event): Void
 	{
-		trace("demo::activate");
+		//trace("demo::activate");
+		//TODO review: openfl bug: set 29
 		if (stage.frameRate <= 15)
 			stage.frameRate = 30;
 	}
 
 	private function on_Stage_Deactivate(e: Event): Void
 	{
-		trace("demo::deactivate");
+		//trace("demo::deactivate");
 		stage.frameRate = 15;
 	}
 

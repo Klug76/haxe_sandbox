@@ -180,6 +180,7 @@ class KonsoleView extends Viewport
 		{
 			fps_view_ = new Viewport(stage);
 			var m : FpsMonitor = new FpsMonitor(fps_view_);
+			fps_view_.content = m;
 			fps_view_.movesize(100 * r.ui_factor_, 100 * r.ui_factor_, m.width + r.small_tool_width_, m.height);
 			return;
 		}
@@ -193,6 +194,7 @@ class KonsoleView extends Viewport
 		{
 			mem_view_ = new Viewport(stage);
 			var m : MemMonitor = new MemMonitor(mem_view_);
+			mem_view_.content = m;
 			mem_view_.movesize(100 * r.ui_factor_, 120 * r.ui_factor_ + m.height, m.width + r.small_tool_width_, m.height);
 			return;
 		}

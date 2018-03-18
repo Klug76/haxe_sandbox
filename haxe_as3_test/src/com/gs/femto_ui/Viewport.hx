@@ -183,6 +183,7 @@ class Viewport extends Visel
 			return value;
 		}
 		content_ = value;
+		content_.visible = true;
 		min_content_width_ = value.width;
 		min_content_height_ = value.height;
 		mover_.dummy_alpha = 0;

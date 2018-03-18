@@ -47,15 +47,9 @@ class Graph extends Visel
 		if (owner != null)
 		{
 			owner.addChildAt(this, 0);
-
-			var v: Viewport = Lib.as(owner, Viewport);
-			if (v != null)
-			{
-				v.content = this;//:use size
-				start();
-			}
 		}
 	}
+//.............................................................................
 //.............................................................................
 //.............................................................................
 	override public function destroy() : Void
@@ -72,25 +66,31 @@ class Graph extends Visel
 //.............................................................................
 	override public function on_Show() : Void
 	{
-		trace("******** Graph::show");
-		invalidate(Visel.INVALIDATION_FLAG_HISTORY);
-		start();
+		//trace("******** Graph::show");
+		resume();
 	}
 //.............................................................................
 	override public function on_Hide() : Void
 	{
-		trace("******** Graph::hide");
+		//trace("******** Graph::hide");
 		suspend_timer_ = Lib.getTimer();
 	}
 //.............................................................................
 //.............................................................................
-	public function start() : Void
+	public function resume() : Void
 	{
 		if ((state_ & Visel.STATE_ACTIVE) != 0)
 		{
+			trace("******** Graph::redraw");
+			invalidate(Visel.INVALIDATION_FLAG_HISTORY);
 			return;
 		}
-		trace("******** Graph::start");
+		start();
+	}
+//.............................................................................
+	private function start(): Void
+	{
+		//trace("******** Graph::start");
 		state_ |= Visel.STATE_ACTIVE;
 		var r: Root = Root.instance;
 		if (null == history_)
@@ -100,13 +100,11 @@ class Graph extends Visel
 		r.frame_signal_.add(on_Enter_Frame);
 	}
 //.............................................................................
-	public function stop() : Void
+	private function stop() : Void
 	{
 		if ((state_ & Visel.STATE_ACTIVE) == 0)
-		{
 			return;
-		}
-		trace("******** Graph::stop");
+		//trace("******** Graph::stop");
 		state_ &= ~Visel.STATE_ACTIVE;
 		var r: Root = Root.instance;
 		if (history_ != null)
@@ -145,6 +143,8 @@ class Graph extends Visel
 //.............................................................................
 	private function on_Enter_Frame() : Void
 	{
+		if ((state_ & Visel.STATE_ACTIVE) == 0)
+			return;
 		var t : Int = Lib.getTimer();
 		collect_Data(t);
 		if (visible)
@@ -190,6 +190,7 @@ class Graph extends Visel
 //.............................................................................
 	public function redraw_History() : Void
 	{
+		trace("Graph::redraw_History");
 		var h : Int = history_.head;
 		var t : Int = history_.tail;
 		for (i in h...t)
@@ -214,6 +215,7 @@ class Graph extends Visel
 		tf.type = TextFieldType.DYNAMIC;
 		tf.defaultTextFormat = fmt;
 		tf.selectable = false;
+		tf.mouseEnabled = false;
 		tf.autoSize = TextFieldAutoSize.LEFT;
 		tf.text = calc;
 		var tw: Int = Math.round(tf.width + 1);
