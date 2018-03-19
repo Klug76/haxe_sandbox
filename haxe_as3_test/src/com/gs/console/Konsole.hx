@@ -11,7 +11,7 @@ import flash.events.KeyboardEvent;
 class Konsole extends RingBuf<LogLine>
 {
 	private var password_idx_ : Int = 0;
-	//private var eval_ : Eval;
+	private var eval_ : Eval = null;
 
 	private var default_view_class_ : Class<Dynamic>;
 	private var default_view_ : DisplayObject = null;
@@ -36,12 +36,6 @@ class Konsole extends RingBuf<LogLine>
 	private function init_Ex() : Void
 	{
 		data_[0] = new LogLine();//:prealloc
-		//eval_ = new Eval();
-		//eval_.const_context_ =
-				//{
-					//Number : Float,
-					//Math : Math
-				//};
 		register_Command("commands", list_All_Commands, "Show a list of all slash commands");
 	}
 //.............................................................................
@@ -57,6 +51,11 @@ class Konsole extends RingBuf<LogLine>
 		#end
 		var c: Command = new Command(f, hint);
 		cmd_map_.set(cmd, c);
+	}
+//.............................................................................
+	public function register_Object(name : String, obj: Dynamic) : Void
+	{
+		get_Eval().register_Object(name, obj);
 	}
 //.............................................................................
 	public function start(stage : Stage) : Void
@@ -180,8 +179,21 @@ class Konsole extends RingBuf<LogLine>
 				return;
 			}
 		}
-		add("fixme " + s);
-		//add(eval_.parse(s));
+		add(s + "=" + get_Eval().interpretate(s));
+	}
+//.............................................................................
+	private function get_Eval() : Eval
+	{
+		if (null == eval_)
+		{
+			eval_ = new Eval();
+			//eval_.const_context_ =
+					//{
+						//Number : Float,
+						//Math : Math
+					//};
+		}
+		return eval_;
 	}
 //.............................................................................
 	private function eval_Command(s : String) : Bool

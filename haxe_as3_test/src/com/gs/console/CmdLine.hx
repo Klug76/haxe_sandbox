@@ -14,8 +14,8 @@ class CmdLine extends Edit
 	private var history_ : RingBuf<String>;
 	private var cur_idx_ : Int = -1;
 	private var stash_ : String = null;
-	//static private const history_size: int = 32;
-	private static inline var history_size : Int = 4;
+	private static inline var history_size_: Int = 64;
+	//private static inline var history_size_ : Int = 4;
 
 	public function new(owner : DisplayObjectContainer, k : Konsole)
 	{
@@ -26,7 +26,7 @@ class CmdLine extends Edit
 //.............................................................................
 	private function init_Ex_Ex() : Void
 	{
-		history_ = new RingBuf<String>(history_size);
+		history_ = new RingBuf<String>(history_size_);
 		history_.push("/commands");
 		addEventListener(KeyboardEvent.KEY_DOWN, on_Key_Down_Edit, false, 1);
 		addEventListener(KeyboardEvent.KEY_UP, on_Key_Up_Edit, false, 1);

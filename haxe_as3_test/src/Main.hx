@@ -9,6 +9,9 @@ import flash.display.StageScaleMode;
 import haxe.unit.TestCase;
 import haxe.unit.TestRunner;
 
+/*
+haxe -cp src -as3 as3_gen -swf-version 21.0 -D analyzer-optimize -main Main -dce full
+*/
 
 class Main
 {

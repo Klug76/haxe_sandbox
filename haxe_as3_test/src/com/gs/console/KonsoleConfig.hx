@@ -53,7 +53,7 @@ class KonsoleConfig
 		#end
 		var r: Root = Root.instance;
 
-		if ((r.os_.indexOf("Windows") == 0) || (r.os_.indexOf("HTML5") == 0))//TODO fix me: !Mac::HTML5
+		if ((r.platform_ == "WIN") || (r.platform_ == "WEB"))//TODO fix me: !Mac::HTML5
 		{
 			con_font_ = "Consolas";
 			font_family_ = con_font_;

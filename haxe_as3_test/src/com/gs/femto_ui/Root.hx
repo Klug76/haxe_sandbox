@@ -15,7 +15,7 @@ class Root
 	public var frame_signal_ : EnterFrameSignal;
 	public var is_touch_supported_ : Bool;
 	public var desktop_mode_ : Bool;
-	public var os_: String;
+	public var platform_: String;
 	public var stage_ : Stage;
 
 	public var color_gripper_	: Int = 0x95D13A;
@@ -72,9 +72,9 @@ class Root
 
 		is_touch_supported_ = Multitouch.supportsTouchEvents;
 
-		os_ = Capabilities.os;
-		//trace("*** os = " + os_);
-		desktop_mode_ = (os_.indexOf("Windows") == 0) || (os_.indexOf("Mac OS") == 0) || (os_.indexOf("HTML5") == 0);
+		platform_ = Capabilities.version.substr(0, 3);
+		//trace("*** platform_ = " + os_);//:html5 return WEB
+		desktop_mode_ = (platform_ == "WIN") || (platform_ == "MAC") || (platform_ == "LNX");
 
 		stage_ = owner.stage;
 
