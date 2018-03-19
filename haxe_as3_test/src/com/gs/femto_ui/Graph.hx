@@ -1,7 +1,7 @@
 package com.gs.femto_ui;
 
-import com.gs.console.RingBuf;
-import com.gs.console.Util;
+import com.gs.femto_ui.util.RingBuf;
+import com.gs.femto_ui.util.Util;
 import flash.Lib;
 import flash.display.BitmapData;
 import flash.display.DisplayObjectContainer;
@@ -12,7 +12,6 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFieldType;
 import flash.text.TextFormat;
-import flash.utils.ByteArray;
 
 //see
 //https://github.com/MindScriptAct/Advanced-hi-res-stats.git

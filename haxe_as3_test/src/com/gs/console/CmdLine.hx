@@ -2,6 +2,7 @@ package com.gs.console;
 
 import com.gs.femto_ui.Edit;
 import com.gs.femto_ui.Root;
+import com.gs.femto_ui.util.RingBuf;
 import flash.display.DisplayObjectContainer;
 import flash.events.KeyboardEvent;
 import flash.text.TextFormat;

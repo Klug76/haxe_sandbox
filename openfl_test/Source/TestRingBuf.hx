@@ -1,7 +1,7 @@
 package;
 
 import haxe.unit.TestCase;
-import com.gs.console.RingBuf;
+import com.gs.femto_ui.util.RingBuf;
 
 class TestRingBuf extends TestCase
 {

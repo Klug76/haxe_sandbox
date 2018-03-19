@@ -1,7 +1,7 @@
 package;
 
 import com.gs.KonsoleDemo;
-import com.gs.console.RingBuf;
+import com.gs.femto_ui.util.RingBuf;
 import flash.Lib;
 import flash.display.Stage;
 import flash.display.StageAlign;

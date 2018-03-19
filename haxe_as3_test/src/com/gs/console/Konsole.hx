@@ -1,5 +1,6 @@
 package com.gs.console;
 
+import com.gs.femto_ui.util.RingBuf;
 import flash.Vector;
 import flash.desktop.Clipboard;
 import flash.desktop.ClipboardFormats;

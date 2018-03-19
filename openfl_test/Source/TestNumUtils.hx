@@ -1,6 +1,6 @@
 package;
 
-import com.gs.console.Util;
+import com.gs.femto_ui.util.Util;
 import haxe.unit.TestCase;
 
 class TestNumUtils extends TestCase

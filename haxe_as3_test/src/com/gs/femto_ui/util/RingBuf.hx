@@ -1,4 +1,4 @@
-package com.gs.console;
+package com.gs.femto_ui.util;
 
 import flash.Vector;
 

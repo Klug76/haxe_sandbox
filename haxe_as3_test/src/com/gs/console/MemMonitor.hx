@@ -3,15 +3,12 @@ package com.gs.console;
 import com.gs.femto_ui.Graph;
 import com.gs.femto_ui.Root;
 import com.gs.femto_ui.Visel;
+import com.gs.femto_ui.util.Util;
 import flash.Lib;
 import flash.display.DisplayObjectContainer;
-import flash.geom.Rectangle;
 import flash.system.System;
 import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
-import flash.text.TextFieldType;
 import flash.text.TextFormat;
-import flash.utils.ByteArray;
 
 class MemMonitor extends Graph
 {
