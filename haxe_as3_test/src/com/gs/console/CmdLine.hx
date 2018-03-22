@@ -43,6 +43,7 @@ class CmdLine extends Edit
 	{
 		//trace("cmd::key down: 0x" + e.keyCode.toString(16));
 		var key = e.keyCode;
+		/*
 		switch (key)
 		{
 			case 0xc0:
@@ -55,12 +56,25 @@ class CmdLine extends Edit
 			case Keyboard.UP:
 				e.preventDefault();
 		}
+		*/
+		if (0xc0 == key)
+		{
+			if (null == k_.cfg_.password_)
+			{
+				e.preventDefault();
+			}
+		}
+		else if ((Keyboard.ENTER == key) || (Keyboard.DOWN == key) || (Keyboard.UP == key))
+		{
+			e.preventDefault();
+		}
 	}
 //.............................................................................
 	private function on_Key_Up_Edit(e : KeyboardEvent) : Void
 	{
 		//trace("cmd::key up: 0x" + e.keyCode.toString(16));
 		var key = e.keyCode;
+		/*
 		switch (key)
 		{
 			case 0xc0:
@@ -82,6 +96,29 @@ class CmdLine extends Edit
 				get_History_Down();
 				e.preventDefault();
 		}
+		*/
+		if (0xc0 == key)
+		{
+			if (null == k_.cfg_.password_)
+			{
+				e.preventDefault();
+			}
+		}
+		else if (Keyboard.ENTER == key)
+		{
+			e.preventDefault();
+			exec();
+		}
+		else if (Keyboard.DOWN == key)
+		{
+			e.preventDefault();
+			get_History_Down();
+		}
+		else if (Keyboard.UP == key)
+		{
+			e.preventDefault();
+			get_History_Up();
+		}
 	}
 //.............................................................................
 	private function complete() : Void
@@ -96,7 +133,7 @@ class CmdLine extends Edit
 		{
 			return;
 		}
-		trace("eval: '" + s + "'");
+		//trace("eval: '" + s + "'");
 		add_To_History(s);
 		cur_idx_ = -1;
 		stash_ = null;
