@@ -52,6 +52,8 @@ abstract GameColors( Int ) to Int from Int {
 .obfuscation: how? 
 
 ==========================
+.in haxe: switch doesn't work with flash.ui.Keyboard
+==========================
 adt:
 https://forum.starling-framework.org/topic/whats-the-best-adt-target-to-use-when-creating-ipa-file
 ipa-app-store is the most optimized. You do not need a distribution certificate to use this target, as some believe.
