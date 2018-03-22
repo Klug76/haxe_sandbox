@@ -3,6 +3,7 @@ package com.gs.femto_ui;
 import flash.Lib;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
+import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.IEventDispatcher;
@@ -311,14 +312,15 @@ class Visel extends Sprite
 			//trace("ENTER label::super::draw(), ", width_, "x", height_, "flags=0x", invalid_flags_.toString(16));
 		if ((invalid_flags_ & (INVALIDATION_FLAG_SKIN | INVALIDATION_FLAG_SIZE | INVALIDATION_FLAG_STATE)) != 0)
 		{
-			graphics.clear();
+			var gr: Graphics = graphics;
+			gr.clear();
 			if ((dummy_alpha_ >= 0) && (width_ > 0) && (height_ > 0))
 			{
 				//if (1100101 === tag_)
 					//trace("label::fill(), ", width_, "x", height_, ", color=0x", dummy_color_.toString(16), "a=", dummy_alpha_);
-				graphics.beginFill(dummy_color_ & 0xffffff, dummy_alpha_);
-				graphics.drawRect(0, 0, width_, height_);
-				graphics.endFill();
+				gr.beginFill(dummy_color_ & 0xffffff, dummy_alpha_);
+				gr.drawRect(0, 0, width_, height_);
+				gr.endFill();
 			}
 		}
 	}

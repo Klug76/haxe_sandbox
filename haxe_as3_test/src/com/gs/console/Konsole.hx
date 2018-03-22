@@ -302,7 +302,7 @@ class Konsole extends RingBuf<LogLine>
 		//trace("stage::key up: 0x" + Std.string(e.keyCode));
 		if (null != cfg_.password_)
 		{
-			if (e.keyCode == cfg_.password_.charCodeAt(password_idx_))
+			if (e.charCode == cfg_.password_.charCodeAt(password_idx_))
 			{
 				++password_idx_;
 				if (password_idx_ == cfg_.password_.length)

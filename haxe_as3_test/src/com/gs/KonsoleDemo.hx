@@ -30,6 +30,7 @@ class KonsoleDemo extends Visel
 	private var counter_: Int = 0;
 	private static var k: Konsole;
 	private var arr_: Array<Int>;
+	private var ruler_: Ruler;
 
 	public function new(owner : DisplayObjectContainer)
 	{
@@ -63,6 +64,7 @@ class KonsoleDemo extends Visel
 
 		k.register_Command("foo", cmd_Foo, "test command");
 		k.register_Command("zoo", cmd_Zoo, "test command #2");
+		k.register_Command("ruler", cmd_Ruler, "show display ruler");
 
 
 		stage.addEventListener(Event.RESIZE, on_Stage_Resize);
@@ -148,6 +150,17 @@ class KonsoleDemo extends Visel
 		k.add("command::zoo()");
 	}
 
+	private function cmd_Ruler(dummy: Array<String>): Void
+	{
+		if (ruler_ != null)
+		{
+			ruler_.visible = !ruler_.visible;
+			return;
+		}
+		ruler_ = new Ruler(k);
+		k.add("show ruler");
+	}
+
 	function test1(v: Dynamic): Void
 	{
 		add_Counter();
@@ -227,7 +240,7 @@ class KonsoleDemo extends Visel
 
 	function do_Command(ev: Dynamic): Void
 	{
-		var cmd = "/foo";
+		var cmd = "/ruler";
 		k.eval(cmd);
 	}
 
