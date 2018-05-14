@@ -30,6 +30,7 @@ class KonsoleConfig
 	public var height_			: Float = 450;
 	public var con_text_size_	: Float = 14;
 	public var cmd_height_		: Float = 32;
+	public var zoom_size_		: Float = 64;
 
 	public var font_family_ : String = "Helvetica,Arial,_sans";
 	public var con_font_ : String = null;
@@ -67,6 +68,7 @@ class KonsoleConfig
 			height_			*= factor;
 			con_text_size_	*= factor;
 			cmd_height_		*= factor;
+			zoom_size_		*= factor;
 		}
 	}
 //.............................................................................

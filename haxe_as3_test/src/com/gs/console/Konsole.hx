@@ -1,5 +1,6 @@
 package com.gs.console;
 
+import com.gs.femto_ui.Signal;
 import com.gs.femto_ui.util.RingBuf;
 import flash.Vector;
 import flash.desktop.Clipboard;
@@ -19,6 +20,8 @@ class Konsole extends RingBuf<LogLine>
 	public var cmd_map_ : Map<String, Command> = new Map<String, Command>();
 	public var cfg_ : KonsoleConfig;
 	public var stage_ : Stage = null;
+
+	public var signal_show_: Signal = new Signal();
 
 	public static inline var APPEND : Int = 1;
 	public static inline var REPLACE : Int = 2;
@@ -277,9 +280,11 @@ class Konsole extends RingBuf<LogLine>
 		if (null == default_view_)
 		{
 			default_view_ = Type.createInstance(default_view_class_, [this]);
+			signal_show_.fire();
 			return;
 		}
 		default_view_.visible = !default_view_.visible;
+		signal_show_.fire();
 	}
 //.............................................................................
 //.............................................................................

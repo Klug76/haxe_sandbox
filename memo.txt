@@ -46,6 +46,7 @@ abstract GameColors( Int ) to Int from Int {
 +. openfl: can eat import flash.*
 
 +.html5 build
+	.BlendMode.INVERT in html5
 +.move console to html5
 	.https://github.com/tiagolr/dconsole.git
 .starling + custom 3d test

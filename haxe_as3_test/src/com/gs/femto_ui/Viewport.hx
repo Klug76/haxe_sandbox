@@ -116,6 +116,7 @@ class Viewport extends Visel
 //.............................................................................
 	public function activate() : Void
 	{
+		//:some sort of bring_To_Top()
 		if (stage != null)
 		{
 			stage.addChild(layer_);
