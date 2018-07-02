@@ -55,13 +55,13 @@ class Ruler extends Visel
 
 		pointer_ = new Shape();
 		addChild(pointer_);
+#if flash
+		pointer_.blendMode = BlendMode.INVERT;//TODO review
+#end
 
 		tap_shape_ = new Shape();
 		addChild(tap_shape_);
-#if flash
-		pointer_.blendMode = BlendMode.INVERT;//TODO review
-		tap_shape_.blendMode = BlendMode.INVERT;
-#end
+
 		var size: Int = Math.round(k_.cfg_.zoom_size_);
 		bd_ = new BitmapData(size, size, false, stage.color);
 		size_ = size;
@@ -194,7 +194,7 @@ class Ruler extends Visel
 		var d: Float = Point.distance(tap1_, tap2_);
 		var w: Float = Util.fabs(tap1_.x - tap2_.x);
 		var h: Float = Util.fabs(tap1_.y - tap2_.y);
-		var s: String = "<p>points: [" + tap1_.x + ", " + tap1_.y + "] - [" + tap2_.x + ", " + tap2_.y + "]<br>";
+		var s: String = "<p>points: <font color='#ff0000'>[" + tap1_.x + ", " + tap1_.y + "]</font> - <font color='#ffff00'>[" + tap2_.x + ", " + tap2_.y + "]</font><br>";
 		s += "distance: " + Util.ftoFixed(d, 2) + "<br>";
 		s += "width: " + w + ", height: " + h + "</p>";
 		//TODO show more info...
@@ -232,11 +232,12 @@ class Ruler extends Visel
 		gr.clear();
 		if ((STATE_TAP1 == tap_state_) || (STATE_TAP2 == tap_state_))
 		{
-			gr.lineStyle(1, 0x800000, 0.75, true, LineScaleMode.NONE, CapsStyle.NONE);
+			gr.lineStyle(1, 0xff0000, 0.75, true, LineScaleMode.NONE, CapsStyle.NONE);
 			paint_Aim(gr, tap1_.x, tap1_.y);
 		}
 		if (STATE_TAP2 == tap_state_)
 		{
+			gr.lineStyle(1, 0xffff00, 0.75, true, LineScaleMode.NONE, CapsStyle.NONE);
 			paint_Aim(gr, tap2_.x, tap2_.y);
 		}
 	}
