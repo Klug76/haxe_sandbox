@@ -34,10 +34,11 @@ class Visel extends Sprite
 	public static inline var INVALIDATION_FLAG_SIZE : Int		= 1;
 	public static inline var INVALIDATION_FLAG_STATE : Int		= 2;
 	public static inline var INVALIDATION_FLAG_SKIN : Int		= 4;
-	public static inline var INVALIDATION_FLAG_DATA : Int		= 8;
-	public static inline var INVALIDATION_FLAG_ALIGN : Int		= 0x10;
-	public static inline var INVALIDATION_FLAG_SCROLL : Int		= 0x20;
-	public static inline var INVALIDATION_FLAG_HISTORY : Int	= 0x40;
+	public static inline var INVALIDATION_FLAG_ALIGN : Int		= 8;
+	public static inline var INVALIDATION_FLAG_SCROLL : Int		= 0x10;
+	public static inline var INVALIDATION_FLAG_HISTORY : Int	= 0x20;
+	public static inline var INVALIDATION_FLAG_DATA : Int		= 0x40;
+	public static inline var INVALIDATION_FLAG_DATA2 : Int		= 0x80;
 	public static inline var INVALIDATION_FLAG_ALL : Int		= ~0;
 
 	public var dummy_color_ : Int = 0;
