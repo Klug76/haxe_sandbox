@@ -1,5 +1,6 @@
 package com.gs;
 import com.gs.console.Konsole;
+import com.gs.femto_ui.Root;
 import com.gs.femto_ui.Visel;
 import com.gs.femto_ui.util.Util;
 import flash.display.Bitmap;
@@ -15,7 +16,13 @@ import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.geom.Matrix;
 import flash.geom.Point;
+import flash.geom.Rectangle;
+import flash.text.TextField;
+import flash.text.TextFormat;
+import flash.text.TextFormatAlign;
 import flash.ui.Keyboard;
+
+using com.gs.femto_ui.TextFieldExt;
 
 class Ruler extends Visel
 {
@@ -33,11 +40,17 @@ class Ruler extends Visel
 	private var tap_state_: Int = 0;
 	private var tap1_: Point = new Point();
 	private var tap2_: Point = new Point();
+	private var aux_pt_: Point = new Point();
+	private var aux_rc_: Rectangle = new Rectangle();
 	private var tap_shape_: Shape;
+	private var info_: TextField;
+	private var line_text_: TextField;
 
-	private static inline var STATE_DEFAULT : Int	= 0;
-	private static inline var STATE_TAP1 	: Int	= 1;
-	private static inline var STATE_TAP2 	: Int	= 2;
+	static private inline var STATE_DEFAULT : Int	= 0;
+	static private inline var STATE_TAP1 	: Int	= 1;
+	static private inline var STATE_TAP2 	: Int	= 2;
+	static private inline var color_pt1_	: Int = 0xff0000;
+	static private inline var color_pt2_	: Int = 0xffff00;
 
 	public function new(k: Konsole)
 	{
@@ -49,6 +62,8 @@ class Ruler extends Visel
 //.............................................................................
 	private function init_Ex() : Void
 	{
+		var r : Root = Root.instance;
+
 		bg_ = new Visel(this);
 		bg_.dummy_color = 0x40000040;
 		addChild(bg_);
@@ -60,7 +75,21 @@ class Ruler extends Visel
 #end
 
 		tap_shape_ = new Shape();
-		addChild(tap_shape_);
+		bg_.addChild(tap_shape_);
+
+		var fmt: TextFormat = new TextFormat(null, Std.int(r.def_text_size_), 0x000000, true);
+
+		line_text_ = TextField.create_AutoSize_Text_Field("0", fmt);
+		line_text_.backgroundColor = 0xffFFff;
+		line_text_.background = true;
+		bg_.addChild(line_text_);
+
+		fmt = new TextFormat(null, Std.int(r.def_text_size_), 0x000000, true);
+		fmt.align = TextFormatAlign.CENTER;
+		info_ = TextField.create_Fixed_Text_Field("0000:0000", "0:0", fmt);
+		info_.backgroundColor = 0xffFFff;
+		info_.background = true;
+		bg_.addChild(info_);
 
 		var size: Int = Math.round(k_.cfg_.zoom_size_);
 		bd_ = new BitmapData(size, size, false, stage.color);
@@ -69,7 +98,7 @@ class Ruler extends Visel
 		zoom_.scaleX = zoom_.scaleY = zoom_factor_;
 		zoom_.x = zoom_offset_;
 		zoom_.y = zoom_offset_;
-		addChild(zoom_);
+		bg_.addChild(zoom_);
 
 		k_.signal_show_.add(on_Show_Console);
 	}
@@ -163,7 +192,13 @@ class Ruler extends Visel
 		draw();
 		validate();
 		if (STATE_TAP2 == tap_state_)
+		{
 			dump_Info();
+		}
+		else
+		{
+			line_text_.visible = false;
+		}
 	}
 //.............................................................................
 	private function on_Mouse_Move(ev : MouseEvent) : Void
@@ -187,6 +222,8 @@ class Ruler extends Visel
 		cur_y_ = stage.mouseY;
 		tap_shape_.graphics.clear();
 		tap_state_ = STATE_DEFAULT;
+		invalid_flags_ |= Visel.INVALIDATION_FLAG_DATA;
+		line_text_.visible = false;
 	}
 //.............................................................................
 	private function dump_Info(): Void
@@ -194,11 +231,58 @@ class Ruler extends Visel
 		var d: Float = Point.distance(tap1_, tap2_);
 		var w: Float = Util.fabs(tap1_.x - tap2_.x);
 		var h: Float = Util.fabs(tap1_.y - tap2_.y);
-		var s: String = "<p>points: <font color='#ff0000'>[" + tap1_.x + ", " + tap1_.y + "]</font> - <font color='#ffff00'>[" + tap2_.x + ", " + tap2_.y + "]</font><br>";
+		var s: String = "<p>points: <font color='#" + Util.toHex(color_pt1_, 6) + "'>[" + tap1_.x + ", " + tap1_.y +
+			"]</font> - <font color='#" + Util.toHex(color_pt2_) + "'>[" + tap2_.x + ", " + tap2_.y + "]</font><br>";
 		s += "distance: " + Util.ftoFixed(d, 2) + "<br>";
 		s += "width: " + w + ", height: " + h + "</p>";
 		//TODO show more info...
 		k_.add_Html(s);
+
+		line_text_.visible = true;
+		if ((tap1_.x == tap2_.x) || (tap1_.y == tap2_.y))
+			line_text_.text = Util.ftoFixed(d, 0);
+		else
+			line_text_.text = Util.ftoFixed(d, 2);
+		aux_pt_.x = (tap1_.x + tap2_.x) * .5;
+		aux_pt_.y = (tap1_.y + tap2_.y) * .5;
+		aux_rc_.setTo(aux_pt_.x, aux_pt_.y, line_text_.width, line_text_.height);
+		aux_rc_.inflate(2, 2);
+		find_Popup_Pos(aux_rc_, tap1_, tap2_);
+		aux_rc_.inflate( -2, -2);
+
+		aux_pt_.x = aux_rc_.left;
+		aux_pt_.y = aux_rc_.top;
+
+		line_text_.x = aux_pt_.x;
+		line_text_.y = aux_pt_.y;
+	}
+//.............................................................................
+	private function find_Popup_Pos(rc: Rectangle, pt1: Point, pt2: Point): Void
+	{
+		//:do not be offscreen
+		if (rc.left + rc.width + 1 > width_)
+		{
+			rc.offset(width_ - rc.left - rc.width - 1, 0);
+		}
+		if (rc.top + rc.height + 1 > height_)
+		{
+			rc.offset(0, height_ - rc.top - rc.height + 1);
+		}
+		if (rc.left < 0)
+		{
+			rc.offset(-rc.left, 0);
+		}
+		if (rc.top < 0)
+		{
+			rc.offset(0, -rc.top);
+		}
+		//TODO do not overlap pt1, pt2
+		//if (rc.containsPoint(pt1))
+		//{
+		//}
+		//if (rc.containsPoint(pt2))
+		//{
+		//}
 	}
 //.............................................................................
 	override public function draw() : Void
@@ -210,6 +294,7 @@ class Ruler extends Visel
 			gr.clear();
 			gr.lineStyle(1, 0xAAcc00, 0.75, true, LineScaleMode.NONE, CapsStyle.SQUARE);
 			paint_Cross(gr, cur_x_, cur_y_);
+			print_Cur_Info();
 			//paint_Aim(gr, cur_x_ + 5, cur_y_ + 5);
 		}
 		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_DATA2)) != 0)
@@ -226,19 +311,36 @@ class Ruler extends Visel
 		}
 	}
 //.............................................................................
+	private function print_Cur_Info(): Void
+	{
+		info_.text = cur_x_ + ":" + cur_y_;
+		var nx: Float = cur_x_ + 4;
+		var ny: Float = cur_y_ - size_ * .5 - info_.height - 4;
+		if (ny < 0)
+			ny = cur_y_ + size_ * .5 + 4;
+		if (nx + info_.width > width_)
+			nx = cur_x_ - info_.width - 4;
+		info_.x = nx;
+		info_.y = ny;
+	}
+//.............................................................................
 	private function paint_Taps(): Void
 	{
 		var gr: Graphics = tap_shape_.graphics;
 		gr.clear();
 		if ((STATE_TAP1 == tap_state_) || (STATE_TAP2 == tap_state_))
 		{
-			gr.lineStyle(1, 0xff0000, 0.75, true, LineScaleMode.NONE, CapsStyle.NONE);
+			gr.lineStyle(1, color_pt1_, 0.75, true, LineScaleMode.NONE, CapsStyle.NONE);
 			paint_Aim(gr, tap1_.x, tap1_.y);
 		}
 		if (STATE_TAP2 == tap_state_)
 		{
-			gr.lineStyle(1, 0xffff00, 0.75, true, LineScaleMode.NONE, CapsStyle.NONE);
+			gr.lineStyle(1, color_pt2_, 0.75, true, LineScaleMode.NONE, CapsStyle.NONE);
 			paint_Aim(gr, tap2_.x, tap2_.y);
+
+			gr.lineStyle(1, 0, 1, true, LineScaleMode.NONE, CapsStyle.NONE);
+			gr.moveTo(tap1_.x, tap1_.y);
+			gr.lineTo(tap2_.x, tap2_.y);
 		}
 	}
 //.............................................................................

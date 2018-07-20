@@ -13,6 +13,8 @@ import flash.text.TextFieldAutoSize;
 import flash.text.TextFieldType;
 import flash.text.TextFormat;
 
+using com.gs.femto_ui.TextFieldExt;
+
 //see
 //https://github.com/MindScriptAct/Advanced-hi-res-stats.git
 //https://github.com/mrdoob/Hi-ReS-Stats
@@ -210,19 +212,7 @@ class Graph extends Visel
 //.............................................................................
 	public function add_Text_Field(calc: String, def: String, fmt: TextFormat): TextField
 	{
-		var tf: TextField = new TextField();
-		tf.type = TextFieldType.DYNAMIC;
-		tf.defaultTextFormat = fmt;
-		tf.selectable = false;
-		tf.mouseEnabled = false;
-		tf.autoSize = TextFieldAutoSize.LEFT;
-		tf.text = calc;
-		var tw: Int = Math.round(tf.width + 1);
-		var th: Int = Math.round(tf.height + 1);
-		tf.autoSize = TextFieldAutoSize.NONE;
-		tf.width = tw;
-		tf.height = th;
-		tf.text = def;
+		var tf: TextField = TextField.create_Fixed_Text_Field(calc, def, fmt);
 		addChild(tf);
 		return tf;
 	}
