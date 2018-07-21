@@ -23,14 +23,19 @@ class TextFieldExt
 		tf.text = def;
 		return tf;
 	}
-	public static function create_AutoSize_Text_Field(cl:Class<TextField>, def: String, fmt: TextFormat/*, tfas: TextFieldAutoSize = TextFieldAutoSize.LEFT*/): TextField
+	public static function create_AutoSize_Text_Field(cl:Class<TextField>, def: String, fmt: TextFormat/*, ?tfas: TextFieldAutoSize*/): TextField
 	{
 		var tf: TextField = new TextField();
 		tf.type = TextFieldType.DYNAMIC;
 		tf.defaultTextFormat = fmt;
 		tf.selectable = false;
 		tf.mouseEnabled = false;
-		//tf.autoSize = tfas;  ERROR: Parameter default value should be constant
+		/*
+		if (null == tfas)
+			tf.autoSize = TextFieldAutoSize.LEFT;
+		else
+			tf.autoSize = tfas;
+		*/
 		tf.autoSize = TextFieldAutoSize.LEFT;
 		tf.text = def;
 		return tf;

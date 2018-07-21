@@ -1,3 +1,7 @@
+. WTF: Parameter default value should be constant
+	. https://try.haxe.org/#60547
+. WTF: swtich(Keyboard.BACK)
+	. https://try.haxe.org/#ae27C
 .bug: html5 scrollbar may be messed up after resizing
 +.eval (hscript)
 +.clean-up in Fps|Mem Monitor

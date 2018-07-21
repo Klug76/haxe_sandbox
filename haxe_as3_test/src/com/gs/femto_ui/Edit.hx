@@ -75,7 +75,7 @@ class Edit extends Visel
 		if (tf_.text != value)
 		{
 			tf_.text = value;
-			invalidate(Visel.INVALIDATION_FLAG_DATA);
+			invalidate_Visel(Visel.INVALIDATION_FLAG_DATA);
 		}
 		return value;
 	}

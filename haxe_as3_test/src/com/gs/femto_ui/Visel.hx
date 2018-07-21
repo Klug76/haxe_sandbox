@@ -94,7 +94,8 @@ class Visel extends Sprite
 			parent.removeChild(this);
 	}
 //.............................................................................
-	public function invalidate(flags : Int) : Void
+//openfl::DisplayObject have public function invalidate ():Void
+	public function invalidate_Visel(flags : Int) : Void
 	{
 		if (disposed)
 			return;
@@ -136,7 +137,7 @@ class Visel extends Sprite
 		{
 			width_ = w;
 			height_ = h;
-			invalidate(INVALIDATION_FLAG_SIZE);
+			invalidate_Visel(INVALIDATION_FLAG_SIZE);
 		}
 	}
 //.............................................................................
@@ -196,7 +197,7 @@ class Visel extends Sprite
 		if (width_ != w)
 		{
 			width_ = w;
-			invalidate(INVALIDATION_FLAG_SIZE);
+			invalidate_Visel(INVALIDATION_FLAG_SIZE);
 		}
 		#if (!flash) return value; #end
 	}
@@ -215,7 +216,7 @@ class Visel extends Sprite
 		if (height_ != h)
 		{
 			height_ = h;
-			invalidate(INVALIDATION_FLAG_SIZE);
+			invalidate_Visel(INVALIDATION_FLAG_SIZE);
 		}
 		#if (!flash) return value; #end
 	}
@@ -264,7 +265,7 @@ class Visel extends Sprite
 			else
 				state_ |= STATE_DISABLED;
 			mouseEnabled = mouseChildren = value;
-			invalidate(INVALIDATION_FLAG_STATE);
+			invalidate_Visel(INVALIDATION_FLAG_STATE);
 		}
 		return value;
 	}
@@ -287,7 +288,7 @@ class Visel extends Sprite
 				dummy_alpha_ = 1;
 			else
 				dummy_alpha_ = a / 255.;
-			invalidate(INVALIDATION_FLAG_SKIN);
+			invalidate_Visel(INVALIDATION_FLAG_SKIN);
 		}
 		return value;
 	}
@@ -301,7 +302,7 @@ class Visel extends Sprite
 		if (dummy_alpha_ != value)
 		{
 			dummy_alpha_ = value;
-			invalidate(INVALIDATION_FLAG_SKIN);
+			invalidate_Visel(INVALIDATION_FLAG_SKIN);
 		}
 		return value;
 	}

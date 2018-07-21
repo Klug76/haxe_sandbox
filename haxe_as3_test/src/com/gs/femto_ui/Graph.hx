@@ -82,8 +82,8 @@ class Graph extends Visel
 	{
 		if ((state_ & Visel.STATE_ACTIVE) != 0)
 		{
-			trace("******** Graph::redraw");
-			invalidate(Visel.INVALIDATION_FLAG_HISTORY);
+			//trace("******** Graph::redraw");
+			invalidate_Visel(Visel.INVALIDATION_FLAG_HISTORY);
 			return;
 		}
 		start();
@@ -115,7 +115,7 @@ class Graph extends Visel
 		r.frame_signal_.remove(on_Enter_Frame);
 	}
 //.............................................................................
-	override public function invalidate(flags : Int) : Void
+	override public function invalidate_Visel(flags : Int) : Void
 	{
 		invalid_flags_ |= flags;
 		//:no super.invalidate
@@ -191,7 +191,7 @@ class Graph extends Visel
 //.............................................................................
 	public function redraw_History() : Void
 	{
-		trace("Graph::redraw_History");
+		//trace("Graph::redraw_History");
 		var h : Int = history_.head;
 		var t : Int = history_.tail;
 		for (i in h...t)

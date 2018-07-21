@@ -20,7 +20,7 @@
   <!-- Build options -->
   <build>
     <option directives="fdb-debug" />
-    <option flashStrict="False" />
+    <option flashStrict="True" />
     <option noInlineOnDebug="True" />
     <option mainClass="Main" />
     <option enabledebug="True" />

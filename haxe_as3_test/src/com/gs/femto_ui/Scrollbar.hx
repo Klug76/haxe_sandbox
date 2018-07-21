@@ -63,7 +63,7 @@ class Scrollbar extends Button
 		else
 			return;
 		set_Value(v);
-		invalidate(Visel.INVALIDATION_FLAG_DATA);
+		invalidate_Visel(Visel.INVALIDATION_FLAG_DATA);
 	}
 	//.............................................................................
 	private function set_Value(v : Int) : Void
@@ -120,7 +120,7 @@ class Scrollbar extends Button
 		if (min_ != value)
 		{
 			min_ = value;
-			invalidate(Visel.INVALIDATION_FLAG_DATA);
+			invalidate_Visel(Visel.INVALIDATION_FLAG_DATA);
 		}
 		return value;
 	}
@@ -135,7 +135,7 @@ class Scrollbar extends Button
 		if (max_ != value)
 		{
 			max_ = value;
-			invalidate(Visel.INVALIDATION_FLAG_DATA);
+			invalidate_Visel(Visel.INVALIDATION_FLAG_DATA);
 		}
 		return value;
 	}
@@ -150,7 +150,7 @@ class Scrollbar extends Button
 		if (value_ != value)
 		{
 			value_ = value;
-			invalidate(Visel.INVALIDATION_FLAG_DATA);
+			invalidate_Visel(Visel.INVALIDATION_FLAG_DATA);
 		}
 		return value;
 	}

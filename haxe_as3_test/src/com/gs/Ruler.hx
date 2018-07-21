@@ -18,6 +18,7 @@ import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 import flash.ui.Keyboard;
@@ -82,6 +83,7 @@ class Ruler extends Visel
 		line_text_ = TextField.create_AutoSize_Text_Field("0", fmt);
 		line_text_.backgroundColor = 0xffFFff;
 		line_text_.background = true;
+		line_text_.alpha = 0.75;
 		bg_.addChild(line_text_);
 
 		fmt = new TextFormat(null, Std.int(r.def_text_size_), 0x000000, true);
@@ -131,7 +133,7 @@ class Ruler extends Visel
 //.............................................................................
 	private function on_Stage_Resize(ev : Event) : Void
 	{
-		invalidate(Visel.INVALIDATION_FLAG_DATA);
+		invalidate_Visel(Visel.INVALIDATION_FLAG_DATA);
 		resize(stage.stageWidth, stage.stageHeight);
 	}
 //.............................................................................

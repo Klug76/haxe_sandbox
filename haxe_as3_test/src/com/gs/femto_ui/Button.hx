@@ -44,7 +44,7 @@ class Button extends Visel
 		on_click_ = on_Click;
 
 		add_Mouse_Listeners();
-		invalidate(Visel.INVALIDATION_FLAG_STATE);
+		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 	}
 //.............................................................................
 //.............................................................................
@@ -136,7 +136,7 @@ class Button extends Visel
 			return;
 		state_ |= Visel.STATE_DOWN;
 		e.stopPropagation();
-		invalidate(Visel.INVALIDATION_FLAG_STATE);
+		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 		stage.addEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage, false, 1);//TODO review: how to handle out-of window event!?
 		if (auto_repeat_)
 		{
@@ -160,7 +160,7 @@ class Button extends Visel
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
 			state_ &= ~Visel.STATE_DOWN;
-			invalidate(Visel.INVALIDATION_FLAG_STATE);
+			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 		}
 	}
 //.............................................................................
@@ -169,14 +169,14 @@ class Button extends Visel
 		if ((state_ & Visel.STATE_HOVER) != 0)
 			return;
 		state_ |= Visel.STATE_HOVER;
-		invalidate(Visel.INVALIDATION_FLAG_STATE);
+		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 		addEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out);
 	}
 //.............................................................................
 	private function on_Mouse_Out(e : MouseEvent) : Void
 	{
 		state_ &= ~Visel.STATE_HOVER;
-		invalidate(Visel.INVALIDATION_FLAG_STATE);
+		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 		removeEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out);
 	}
 //.............................................................................

@@ -22,6 +22,7 @@ import flash.net.URLRequest;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
+import flash.ui.Keyboard;
 import flash.utils.ByteArray;
 import haxe.Json;
 import haxe.Timer;
@@ -79,7 +80,7 @@ class KonsoleDemo extends Visel
 		stage.addEventListener(Event.RESIZE, on_Stage_Resize);
 		stage.addEventListener(Event.ACTIVATE, on_Stage_Activate);
 		stage.addEventListener(Event.DEACTIVATE, on_Stage_Deactivate);
- 		invalidate(Visel.INVALIDATION_FLAG_SIZE);
+ 		invalidate_Visel(Visel.INVALIDATION_FLAG_SIZE);
 	}
 
 	function add_Bitmap_Asset(): Void
@@ -139,7 +140,7 @@ class KonsoleDemo extends Visel
 
 	private function on_Stage_Resize(e: Event): Void
 	{
-		invalidate(Visel.INVALIDATION_FLAG_SIZE);
+		invalidate_Visel(Visel.INVALIDATION_FLAG_SIZE);
 	}
 
 	private function on_Stage_Activate(e: Event): Void
@@ -214,7 +215,34 @@ class KonsoleDemo extends Visel
 		k.add("1 < 2 & 6\n  4 > 1 & 0");
 		k.add("\n");
 		k.add('');
+		foo(Keyboard.ESCAPE);
+#if flash
+		foo(Keyboard.BACK);
+		foo(Keyboard.BACK);
+#end
+		foo(Keyboard.A);
+		k.add('');
 		Timer.delay(append_Test1, 100);
+	}
+
+	private function foo(u: UInt): Void
+	{
+		k.add(u);
+		switch(u)
+		{
+		case Keyboard.ESCAPE:
+			k.add("Esc");
+#if flash
+		case Keyboard.BACK:
+			k.add("Back");
+#end
+		case Keyboard.A:
+			k.add("A");
+		}
+#if flash
+		if (u == Keyboard.BACK)
+			k.add("*Back");
+#end
 	}
 
 
