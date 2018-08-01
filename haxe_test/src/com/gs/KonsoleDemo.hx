@@ -1,5 +1,6 @@
 package com.gs;
 
+import com.gs.console.KonController;
 import com.gs.console.Konsole;
 import com.gs.console.KonsoleConfig;
 import com.gs.console.KonsoleView;
@@ -36,10 +37,16 @@ class KonsoleDemo extends Visel
 	private var tb_: Toolbar;
 	private var aux_: TextField;
 	private var counter_: Int = 0;
-	private static var k: Konsole;
 	private var arr_: Array<Int>;
-	private var ruler_: Ruler;
 	private var asset_: Loader;
+
+	public static function create_UI(stage: Stage): Void
+	{
+		var cfg: KonsoleConfig = new KonsoleConfig();
+		KonController.start(stage, cfg);
+
+		new KonsoleDemo(stage);
+	}
 
 	public function new(owner : DisplayObjectContainer)
 	{
@@ -73,9 +80,8 @@ class KonsoleDemo extends Visel
 		add_Tool_Button(0xFF9800, "eval", eval_Test);
 		add_Tool_Button(0xc00020, "clear", clear);
 
-		k.register_Command("foo", cmd_Foo, "test command");
-		k.register_Command("zoo", cmd_Zoo, "test command #2");
-		k.register_Command("ruler", cmd_Ruler, "show display ruler");
+		KonController.register_Command("foo", cmd_Foo, "test command");
+		KonController.register_Command("zoo", cmd_Zoo, "test command #2");
 
 		stage.addEventListener(Event.RESIZE, on_Stage_Resize);
 		stage.addEventListener(Event.ACTIVATE, on_Stage_Activate);
@@ -106,7 +112,7 @@ class KonsoleDemo extends Visel
 
 	private function load_Error_Handler(e: Event): Void
 	{
-		k.add(e.toString());
+		KonController.add(e.toString());
 	}
 
 	private function asset_Cleanup(): Void
@@ -118,12 +124,12 @@ class KonsoleDemo extends Visel
 
 	function toggle_Konsole(v: Dynamic): Void
 	{
-		k.toggle_View();
+		KonController.toggle_View();
 	}
 
 	function clear(v: Dynamic): Void
 	{
-		k.clear();
+		KonController.clear();
 	}
 
 	function add_Tool_Button(cl: Int, txt: String, f: Dynamic->Void): Button
@@ -169,39 +175,14 @@ class KonsoleDemo extends Visel
 		}
 	}
 
-	public static function create_UI(stage: Stage): Void
-	{
-		var r: Root = Root.create(stage);
-
-		var cfg: KonsoleConfig = new KonsoleConfig();
-		k = new Konsole(cfg);
-		k.set_View(KonsoleView);
-		k.start(stage);
-		//k.add("foo");
-		//k.add("bar");
-
-		new KonsoleDemo(stage);
-	}
-
 	private function cmd_Foo(dummy: Array<String>): Void
 	{
-		k.add("command::foo()");
+		KonController.add("command::foo()");
 	}
 
 	private function cmd_Zoo(dummy: Array<String>): Void
 	{
-		k.add("command::zoo()");
-	}
-
-	private function cmd_Ruler(dummy: Array<String>): Void
-	{
-		if (ruler_ != null)
-		{
-			ruler_.visible = !ruler_.visible;
-			return;
-		}
-		ruler_ = new Ruler(k);
-		k.add("show ruler");
+		KonController.add("command::zoo()");
 	}
 
 	function test1(v: Dynamic): Void
@@ -211,37 +192,37 @@ class KonsoleDemo extends Visel
 
 	function test2(v: Dynamic): Void
 	{
-		k.add_Html("<p>Hello, <font color='#FFFF00'>World</font>! Тест!</p>");
-		k.add("1 < 2 & 6\n  4 > 1 & 0");
-		k.add("\n");
-		k.add('');
+		KonController.add_Html("<p>Hello, <font color='#FFFF00'>World</font>! Тест!</p>");
+		KonController.add("1 < 2 & 6\n  4 > 1 & 0");
+		KonController.add("\n");
+		KonController.add('');
 		foo(Keyboard.ESCAPE);
 #if flash
 		foo(Keyboard.BACK);
 		foo(Keyboard.BACK);
 #end
 		foo(Keyboard.A);
-		k.add('');
+		KonController.add('');
 		Timer.delay(append_Test1, 100);
 	}
 
 	private function foo(u: UInt): Void
 	{
-		k.add(u);
+		KonController.add(u);
 		switch(u)
 		{
 		case Keyboard.ESCAPE:
-			k.add("Esc");
+			KonController.add("Esc");
 #if flash
 		case Keyboard.BACK:
-			k.add("Back");
+			KonController.add("Back");
 #end
 		case Keyboard.A:
-			k.add("A");
+			KonController.add("A");
 		}
 #if flash
 		if (u == Keyboard.BACK)
-			k.add("*Back");
+			KonController.add("*Back");
 #end
 	}
 
@@ -270,7 +251,7 @@ class KonsoleDemo extends Visel
 		if ((counter_ & 1) != 0)
 			s = "<b>" + s + "</b>";
 		s = "<p>" + s + "</p>";
-		k.add_Html(s);
+		KonController.add_Html(s);
 	}
 
 	function eat_Mem(v: Dynamic): Void
@@ -286,7 +267,7 @@ class KonsoleDemo extends Visel
 		}
 		catch (err: Dynamic)
 		{
-			k.add(err);
+			KonController.add(err);
 		}
 		try
 		{
@@ -294,7 +275,7 @@ class KonsoleDemo extends Visel
 		}
 		catch (err: Dynamic)
 		{
-			k.add(err);
+			KonController.add(err);
 		}
 	}
 
@@ -311,12 +292,12 @@ class KonsoleDemo extends Visel
 	function do_Command(ev: Dynamic): Void
 	{
 		var cmd = "/ruler";
-		k.eval(cmd);
+		KonController.eval(cmd);
 	}
 
 	function eval_Test(ev: Dynamic): Void
 	{
-		k.eval("2+3");
+		KonController.eval("2+3");
 	}
 
 	function log_Xml(v: Dynamic): Void
@@ -327,74 +308,71 @@ class KonsoleDemo extends Visel
 #else
 		var x = Xml.parse(s);
 #end
-		k.add(x);
+		KonController.add(x);
 	}
 
 	function log_Data(ev: Dynamic): Void
 	{
-		k.add("null:");
-		k.add(null);
+		KonController.add("null:");
+		KonController.add(null);
 
-		k.add("NaN:");
-		k.add(Math.sqrt( -1));
+		KonController.add("NaN:");
+		KonController.add(Math.sqrt( -1));
 
 		var b: Bool = true;
-		k.add("Bool:");
-		//k.add(Type.typeof(b));
-		k.add(b);
-		k.add(!b);
+		KonController.add("Bool:");
+		KonController.add(b);
+		KonController.add(!b);
 
 		var n: Int = 1100101;
-		k.add("Int:");
-		//k.add(Type.typeof(n));
-		k.add(n);
+		KonController.add("Int:");
+		KonController.add(n);
 
 
 		var u: UInt = 0xdeadbeaf;
-		k.add("UInt:");
-		k.add(Type.typeof(u));
-		k.add(u);
+		KonController.add("UInt:");
+		KonController.add(Type.typeof(u));
+		KonController.add(u);
 
 		var f: Float = 1. / 3;
-		k.add("Float:");
-		//k.add(Type.typeof(f));
-		k.add(f);
+		KonController.add("Float:");
+		KonController.add(f);
 
 		var ai: Array<Int> = [for (i in 1...41) i];
-		k.add("Array:");
-		k.add(ai);
+		KonController.add("Array:");
+		KonController.add(ai);
 
-		k.add("Vector<Int>:");
+		KonController.add("Vector<Int>:");
 		var vi: Vector<Int> = new Vector<Int>();
-		k.add(vi);
+		KonController.add(vi);
 		vi.push(1);
 		vi.push(8);
 		vi.push(2);
-		k.add(vi);
+		KonController.add(vi);
 
-		k.add("Vector<Float>:");
+		KonController.add("Vector<Float>:");
 		var vf: Vector<Float> = new Vector<Float>();
 		vf.push(f);
 		vf.push(f);
-		k.add(vf);
+		KonController.add(vf);
 
-		k.add("Vector<String>:");
+		KonController.add("Vector<String>:");
 		var vs: Vector<String> = new Vector<String>();
 		vs.push("foo");
 		vs.push("bar");
-		k.add(vs);
+		KonController.add(vs);
 
-		k.add("ByteArray:");
+		KonController.add("ByteArray:");
 		var ba: ByteArray = new ByteArray();
 		//ba.writeByte('0'.code);
 		//ba.writeByte('1'.code);
 		//k.add(ba);
 		for (i in 0...100)
 			ba.writeByte(i & 0xFF);
-		k.add(ba);
+		KonController.add(ba);
 
 		var ob: Dynamic = Json.parse('{"key1":[{"key2":5},67,null,"test"],"key3":[true,false]}');
-		k.add("Object:");
-		k.add(ob);
+		KonController.add("Object:");
+		KonController.add(ob);
 	}
 }

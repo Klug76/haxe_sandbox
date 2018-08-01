@@ -1,5 +1,7 @@
 package
 {
+	import com.gs.console.KonController;
+	import com.gs.console.KonsoleConfig;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -17,12 +19,20 @@ package
 		private function init(e:Event = null):void
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, init);
-			// entry point
+
+//:magic call
+//:sources here:
+//:\HaxeToolkit\haxe\std\flash\Boot.hx
+//:\HaxeToolkit\haxe\std\flash\Lib.hx
+//:\HaxeToolkit\haxe\std\haxe\Log.hx
+
 			haxe.initSwc(this);
 
-			trace(Foo.foo());
+			var cfg: KonsoleConfig = new KonsoleConfig();
+			KonController.start(stage, cfg);
+
 			var f: Number = 0.2 + 0.1;
-			trace(f.toPrecision(4));
+			Log(f.toPrecision(4));
 
 			foo(Keyboard.ESCAPE);
 			foo(Keyboard.BACK);
@@ -30,14 +40,14 @@ package
 
 		private function foo(u: uint): void
 		{
-			trace(u);
+			Log("u=" + u);
 			switch(u)
 			{
 			case Keyboard.ESCAPE:
-				trace("Esc");
+				Log("Esc");
 				break;
 			case Keyboard.BACK:
-				trace("Back");
+				Log("Back");
 				break;
 			}
 		}

@@ -44,6 +44,11 @@ class KonsoleConfig
 
 	public function new()
 	{
+
+	}
+
+	public function init(): Void
+	{
 		#if debug
 		{
 			if (!((max_lines_ > 0) && ((max_lines_ & (max_lines_ - 1)) == 0)))

@@ -8,7 +8,7 @@
     <movie fps="30" />
     <movie width="800" />
     <movie height="600" />
-    <movie version="19" />
+    <movie version="21" />
     <movie minorVersion="0" />
     <movie platform="Flash Player" />
     <movie background="#FFFFFF" />
@@ -20,9 +20,9 @@
   <!-- Build options -->
   <build>
     <option directives="" />
-    <option flashStrict="False" />
-    <option noInlineOnDebug="False" />
-    <option mainClass="Main" />
+    <option flashStrict="True" />
+    <option noInlineOnDebug="True" />
+    <option mainClass="com.gs.console.KonController" />
     <option enabledebug="True" />
     <option additional="" />
   </build>
@@ -43,9 +43,9 @@
     <hidden path="obj" />
   </hiddenPaths>
   <!-- Executed before build -->
-  <preBuildCommand>haxe -cp src -swf bin/hxlib.swc Foo</preBuildCommand>
+  <preBuildCommand>haxe -cp src -swf bin/hxlib.swc com.gs.console.KonController -lib hscript -swf-version 21.0 -dce no -D fdb -debug --macro include('com.gs')</preBuildCommand>
   <!-- Executed after build -->
-  <postBuildCommand alwaysRun="False">haxe -cp src -as3 as3_gen Foo</postBuildCommand>
+  <postBuildCommand alwaysRun="False" />
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />

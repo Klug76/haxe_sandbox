@@ -1,8 +1,9 @@
-haxe_swc_lib/as3_gen/
 *.swc
 *.swf
 as3_hx_swc/obj/
-haxe_as3_test/as3_gen/
+haxe_test/as3_gen/
+haxe_test/haxe_test.hxml
 openfl_test/Export/
 openfl_test/Source/com/
-haxe_as3_test/haxe_as3_test.hxml
+haxe_swc_lib/as3_gen/
+haxe_swc_lib/src/com/

@@ -4,7 +4,7 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="bin\haxeas3test.swf" />
+    <movie path="bin\haxetest.swf" />
     <movie fps="30" />
     <movie width="800" />
     <movie height="600" />
@@ -19,7 +19,7 @@
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="fdb-debug" />
+    <option directives="fdb" />
     <option flashStrict="True" />
     <option noInlineOnDebug="True" />
     <option mainClass="Main" />
