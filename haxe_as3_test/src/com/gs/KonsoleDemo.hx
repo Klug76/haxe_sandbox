@@ -64,7 +64,7 @@ class KonsoleDemo extends Visel
 		add_Tool_Button(0x0000c0, "~", toggle_Konsole);
 		add_Tool_Button(0x9C27B0, "test1", test1);
 		add_Tool_Button(0xDB4437, "test2", test2);
-		add_Tool_Button(0x3F51B5, "eat", eat_Mem);
+		add_Tool_Button(0x3F51B5, "+mem", eat_Mem);
 		add_Tool_Button(0x9C27B0, "err", log_Error);
 		add_Tool_Button(0xFF9800, "cmd", do_Command);
 		add_Tool_Button(0x3F51B5, "xml", log_Xml);
