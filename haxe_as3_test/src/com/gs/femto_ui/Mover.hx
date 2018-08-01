@@ -34,7 +34,7 @@ class Mover extends Visel
 		e.stopPropagation();
 		start_x_ = parent.x - e.stageX;
 		start_y_ = parent.y - e.stageY;
-		invalidate(Visel.INVALIDATION_FLAG_STATE);
+		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 		stage.addEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage, false, 1);
 		stage.addEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move_Stage, false, 1);
 	}
@@ -51,7 +51,7 @@ class Mover extends Visel
 		{
 			state_ &= ~Visel.STATE_DOWN;
 			e.stopPropagation();
-			invalidate(Visel.INVALIDATION_FLAG_STATE);
+			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 		}
 	}
 	//.............................................................................
@@ -77,14 +77,14 @@ class Mover extends Visel
 			return;
 		}
 		state_ |= Visel.STATE_HOVER;
-		invalidate(Visel.INVALIDATION_FLAG_STATE);
+		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 		addEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out);
 	}
 	//.............................................................................
 	private function on_Mouse_Out(e : MouseEvent) : Void
 	{
 		state_ &= ~Visel.STATE_HOVER;
-		invalidate(Visel.INVALIDATION_FLAG_STATE);
+		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 		removeEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out);
 	}
 	//.............................................................................

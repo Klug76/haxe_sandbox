@@ -47,6 +47,11 @@ class Util
 		return (x > y) ? x : y;
 	}
 //.............................................................................
+	public static inline function fabs(x: Float): Float
+	{
+		return (x < 0) ? -x: x;
+	}
+//.............................................................................
 	public static inline function toHex(n: Int, ?digits : Int): String
 	{
 		var s : String;

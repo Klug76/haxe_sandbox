@@ -116,6 +116,7 @@ class Viewport extends Visel
 //.............................................................................
 	public function activate() : Void
 	{
+		//:some sort of bring_To_Top()
 		if (stage != null)
 		{
 			stage.addChild(layer_);
@@ -189,7 +190,7 @@ class Viewport extends Visel
 		mover_.dummy_alpha = 0;
 		resizer_.min_width_ = min_content_width_ + Root.instance.small_tool_width_;
 		resizer_.min_height_ = min_content_height_;
-		invalidate(Visel.INVALIDATION_FLAG_DATA);
+		invalidate_Visel(Visel.INVALIDATION_FLAG_DATA);
 		return value;
 	}
 }

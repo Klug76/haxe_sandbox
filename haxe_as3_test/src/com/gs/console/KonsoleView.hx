@@ -137,7 +137,7 @@ class KonsoleView extends Viewport
 		if (visible)
 		{
 			add_Signals();
-			invalidate(Visel.INVALIDATION_FLAG_SCROLL);
+			invalidate_Visel(Visel.INVALIDATION_FLAG_SCROLL);
 		}
 	}
 //.............................................................................
@@ -160,7 +160,7 @@ class KonsoleView extends Viewport
 	private function on_Text_Scroll(e : Event) : Void
 	{
 		//trace("text::scroll " + text_field_.scrollV + " of " + text_field_.maxScrollV);
-		invalidate(Visel.INVALIDATION_FLAG_SCROLL);
+		invalidate_Visel(Visel.INVALIDATION_FLAG_SCROLL);
 	}
 //.............................................................................
 	private function on_Clear_Click(e : Event) : Void
@@ -246,7 +246,7 @@ class KonsoleView extends Viewport
 	}
 //.............................................................................
 //.............................................................................
-	override public function invalidate(flags : Int) : Void
+	override public function invalidate_Visel(flags : Int) : Void
 	{
 		invalid_flags_ |= flags;
 	}
@@ -340,7 +340,7 @@ class KonsoleView extends Viewport
 		{
 			text_field_.scrollV = text_field_.maxScrollV;
 		}
-		invalidate(Visel.INVALIDATION_FLAG_SCROLL);
+		invalidate_Visel(Visel.INVALIDATION_FLAG_SCROLL);
 	}
 	//.............................................................................
 	private function replace_Text(s : String) : Void
@@ -380,7 +380,7 @@ class KonsoleView extends Viewport
 			}
 #end
 		}
-		invalidate(Visel.INVALIDATION_FLAG_SCROLL);
+		invalidate_Visel(Visel.INVALIDATION_FLAG_SCROLL);
 	}
 //.............................................................................
 //.............................................................................
@@ -419,7 +419,7 @@ class KonsoleView extends Viewport
 	{
 		if (-1 == v)
 		{//:drag finish
-			invalidate(Visel.INVALIDATION_FLAG_SCROLL);
+			invalidate_Visel(Visel.INVALIDATION_FLAG_SCROLL);
 			return;
 		}
 		var max : Int = text_field_.maxScrollV;

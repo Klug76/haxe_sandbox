@@ -3,6 +3,7 @@ package com.gs.femto_ui;
 import flash.Lib;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
+import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.IEventDispatcher;
@@ -33,10 +34,11 @@ class Visel extends Sprite
 	public static inline var INVALIDATION_FLAG_SIZE : Int		= 1;
 	public static inline var INVALIDATION_FLAG_STATE : Int		= 2;
 	public static inline var INVALIDATION_FLAG_SKIN : Int		= 4;
-	public static inline var INVALIDATION_FLAG_DATA : Int		= 8;
-	public static inline var INVALIDATION_FLAG_ALIGN : Int		= 0x10;
-	public static inline var INVALIDATION_FLAG_SCROLL : Int		= 0x20;
-	public static inline var INVALIDATION_FLAG_HISTORY : Int	= 0x40;
+	public static inline var INVALIDATION_FLAG_ALIGN : Int		= 8;
+	public static inline var INVALIDATION_FLAG_SCROLL : Int		= 0x10;
+	public static inline var INVALIDATION_FLAG_HISTORY : Int	= 0x20;
+	public static inline var INVALIDATION_FLAG_DATA : Int		= 0x40;
+	public static inline var INVALIDATION_FLAG_DATA2 : Int		= 0x80;
 	public static inline var INVALIDATION_FLAG_ALL : Int		= ~0;
 
 	public var dummy_color_ : Int = 0;
@@ -92,7 +94,8 @@ class Visel extends Sprite
 			parent.removeChild(this);
 	}
 //.............................................................................
-	public function invalidate(flags : Int) : Void
+//openfl::DisplayObject have public function invalidate ():Void
+	public function invalidate_Visel(flags : Int) : Void
 	{
 		if (disposed)
 			return;
@@ -134,7 +137,7 @@ class Visel extends Sprite
 		{
 			width_ = w;
 			height_ = h;
-			invalidate(INVALIDATION_FLAG_SIZE);
+			invalidate_Visel(INVALIDATION_FLAG_SIZE);
 		}
 	}
 //.............................................................................
@@ -194,7 +197,7 @@ class Visel extends Sprite
 		if (width_ != w)
 		{
 			width_ = w;
-			invalidate(INVALIDATION_FLAG_SIZE);
+			invalidate_Visel(INVALIDATION_FLAG_SIZE);
 		}
 		#if (!flash) return value; #end
 	}
@@ -213,7 +216,7 @@ class Visel extends Sprite
 		if (height_ != h)
 		{
 			height_ = h;
-			invalidate(INVALIDATION_FLAG_SIZE);
+			invalidate_Visel(INVALIDATION_FLAG_SIZE);
 		}
 		#if (!flash) return value; #end
 	}
@@ -262,7 +265,7 @@ class Visel extends Sprite
 			else
 				state_ |= STATE_DISABLED;
 			mouseEnabled = mouseChildren = value;
-			invalidate(INVALIDATION_FLAG_STATE);
+			invalidate_Visel(INVALIDATION_FLAG_STATE);
 		}
 		return value;
 	}
@@ -285,7 +288,7 @@ class Visel extends Sprite
 				dummy_alpha_ = 1;
 			else
 				dummy_alpha_ = a / 255.;
-			invalidate(INVALIDATION_FLAG_SKIN);
+			invalidate_Visel(INVALIDATION_FLAG_SKIN);
 		}
 		return value;
 	}
@@ -299,7 +302,7 @@ class Visel extends Sprite
 		if (dummy_alpha_ != value)
 		{
 			dummy_alpha_ = value;
-			invalidate(INVALIDATION_FLAG_SKIN);
+			invalidate_Visel(INVALIDATION_FLAG_SKIN);
 		}
 		return value;
 	}
@@ -311,14 +314,15 @@ class Visel extends Sprite
 			//trace("ENTER label::super::draw(), ", width_, "x", height_, "flags=0x", invalid_flags_.toString(16));
 		if ((invalid_flags_ & (INVALIDATION_FLAG_SKIN | INVALIDATION_FLAG_SIZE | INVALIDATION_FLAG_STATE)) != 0)
 		{
-			graphics.clear();
+			var gr: Graphics = graphics;
+			gr.clear();
 			if ((dummy_alpha_ >= 0) && (width_ > 0) && (height_ > 0))
 			{
 				//if (1100101 === tag_)
 					//trace("label::fill(), ", width_, "x", height_, ", color=0x", dummy_color_.toString(16), "a=", dummy_alpha_);
-				graphics.beginFill(dummy_color_ & 0xffffff, dummy_alpha_);
-				graphics.drawRect(0, 0, width_, height_);
-				graphics.endFill();
+				gr.beginFill(dummy_color_ & 0xffffff, dummy_alpha_);
+				gr.drawRect(0, 0, width_, height_);
+				gr.endFill();
 			}
 		}
 	}

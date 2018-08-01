@@ -52,7 +52,7 @@ class Label extends Visel
 		if (text_ != value)
 		{
 			text_ = value;
-			invalidate(Visel.INVALIDATION_FLAG_DATA);
+			invalidate_Visel(Visel.INVALIDATION_FLAG_DATA);
 		}
 		return value;
 	}
@@ -66,7 +66,7 @@ class Label extends Visel
 		if (h_align != value)
 		{
 			align_ = (cast value: Int) | (align_ & 0xFF00);
-			invalidate(Visel.INVALIDATION_FLAG_ALIGN);
+			invalidate_Visel(Visel.INVALIDATION_FLAG_ALIGN);
 		}
 		return value;
 	}
@@ -81,7 +81,7 @@ class Label extends Visel
 		if (v_align != value)
 		{
 			align_ = (align_ & 0xFF) | ((cast value: Int) << 8);
-			invalidate(Visel.INVALIDATION_FLAG_ALIGN);
+			invalidate_Visel(Visel.INVALIDATION_FLAG_ALIGN);
 		}
 		return value;
 	}

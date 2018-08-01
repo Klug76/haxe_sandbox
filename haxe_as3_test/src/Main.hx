@@ -11,6 +11,7 @@ import haxe.unit.TestRunner;
 
 /*
 haxe -cp src -as3 as3_gen -swf-version 21.0 -D analyzer-optimize -main Main -dce full
+haxe -cp src -as3 as3_gen -swf-header 800:600:30:FFFFFF -swf-version 21.0 -D analyzer-optimize -main Main -dce full -lib hscript
 */
 
 class Main

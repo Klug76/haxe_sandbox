@@ -1,3 +1,7 @@
+. WTF: Parameter default value should be constant
+	. https://try.haxe.org/#60547
+. WTF: swtich(Keyboard.BACK)
+	. https://try.haxe.org/#ae27C
 .bug: html5 scrollbar may be messed up after resizing
 +.eval (hscript)
 +.clean-up in Fps|Mem Monitor
@@ -46,11 +50,14 @@ abstract GameColors( Int ) to Int from Int {
 +. openfl: can eat import flash.*
 
 +.html5 build
+	.BlendMode.INVERT in html5
 +.move console to html5
 	.https://github.com/tiagolr/dconsole.git
 .starling + custom 3d test
 .obfuscation: how? 
 
+==========================
+.in haxe: switch doesn't work with flash.ui.Keyboard
 ==========================
 adt:
 https://forum.starling-framework.org/topic/whats-the-best-adt-target-to-use-when-creating-ipa-file

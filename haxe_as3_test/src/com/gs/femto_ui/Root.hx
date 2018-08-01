@@ -30,6 +30,7 @@ class Root
 	public var color_scroller_	: Int = 0x414c74;
 	public var color_thumb_		: Int = 0x20207a;
 	public var color_updown_	: Int = 0x20407a;
+	public var color_bg_ruler_	: Int = 0x40000040;
 
     public var graph_width_ : Int = 256;
     //public var graph_width_: int = 16;

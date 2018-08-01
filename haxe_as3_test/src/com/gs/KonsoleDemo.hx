@@ -9,13 +9,20 @@ import com.gs.femto_ui.Toolbar;
 import com.gs.femto_ui.Visel;
 import com.gs.femto_ui.util.Util;
 import flash.Vector;
+import flash.display.Bitmap;
+import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
+import flash.display.Loader;
 import flash.display.Stage;
 import flash.errors.Error;
 import flash.events.Event;
+import flash.events.IOErrorEvent;
+import flash.events.SecurityErrorEvent;
+import flash.net.URLRequest;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
+import flash.ui.Keyboard;
 import flash.utils.ByteArray;
 import haxe.Json;
 import haxe.Timer;
@@ -30,6 +37,8 @@ class KonsoleDemo extends Visel
 	private var counter_: Int = 0;
 	private static var k: Konsole;
 	private var arr_: Array<Int>;
+	private var ruler_: Ruler;
+	private var asset_: Loader;
 
 	public function new(owner : DisplayObjectContainer)
 	{
@@ -38,13 +47,15 @@ class KonsoleDemo extends Visel
 		create_Children();
 	}
 
-	function create_Children()
+	function create_Children(): Void
 	{
 		var r: Root = Root.instance;
 
 		aux_ = new TextField();
 		aux_.autoSize = TextFieldAutoSize.LEFT;
 		aux_.defaultTextFormat = new TextFormat(null, Std.int(r.def_text_size_));
+
+		add_Bitmap_Asset();
 
 		tb_ = new Toolbar(this);
 		tb_.spacing_ = 6;
@@ -53,7 +64,7 @@ class KonsoleDemo extends Visel
 		add_Tool_Button(0x0000c0, "~", toggle_Konsole);
 		add_Tool_Button(0x9C27B0, "test1", test1);
 		add_Tool_Button(0xDB4437, "test2", test2);
-		add_Tool_Button(0x3F51B5, "eat", eat_Mem);
+		add_Tool_Button(0x3F51B5, "+mem", eat_Mem);
 		add_Tool_Button(0x9C27B0, "err", log_Error);
 		add_Tool_Button(0xFF9800, "cmd", do_Command);
 		add_Tool_Button(0x3F51B5, "xml", log_Xml);
@@ -63,12 +74,46 @@ class KonsoleDemo extends Visel
 
 		k.register_Command("foo", cmd_Foo, "test command");
 		k.register_Command("zoo", cmd_Zoo, "test command #2");
+		k.register_Command("ruler", cmd_Ruler, "show display ruler");
 
 
 		stage.addEventListener(Event.RESIZE, on_Stage_Resize);
 		stage.addEventListener(Event.ACTIVATE, on_Stage_Activate);
 		stage.addEventListener(Event.DEACTIVATE, on_Stage_Deactivate);
- 		invalidate(Visel.INVALIDATION_FLAG_SIZE);
+ 		invalidate_Visel(Visel.INVALIDATION_FLAG_SIZE);
+	}
+
+	function add_Bitmap_Asset(): Void
+	{
+		var uri: String = "https://fishgame.staticgs.com/thumb/collect/steam1.jpg";
+		asset_ = new Loader();
+		asset_.contentLoaderInfo.addEventListener(Event.COMPLETE, load_Complete_Handler);
+		asset_.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, load_Error_Handler);
+		asset_.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, load_Error_Handler);
+		var rq: URLRequest = new URLRequest(uri);
+		asset_.load(rq);
+	}
+
+	private function load_Complete_Handler(e: Event): Void
+	{
+		//k.add("OK");
+		asset_Cleanup();
+		var b: DisplayObject = asset_.content;
+		b.x = 250;
+		b.y = 100;
+		addChild(b);
+	}
+
+	private function load_Error_Handler(e: Event): Void
+	{
+		k.add(e.toString());
+	}
+
+	private function asset_Cleanup(): Void
+	{
+		asset_.contentLoaderInfo.removeEventListener(Event.COMPLETE, load_Complete_Handler);
+		asset_.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, load_Error_Handler);
+		asset_.contentLoaderInfo.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, load_Error_Handler);
 	}
 
 	function toggle_Konsole(v: Dynamic): Void
@@ -95,7 +140,7 @@ class KonsoleDemo extends Visel
 
 	private function on_Stage_Resize(e: Event): Void
 	{
-		invalidate(Visel.INVALIDATION_FLAG_SIZE);
+		invalidate_Visel(Visel.INVALIDATION_FLAG_SIZE);
 	}
 
 	private function on_Stage_Activate(e: Event): Void
@@ -124,7 +169,7 @@ class KonsoleDemo extends Visel
 		}
 	}
 
-	public static function create_UI(stage: Stage) : Void
+	public static function create_UI(stage: Stage): Void
 	{
 		var r: Root = Root.create(stage);
 
@@ -148,6 +193,17 @@ class KonsoleDemo extends Visel
 		k.add("command::zoo()");
 	}
 
+	private function cmd_Ruler(dummy: Array<String>): Void
+	{
+		if (ruler_ != null)
+		{
+			ruler_.visible = !ruler_.visible;
+			return;
+		}
+		ruler_ = new Ruler(k);
+		k.add("show ruler");
+	}
+
 	function test1(v: Dynamic): Void
 	{
 		add_Counter();
@@ -159,7 +215,34 @@ class KonsoleDemo extends Visel
 		k.add("1 < 2 & 6\n  4 > 1 & 0");
 		k.add("\n");
 		k.add('');
+		foo(Keyboard.ESCAPE);
+#if flash
+		foo(Keyboard.BACK);
+		foo(Keyboard.BACK);
+#end
+		foo(Keyboard.A);
+		k.add('');
 		Timer.delay(append_Test1, 100);
+	}
+
+	private function foo(u: UInt): Void
+	{
+		k.add(u);
+		switch(u)
+		{
+		case Keyboard.ESCAPE:
+			k.add("Esc");
+#if flash
+		case Keyboard.BACK:
+			k.add("Back");
+#end
+		case Keyboard.A:
+			k.add("A");
+		}
+#if flash
+		if (u == Keyboard.BACK)
+			k.add("*Back");
+#end
 	}
 
 
@@ -215,19 +298,19 @@ class KonsoleDemo extends Visel
 		}
 	}
 
-	function throw_Error()
+	function throw_Error(): Void
 	{
 		throw new Error("flash::error");
 	}
 
-	function throw_String()
+	function throw_String(): Void
 	{
 		throw "string::error";
 	}
 
 	function do_Command(ev: Dynamic): Void
 	{
-		var cmd = "/foo";
+		var cmd = "/ruler";
 		k.eval(cmd);
 	}
 

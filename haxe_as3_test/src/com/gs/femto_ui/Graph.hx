@@ -13,6 +13,8 @@ import flash.text.TextFieldAutoSize;
 import flash.text.TextFieldType;
 import flash.text.TextFormat;
 
+using com.gs.femto_ui.TextFieldExt;
+
 //see
 //https://github.com/MindScriptAct/Advanced-hi-res-stats.git
 //https://github.com/mrdoob/Hi-ReS-Stats
@@ -80,8 +82,8 @@ class Graph extends Visel
 	{
 		if ((state_ & Visel.STATE_ACTIVE) != 0)
 		{
-			trace("******** Graph::redraw");
-			invalidate(Visel.INVALIDATION_FLAG_HISTORY);
+			//trace("******** Graph::redraw");
+			invalidate_Visel(Visel.INVALIDATION_FLAG_HISTORY);
 			return;
 		}
 		start();
@@ -113,7 +115,7 @@ class Graph extends Visel
 		r.frame_signal_.remove(on_Enter_Frame);
 	}
 //.............................................................................
-	override public function invalidate(flags : Int) : Void
+	override public function invalidate_Visel(flags : Int) : Void
 	{
 		invalid_flags_ |= flags;
 		//:no super.invalidate
@@ -189,7 +191,7 @@ class Graph extends Visel
 //.............................................................................
 	public function redraw_History() : Void
 	{
-		trace("Graph::redraw_History");
+		//trace("Graph::redraw_History");
 		var h : Int = history_.head;
 		var t : Int = history_.tail;
 		for (i in h...t)
@@ -210,19 +212,7 @@ class Graph extends Visel
 //.............................................................................
 	public function add_Text_Field(calc: String, def: String, fmt: TextFormat): TextField
 	{
-		var tf: TextField = new TextField();
-		tf.type = TextFieldType.DYNAMIC;
-		tf.defaultTextFormat = fmt;
-		tf.selectable = false;
-		tf.mouseEnabled = false;
-		tf.autoSize = TextFieldAutoSize.LEFT;
-		tf.text = calc;
-		var tw: Int = Math.round(tf.width + 1);
-		var th: Int = Math.round(tf.height + 1);
-		tf.autoSize = TextFieldAutoSize.NONE;
-		tf.width = tw;
-		tf.height = th;
-		tf.text = def;
+		var tf: TextField = TextField.create_Fixed_Text_Field(calc, def, fmt);
 		addChild(tf);
 		return tf;
 	}
