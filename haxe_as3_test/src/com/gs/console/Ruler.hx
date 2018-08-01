@@ -1,4 +1,5 @@
-package com.gs;
+package com.gs.console;
+
 import com.gs.console.Konsole;
 import com.gs.femto_ui.Root;
 import com.gs.femto_ui.Visel;

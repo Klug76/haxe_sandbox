@@ -3,6 +3,7 @@ package com.gs;
 import com.gs.console.Konsole;
 import com.gs.console.KonsoleConfig;
 import com.gs.console.KonsoleView;
+import com.gs.console.Ruler;
 import com.gs.femto_ui.Button;
 import com.gs.femto_ui.Root;
 import com.gs.femto_ui.Toolbar;
@@ -75,7 +76,6 @@ class KonsoleDemo extends Visel
 		k.register_Command("foo", cmd_Foo, "test command");
 		k.register_Command("zoo", cmd_Zoo, "test command #2");
 		k.register_Command("ruler", cmd_Ruler, "show display ruler");
-
 
 		stage.addEventListener(Event.RESIZE, on_Stage_Resize);
 		stage.addEventListener(Event.ACTIVATE, on_Stage_Activate);
