@@ -7,3 +7,6 @@ openfl_test/Export/
 openfl_test/Source/com/
 haxe_swc_lib/as3_gen/
 haxe_swc_lib/src/com/
+test3d/bat/SetupSDK.bat
+test3d/src/com/
+test3d/obj/

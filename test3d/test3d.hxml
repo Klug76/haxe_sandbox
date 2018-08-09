@@ -1,0 +1,9 @@
+-lib air3
+-lib hscript
+-lib hxsl
+-cp src
+-cp hxsl
+-swf bin/test3d.swf
+-swf-header 800:600:30:004000
+-swf-version 25.0
+-main Main

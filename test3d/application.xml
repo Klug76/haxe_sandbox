@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<application xmlns="http://ns.adobe.com/air/application/25.0">
+
+	<id>test3d</id>
+	<versionNumber>1.0</versionNumber>
+	<filename>test3d</filename>
+	<supportedProfiles>mobileDevice</supportedProfiles>
+	<name>test3d</name>
+	<description></description>
+	<copyright></copyright>
+
+	<initialWindow>
+		<title>test3d</title>
+		<content>test3d.swf</content>
+		<visible>true</visible>
+		<renderMode>direct</renderMode>
+		<depthAndStencil>true</depthAndStencil>
+		<systemChrome>standard</systemChrome>
+		<fullScreen>true</fullScreen>
+		<autoOrients>true</autoOrients>
+		<aspectRatio>landscape</aspectRatio>
+	</initialWindow>
+
+	<!--
+	More options:
+	http://livedocs.adobe.com/flex/3/html/File_formats_1.html#1043413
+	-->
+</application>
