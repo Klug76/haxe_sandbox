@@ -149,10 +149,10 @@ class CmdLine extends Edit
 		}
 		if (!history_.is_Empty() && (history_.back == s))
 		{
-			trace("already in history: " + s);
+			//trace("already in history: " + s);
 			return;
 		}
-		trace("history.push: " + s);
+		//trace("history.push: " + s);
 		history_.push(s);
 	}
 	//.............................................................................

@@ -19,11 +19,11 @@ class Toolbar extends Visel
 	//.............................................................................
 	override public function draw() : Void
 	{
+		super.draw();
 		if ((invalid_flags_ & Visel.INVALIDATION_FLAG_SIZE) != 0)
 		{
 			update_Layout();
 		}
-		super.draw();
 	}
 	//.............................................................................
 	public function update_Layout() : Void

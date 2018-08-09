@@ -1,7 +1,9 @@
 package com.gs.console;
 
+import com.gs.femto_ui.Root;
 import com.gs.femto_ui.Signal;
 import com.gs.femto_ui.util.RingBuf;
+import flash.Lib;
 import flash.Vector;
 import flash.desktop.Clipboard;
 import flash.desktop.ClipboardFormats;
@@ -17,9 +19,9 @@ class Konsole extends RingBuf<LogLine>
 	private var default_view_class_ : Class<Dynamic>;
 	private var default_view_ : DisplayObject = null;
 
-	public var cmd_map_ : Map<String, Command> = new Map<String, Command>();
+	public var map_cmd_ : Map<String, Command> = new Map<String, Command>();
+	public var vec_obj_ : Vector<EvalObject> = new Vector<EvalObject>();
 	public var cfg_ : KonsoleConfig;
-	public var stage_ : Stage = null;
 
 	public var signal_show_: Signal = new Signal();
 
@@ -39,31 +41,40 @@ class Konsole extends RingBuf<LogLine>
 	private function init_Ex() : Void
 	{
 		data_[0] = new LogLine();//:prealloc
+
+		register_Object("Math", Math);
+#if flash
+		register_Object("Number", untyped __global__["Number"]);
+#end
+
 		register_Command("commands", list_All_Commands, "Show a list of all slash commands");
+		register_Command("objects", list_All_Objects, "Show a list of all eval objects");
 	}
 //.............................................................................
 	public function register_Command(cmd : String, f : Array<String>->Void, hint : String = null) : Void
 	{
 		#if debug
 		{
-			if (cmd_map_.exists(cmd))
+			if (map_cmd_.exists(cmd))
 			{
 				throw "command " + cmd + " already exist";
 			}
 		}
 		#end
 		var c: Command = new Command(f, hint);
-		cmd_map_.set(cmd, c);
+		map_cmd_.set(cmd, c);
 	}
 //.............................................................................
 	public function register_Object(name : String, obj: Dynamic) : Void
 	{
-		get_Eval().register_Object(name, obj);
+		vec_obj_.push(new EvalObject(name, obj));
+		if (eval_ != null)
+			eval_.register_Object(name, obj);
 	}
 //.............................................................................
-	public function start(stage : Stage) : Void
+	public function start() : Void
 	{
-		stage_ = stage;
+		var stage: Stage = Root.instance.stage_;
 		stage.addEventListener(KeyboardEvent.KEY_DOWN, on_Key_Down_Stage, false, 1);
 		stage.addEventListener(KeyboardEvent.KEY_UP, on_Key_Up_Stage, false, 1);
 	}
@@ -78,7 +89,7 @@ class Konsole extends RingBuf<LogLine>
 		var s: String = StrUtil.dump_Dynamic(v);
 		if (null == s)
 			s = "";
-		trace(s);
+		Lib.trace(s);
 		var it : LogLine = add_Line();
 		it.html_ = null;
 		it.text_ = s;
@@ -88,11 +99,27 @@ class Konsole extends RingBuf<LogLine>
 //html must be in simple format surrounded by <p> tag
 	public function add_Html(html : String) : Void
 	{
+		if (!validate_Html(html))
+		{
+			add("WARNING: unsupported or bad html:");
+			add(html);
+			return;
+		}
 		var s : String = StrUtil.strip_Tags(html);
 		s = StrUtil.remove_Last_Lf(s);  //:remove last </p>=>\n
-		trace(s);  //:will add \n
+		Lib.trace(s);//:will add \n
 		var it : LogLine = add_Line();
 		it.html_ = html;
+	}
+//.............................................................................
+	private function validate_Html(s : String) : Bool
+	{//:perform very simple validation
+		var len: Int = s.length;
+		if ((null == s) || (len <= 0))
+			return false;
+		if ((s.indexOf("<p>") != 0) && (s.lastIndexOf("</p>") != len - 4))
+			return false;
+		return true;
 	}
 //.............................................................................
 //.............................................................................
@@ -190,22 +217,23 @@ class Konsole extends RingBuf<LogLine>
 		if (null == eval_)
 		{
 			eval_ = new Eval();
-			//eval_.const_context_ =
-					//{
-						//Number : Float,
-						//Math : Math
-					//};
+			var count: Int = vec_obj_.length;
+			for (i in 0...count)
+			{
+				var it: EvalObject = vec_obj_[i];
+				eval_.register_Object(it.name_, it.obj_);
+			}
 		}
 		return eval_;
 	}
 //.............................................................................
-	private function eval_Command(s : String) : Bool
+	public function eval_Command(s : String) : Bool
 	{
 		var arr: Array<String> = s.split(' ');
 		var cmd : String = arr[0];
-		if (cmd_map_.exists(cmd))
+		if (map_cmd_.exists(cmd))
 		{
-			var it: Command = cmd_map_[cmd];
+			var it: Command = map_cmd_[cmd];
 			var f: Array<String>->Void = it.func_;
 			arr.shift();
 			f(arr);
@@ -214,25 +242,33 @@ class Konsole extends RingBuf<LogLine>
 		return false;
 	}
 //.............................................................................
+	public function have_Command(cmd : String) : Bool
+	{
+		return map_cmd_.exists(cmd);
+	}
+//.............................................................................
 //.............................................................................
 //.............................................................................
 //.............................................................................
 	private function list_All_Commands(dummy: Array<String>) : Void
 	{
-		var fnt: String = " <font color='#" + cfg_.con_hint_color_ + "'>";
+		var fnt_open: String = "<font color='#" + cfg_.con_hint_color_ + "'>";
+		var fnt_close: String = "</font>";
 		var s : String = "<p>command list:</p>";
 		var v : Vector<String> = new Vector<String>();
-		for (key in cmd_map_.keys())
+		for (key in map_cmd_.keys())
 		{
-			var it: Command = cmd_map_[key];
+			var it: Command = map_cmd_[key];
 			var t : String = "<p>/";
 			t += key;
 			if (it.hint_ != null)
 			{
-				t += fnt;
+				t += ' ';
+				t += fnt_open;
 				t += it.hint_;
-				t += "</font></p>";
+				t += fnt_close;
 			}
+			t += "</p>";
 			v.push(t);
 		}
 		v.sort(sort_Ascending);  //:Array.ascending not defined but mentioned in help
@@ -247,6 +283,25 @@ class Konsole extends RingBuf<LogLine>
 		return 0;
 	}
 //.............................................................................
+//.............................................................................
+	private function list_All_Objects(dummy: Array<String>) : Void
+	{
+		var fnt: String = " <font color='#" + cfg_.con_hint_color_ + "'>";
+		var s : String = "<p>object list:</p>";
+		var v : Vector<String> = new Vector<String>();
+		var count: Int = vec_obj_.length;
+		for (i in 0...count)
+		{
+			var it: EvalObject = vec_obj_[i];
+			var t : String = "<p>";
+			t += it.name_;
+			t += "</p>";
+			v.push(t);
+		}
+		v.sort(sort_Ascending);  //:Array.ascending not defined but mentioned in help
+		s += v.join("");
+		add_Html(s);
+	}
 //.............................................................................
 //.............................................................................
 	public function copy() : Void
@@ -275,16 +330,33 @@ class Konsole extends RingBuf<LogLine>
 		default_view_class_ = viewClass;
 	}
 //.............................................................................
-	public function toggle_View() : Void
+//.............................................................................
+	public var visible (get, set) : Bool;
+	public function get_visible(): Bool
 	{
-		if (null == default_view_)
+		if (default_view_ != null)
+			return default_view_.visible;
+		return false;
+	}
+	public function set_visible(value: Bool): Bool
+	{
+		if (value)
 		{
-			default_view_ = Type.createInstance(default_view_class_, [this]);
+			if (null == default_view_)
+			{
+				default_view_ = Type.createInstance(default_view_class_, [this]);
+				signal_show_.fire();
+				return value;
+			}
+			default_view_.visible = true;
 			signal_show_.fire();
-			return;
 		}
-		default_view_.visible = !default_view_.visible;
-		signal_show_.fire();
+		else
+		{
+			if (default_view_ != null)
+				default_view_.visible = false;
+		}
+		return value;
 	}
 //.............................................................................
 //.............................................................................
@@ -312,7 +384,7 @@ class Konsole extends RingBuf<LogLine>
 				++password_idx_;
 				if (password_idx_ == cfg_.password_.length)
 				{
-					toggle_View();
+					visible = true;//?
 					password_idx_ = 0;
 				}
 				return;
@@ -324,7 +396,7 @@ class Konsole extends RingBuf<LogLine>
 		{
 			case 0xc0:
 				e.preventDefault();
-				toggle_View();
+				visible = !visible;
 		}
 	}
 }
@@ -338,5 +410,16 @@ class Command
 	{
 		func_ = f;
 		hint_ = h;
+	}
+}
+class EvalObject
+{
+	public var name_: String;
+	public var obj_: Dynamic;
+
+	public function new(name: String, obj: Dynamic)
+	{
+		name_ = name;
+		obj_ = obj;
 	}
 }

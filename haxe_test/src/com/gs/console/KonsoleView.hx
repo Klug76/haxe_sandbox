@@ -28,6 +28,7 @@ class KonsoleView extends Viewport
 	private var cmdline_ : CmdLine;
 	private var fps_view_ : Viewport;
 	private var mem_view_ : Viewport;
+	private var ruler_: Ruler;
 
 	private var k_ : Konsole;
 	private var start_head_: Int = 0;
@@ -37,7 +38,7 @@ class KonsoleView extends Viewport
 	public function new(k : Konsole)
 	{
 		k_ = k;
-		super(k_.stage_);
+		super(Root.instance.stage_);
 		//:super.visible = false;
 		create_Children_Ex();
 	}
@@ -48,6 +49,7 @@ class KonsoleView extends Viewport
 
 		resize(k_.cfg_.width_, k_.cfg_.height_);
 		dummy_color = k_.cfg_.con_bg_color_;
+		alpha = k_.cfg_.con_bg_alpha_;
 
 #if flash
 		aux_ = new TextField();
@@ -99,25 +101,33 @@ class KonsoleView extends Viewport
 		toolbar_.height = r.tool_height_;
 		toolbar_.x = r.tool_width_ + r.tool_spacing_;
 
-		var b : Button;
+		function spawn_Button(text: String, callback: Dynamic->Void, color: UInt = 0)
+		{
+			var b : Button = new Button(toolbar_, text, callback);
+			b.resize(r.btn_width_, r.tool_height_);
+			b.dummy_color = (color != 0) ? color : k_.cfg_.btn_tool_color_;
+			return b;
+		}
+		btn_copy_ = spawn_Button("copy", on_Copy_Click, k_.cfg_.btn_copy_color_);
 
-		b = new Button(toolbar_, "copy", on_Copy_Click);
-		b.dummy_color = k_.cfg_.btn_copy_color_;
-		b.resize(r.btn_width_, r.tool_height_);
-		btn_copy_ = b;
+		if (k_.have_Command("send"))
+		{
+			spawn_Button("send", on_Send_Click, k_.cfg_.btn_copy_color_);
+		}
 
-		b = new Button(toolbar_, "fps", on_Fps_Click);
-		b.dummy_color = k_.cfg_.btn_fps_color_;
-		b.resize(r.btn_width_, r.tool_height_);
+		spawn_Button("fps", on_Fps_Click);
 
-		b = new Button(toolbar_, "mem", on_Mem_Click);
-		b.dummy_color = k_.cfg_.btn_mem_color_;
-		b.resize(r.btn_width_, r.tool_height_);
+		spawn_Button("mem", on_Mem_Click);
 
-		b = new Button(toolbar_, "clear", on_Clear_Click);
-		b.dummy_color = k_.cfg_.btn_clear_color_;
-		b.resize(r.btn_width_, r.tool_height_);
-		btn_clear_ = b;
+		if (k_.have_Command("tree"))
+		{
+			spawn_Button("tree", on_Tree_Click);
+		}
+		if (k_.have_Command("ruler"))
+		{
+			spawn_Button("ruler", on_Ruler_Click);
+		}
+		btn_clear_ = spawn_Button("clear", on_Clear_Click, k_.cfg_.btn_clear_color_);
 
 		cmdline_ = new CmdLine(this, k_);
 		cmdline_.y = height_ - k_.cfg_.cmd_height_;
@@ -201,6 +211,21 @@ class KonsoleView extends Viewport
 		mem_view_.visible = !mem_view_.visible;
 	}
 //.............................................................................
+	private function on_Send_Click(e : Event) : Void
+	{
+		k_.eval_Command("send");
+	}
+//.............................................................................
+	private function on_Tree_Click(e : Event) : Void
+	{
+		k_.eval_Command("tree");
+	}
+//.............................................................................
+	private function on_Ruler_Click(e : Event) : Void
+	{
+		k_.eval_Command("ruler");
+	}
+//.............................................................................
 //.............................................................................
 	override public function on_Show() : Void
 	{
@@ -218,6 +243,7 @@ class KonsoleView extends Viewport
 //.............................................................................
 	override public function draw() : Void
 	{
+		super.draw();//:may resize
 		if ((invalid_flags_ & Visel.INVALIDATION_FLAG_SIZE) != 0)
 		{
 			var r : Root = Root.instance;
@@ -238,11 +264,10 @@ class KonsoleView extends Viewport
 			cmdline_.y = height_ - k_.cfg_.cmd_height_;
 			cmdline_.width = width_ - r.small_tool_width_ - r.spacing_;
 		}
-		else if ((invalid_flags_ & Visel.INVALIDATION_FLAG_SCROLL) != 0)
-		{//:INVALIDATION_FLAG_SCROLL frame after INVALIDATION_FLAG_SIZE
+		else if ((invalid_flags_ & Visel.INVALIDATION_FLAG_SCROLL) != 0)//:see on_Enter_Frame
+		{//:INVALIDATION_FLAG_SCROLL frame should be after INVALIDATION_FLAG_SIZE
 			update_Controls();
 		}
-		super.draw();
 	}
 //.............................................................................
 //.............................................................................

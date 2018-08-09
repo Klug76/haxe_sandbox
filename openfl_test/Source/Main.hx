@@ -48,6 +48,7 @@ class Main extends Sprite
 
 	}
 
+	/*
 	function test2()
 	{
 		var r: Root = Root.create(stage);
@@ -91,13 +92,12 @@ class Main extends Sprite
 		if (!vp.visible)
 			vp.visible = true;
 	}
+	*/
 
 	function test3()
 	{
-		var r: Root = Root.create(stage);
-
 		tf_ = new TextField();
-		stage.addChild(tf_);
+		addChild(tf_);
 		tf_.x = 10;
 		tf_.y = 20;
 		tf_.htmlText = "1<br>";
@@ -106,7 +106,7 @@ class Main extends Sprite
 		tf_.htmlText += "<p>2</p>";
 		tf_.htmlText += "<p>1</p><p>2</p>";
 
-		KonsoleDemo.create_UI(stage);
+		KonsoleDemo.create_UI(this);
 	}
 
 

@@ -26,16 +26,24 @@ package
 //:\HaxeToolkit\haxe\std\flash\Lib.hx
 //:\HaxeToolkit\haxe\std\haxe\Log.hx
 
+//:why is MovieClip? used stage property only
+
 			haxe.initSwc(this);
 
 			var cfg: KonsoleConfig = new KonsoleConfig();
-			KonController.start(stage, cfg);
+
+			cfg.con_bg_color_ = 0xFF000000;
+			cfg.con_text_color_ = 0x77BB77;
+			cfg.con_text_size_ = 18;
+
+			KonController.start(this, cfg);
 
 			var f: Number = 0.2 + 0.1;
 			Log(f.toPrecision(4));
 
 			foo(Keyboard.ESCAPE);
 			foo(Keyboard.BACK);
+			var b: Boolean = KonController.visible;
 		}
 
 		private function foo(u: uint): void

@@ -8,7 +8,7 @@
     <movie fps="30" />
     <movie width="800" />
     <movie height="600" />
-    <movie version="21" />
+    <movie version="29" />
     <movie minorVersion="0" />
     <movie platform="Flash Player" />
     <movie background="#FFFFFF" />
@@ -43,7 +43,7 @@
     <hidden path="obj" />
   </hiddenPaths>
   <!-- Executed before build -->
-  <preBuildCommand>haxe -cp src -swf bin/hxlib.swc com.gs.console.KonController -lib hscript -swf-version 21.0 -dce no -D fdb -debug --macro include('com.gs')</preBuildCommand>
+  <preBuildCommand>haxe -cp src -swf bin/hxcon.swc com.gs.console.KonController -lib hscript -swf-version 22 -dce no -D fdb -debug --macro include('com.gs')</preBuildCommand>
   <!-- Executed after build -->
   <postBuildCommand alwaysRun="False" />
   <!-- Other project options -->

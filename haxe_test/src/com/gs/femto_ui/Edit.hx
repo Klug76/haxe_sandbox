@@ -53,12 +53,12 @@ class Edit extends Visel
 //.............................................................................
 	override public function draw() : Void
 	{
+		super.draw();
 		if ((invalid_flags_ & Visel.INVALIDATION_FLAG_SIZE) != 0)
 		{
 			tf_.width = width_;
 			tf_.height = height_;
 		}
-		super.draw();
 	}
 //.............................................................................
 	public function set_Focus() : Void

@@ -57,6 +57,7 @@ class MemMonitor extends Graph
 	override public function draw() : Void
 	{
 		update_Text();
+		super.draw();
 		if ((invalid_flags_ & Visel.INVALIDATION_FLAG_SIZE) != 0)
 		{
 			tf_.x = width_ - tf_.width;
@@ -72,7 +73,6 @@ class MemMonitor extends Graph
 			graph_.scroll(-1, 0);
 			draw_Column(graph_width_ - 1, normalize(mem_));
 		}
-		super.draw();
 	}
 //.............................................................................
 	private function update_Text() : Void

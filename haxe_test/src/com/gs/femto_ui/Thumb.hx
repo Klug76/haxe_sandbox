@@ -25,6 +25,7 @@ class Thumb extends Visel
 	//.............................................................................
 	private function on_Mouse_Down(e : MouseEvent) : Void
 	{
+		e.stopPropagation();
 		if ((state_ & Visel.STATE_DRAG) != 0)
 		{
 			return;
@@ -32,11 +33,10 @@ class Thumb extends Visel
 		var p : Scrollbar = Lib.as(parent, Scrollbar);
 		var nh : Float = Math.floor(p.height - height_);
 		if (nh <= 0)
-		{
+		{//:unable to drag
 			return;
-		}  //:unable to drag
+		}
 		state_ |= Visel.STATE_DRAG;
-		e.stopPropagation();
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 		stage.addEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage, false, 1);
 		stage.addEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move_Stage, false, 1);
@@ -54,11 +54,11 @@ class Thumb extends Visel
 	private function on_Mouse_Up_Stage(e : MouseEvent) : Void
 	//trace("thumb::mouse up");
 	{
-
 		stage.removeEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage);
 		if ((state_ & Visel.STATE_DRAG) != 0)
 		{
 			state_ &= ~Visel.STATE_DRAG;
+			e.stopPropagation();
 			stopDrag();
 			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 			var p : Scrollbar = Lib.as(parent, Scrollbar);

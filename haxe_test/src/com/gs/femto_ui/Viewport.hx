@@ -4,6 +4,7 @@ import flash.Lib;
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 import flash.display.Stage;
+import flash.display.StageScaleMode;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
@@ -19,12 +20,12 @@ class Viewport extends Visel
 	private var min_content_height_ : Float;
 	static private var layer_: Sprite = null;
 
-	public function new(st : Stage)
+	public function new(stg : Stage)
 	{
 		if (null == layer_)
 		{
 			layer_ = new Sprite();
-			st.addChild(layer_);
+			stg.addChild(layer_);
 		}
 		super(layer_);
 		create_Children();
@@ -70,23 +71,34 @@ class Viewport extends Visel
 	private function add_Listeners() : Void
 	{
 		stage.addEventListener(Event.RESIZE, on_Stage_Resize);
-		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down, true, 100);
+		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down_Phase0, true, 100);
+		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
 	}
 //.............................................................................
 	private function remove_Listeners() : Void
 	{
 		stage.removeEventListener(Event.RESIZE, on_Stage_Resize);
-		removeEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down, true);
+		removeEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down_Phase0, true);
+		removeEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
 	}
 //.............................................................................
-	private function on_Mouse_Down(e: Event): Void
+	private function on_Mouse_Down_Phase0(ev: Event): Void
 	{
+		//trace("Viewport::on_Mouse_Down_Phase0, target=" + ev.target);
 		activate();
 	}
 //.............................................................................
-	private function on_Stage_Resize(e: Event): Void
+	private function on_Mouse_Down(ev: MouseEvent): Void
 	{
-		safe_Position();
+		//trace("Viewport::on_Mouse_Down, target=" + ev.target);
+		ev.stopPropagation();
+	}
+//.............................................................................
+//.............................................................................
+	private function on_Stage_Resize(ev: Event): Void
+	{
+		//?if (StageScaleMode.NO_SCALE == stage.scaleMode)
+		invalidate_Visel(Visel.INVALIDATION_FLAG_STAGE_SIZE);
 	}
 //.............................................................................
 	private function safe_Position() : Void
@@ -97,18 +109,23 @@ class Viewport extends Visel
 		var stage_y: Float = stage.y;
 		var stage_w: Float = stage.stageWidth;
 		var stage_h: Float = stage.stageHeight;
-		if (x < stage_x)
-			x = stage_x;
-		else if (x + min_w > stage_x + stage_w)
-			x = stage_x + stage_w - min_w;
-		if (y < stage_y)
-			y = stage_y;
-		else if (y + min_h > stage_y + stage_h)
-			y = stage_y + stage_h - min_h;
-		if (width_ > stage_w)
-			width = stage_w;
-		if (height_ > stage_h)
-			height = stage_h;
+		var nx: Float = x;
+		var ny: Float = y;
+		var nw: Float = width_;
+		var nh: Float = height_;
+		if (nw > stage_w)
+			nw = stage_w;
+		if (nh > stage_h)
+			nh = stage_h;
+		if (nx < stage_x)
+			nx = stage_x;
+		else if (nx + min_w > stage_x + stage_w)
+			nx = stage_x + stage_w - min_w;
+		if (ny < stage_y)
+			ny = stage_y;
+		else if (ny + min_h > stage_y + stage_h)
+			ny = stage_y + stage_h - min_h;
+		movesize(nx, ny, nw, nh);
 	}
 //.............................................................................
 //.............................................................................
@@ -143,6 +160,10 @@ class Viewport extends Visel
 //.............................................................................
 	override public function draw() : Void
 	{
+		if ((invalid_flags_ & Visel.INVALIDATION_FLAG_STAGE_SIZE) != 0)
+		{
+			safe_Position();
+		}
 		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_SIZE | Visel.INVALIDATION_FLAG_DATA)) != 0)
 		{
 			resizer_.x = width_ - resizer_.width;

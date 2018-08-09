@@ -10,11 +10,6 @@ class Eval
 
 	public function new()
 	{
-		register_Object("Math", Math);
-#if flash
-		register_Object("Number", untyped __global__["Number"]);
-#end
-		//TODO add reset command!?
 	}
 //.............................................................................
 	public function register_Object(name: String, obj: Dynamic) : Void

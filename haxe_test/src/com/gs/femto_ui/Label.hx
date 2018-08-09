@@ -94,6 +94,7 @@ class Label extends Visel
 //.............................................................................
 	override public function draw() : Void
 	{
+		super.draw();
 		if ((invalid_flags_ & Visel.INVALIDATION_FLAG_DATA) != 0)
 		{
 			text_field_.text = ((text_ != null)) ? text_ : "";
@@ -139,7 +140,6 @@ class Label extends Visel
 			text_field_.x = Math.round(text_x);
 			text_field_.y = Math.round(text_y);
 		}
-		super.draw();
 	}
 }
 

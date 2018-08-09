@@ -1,3 +1,9 @@
+. /explode var|current context
+. zoom: show color under mouse!?
++. zoom doesn't work with stage3d - fixed!!!
++. bug: mouse click e.g. in disabled button cause underlying ui click - fixed in Viewport
++. /objects: dump all script objects
+. bug: resize stage cause unusable size
 . WTF: Parameter default value should be constant
 	. https://try.haxe.org/#60547
 . WTF: swtich(Keyboard.BACK)
@@ -25,6 +31,7 @@
 .how to int *= float?
 +.how to cast like 'as'?
 .js-target has no uint, but only int. sux :(
+.haxe have no warning if function call miss () (e.g. event.preventDefault;)
 
 @:enum
 abstract GameColors( Int ) to Int from Int {
@@ -66,7 +73,7 @@ You can use it with development certificates too. ipa-ad-hoc is not as optimized
 ipa-ad-hoc is supposed to be more optimized than ipa-test.
 ==========================
 post build:
-haxe  -cp src -as3 as3_gen -swf-header 800:600:30:FFFFFF -swf-version 21.0 -D analyzer-optimize -main Main -dce full
+haxe  -cp src -as3 as3_gen -swf-header 800:600:30:FFFFFF -swf-version 11 -D analyzer-optimize -main Main -dce full
 //analyzer-optimize - Directives
 //-dce full - Add. compiler options
 
@@ -194,4 +201,6 @@ class Test {
         trace(foo(1, 2, 3));
     }
 }
+==========================
+https://stackoverflow.com/questions/7802601/event-bubbling-and-stop-propagation
 ==========================

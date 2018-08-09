@@ -39,6 +39,7 @@ class Visel extends Sprite
 	public static inline var INVALIDATION_FLAG_HISTORY : Int	= 0x20;
 	public static inline var INVALIDATION_FLAG_DATA : Int		= 0x40;
 	public static inline var INVALIDATION_FLAG_DATA2 : Int		= 0x80;
+	public static inline var INVALIDATION_FLAG_STAGE_SIZE : Int	= 0x100;
 	public static inline var INVALIDATION_FLAG_ALL : Int		= ~0;
 
 	public var dummy_color_ : Int = 0;
@@ -264,7 +265,7 @@ class Visel extends Sprite
 				state_ &= ~STATE_DISABLED;
 			else
 				state_ |= STATE_DISABLED;
-			mouseEnabled = mouseChildren = value;
+			mouseEnabled = mouseChildren = value;//:side effect: if mouseEnabled==false, underlying ui may get taps/clicks thru
 			invalidate_Visel(INVALIDATION_FLAG_STATE);
 		}
 		return value;

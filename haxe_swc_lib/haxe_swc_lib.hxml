@@ -1,0 +1,9 @@
+-lib hscript
+-cp src
+-swf bin/hxcon.swc
+--flash-strict
+-swf-version 22
+-D fdb
+-debug
+-dce no
+--macro include('com.gs')

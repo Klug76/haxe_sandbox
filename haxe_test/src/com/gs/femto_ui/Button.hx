@@ -130,19 +130,19 @@ class Button extends Visel
 		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
 	}
 //.............................................................................
-	private function on_Mouse_Down(e : MouseEvent) : Void
+	private function on_Mouse_Down(ev : MouseEvent) : Void
 	{
 		if ((state_ & Visel.STATE_DOWN) != 0)
 			return;
 		state_ |= Visel.STATE_DOWN;
-		e.stopPropagation();
+		ev.stopPropagation();
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 		stage.addEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage, false, 1);//TODO review: how to handle out-of window event!?
 		if (auto_repeat_)
 		{
 			repeat_count_ = 0;
 			repeat_time_ = Lib.getTimer() + repeat_delay_;
-			repeat_event_ = e.clone();
+			repeat_event_ = ev.clone();
 			repeat_button_ = this;
 			Root.instance.frame_signal_.add(on_Enter_Frame);
 		}
@@ -152,13 +152,14 @@ class Button extends Visel
 		}
 	}
 //.............................................................................
-	private function on_Mouse_Up_Stage(e : MouseEvent) : Void
+	private function on_Mouse_Up_Stage(ev : MouseEvent) : Void
 	{
 		stage.removeEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage, false);
 		if ((state_ & Visel.STATE_DISPOSED) != 0)
 			return;
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
+			ev.stopPropagation();
 			state_ &= ~Visel.STATE_DOWN;
 			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 		}
@@ -180,13 +181,13 @@ class Button extends Visel
 		removeEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out);
 	}
 //.............................................................................
-	private function on_Mouse_Click(e : MouseEvent) : Void
+	private function on_Mouse_Click(ev : MouseEvent) : Void
 	{
 		//trace("button::click '" + label_.text + "', target=" + e.target);
 		//trace("_______");
-		e.stopPropagation();
+		ev.stopPropagation();
 		if (on_click_ != null)
-			on_click_(e);
+			on_click_(ev);
 	}
 //.............................................................................
 	private function on_Enter_Frame() : Void

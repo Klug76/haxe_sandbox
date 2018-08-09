@@ -158,11 +158,11 @@ class Scrollbar extends Button
 	//.............................................................................
 	override public function draw() : Void
 	{
+		super.draw();
 		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_DATA | Visel.INVALIDATION_FLAG_SIZE)) != 0)
 		{
 			update_Thumb_Position();
 		}
-		super.draw();
 	}
 	//.............................................................................
 	private function update_Thumb_Position() : Void

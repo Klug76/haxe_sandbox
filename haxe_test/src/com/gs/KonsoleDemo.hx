@@ -15,10 +15,12 @@ import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Loader;
+import flash.display.Sprite;
 import flash.display.Stage;
 import flash.errors.Error;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
+import flash.events.MouseEvent;
 import flash.events.SecurityErrorEvent;
 import flash.net.URLRequest;
 import flash.text.TextField;
@@ -40,19 +42,33 @@ class KonsoleDemo extends Visel
 	private var arr_: Array<Int>;
 	private var asset_: Loader;
 
-	public static function create_UI(stage: Stage): Void
+	public static function create_UI(owner: DisplayObjectContainer): Void
 	{
 		var cfg: KonsoleConfig = new KonsoleConfig();
-		KonController.start(stage, cfg);
 
-		new KonsoleDemo(stage);
+		cfg.width_ = owner.stage.stageWidth * 0.75;
+		cfg.height_ = owner.stage.stageHeight * 0.75;
+		//cfg.con_bg_color_ = 0xFF000000;
+		//cfg.con_text_color_ = 0x77BB77;
+		//cfg.con_text_size_ = 18;
+
+		KonController.start(owner, cfg);
+
+		new KonsoleDemo(owner);
 	}
 
 	public function new(owner : DisplayObjectContainer)
 	{
 		super(owner);
-		visible = false;
+		visible = false;//:draw should make this visible
 		create_Children();
+
+		test1(null);
+		test2(null);
+		KonController.visible = true;
+
+		KonController.register_Object("world", this);
+		KonController.eval("world.counter_");
 	}
 
 	function create_Children(): Void
@@ -86,10 +102,20 @@ class KonsoleDemo extends Visel
 		stage.addEventListener(Event.RESIZE, on_Stage_Resize);
 		stage.addEventListener(Event.ACTIVATE, on_Stage_Activate);
 		stage.addEventListener(Event.DEACTIVATE, on_Stage_Deactivate);
- 		invalidate_Visel(Visel.INVALIDATION_FLAG_SIZE);
+		addEventListener(MouseEvent.CLICK, on_Click);
+
+ 		on_Stage_Resize(null);
 	}
 
-	function add_Bitmap_Asset(): Void
+	private var click_id_: Int = 0;
+
+	private function on_Click(ev: MouseEvent) : Void
+	{
+		KonController.add("click " + click_id_++);
+	}
+
+
+	private function add_Bitmap_Asset(): Void
 	{
 		var uri: String = "https://fishgame.staticgs.com/thumb/collect/steam1.jpg";
 		asset_ = new Loader();
@@ -124,7 +150,7 @@ class KonsoleDemo extends Visel
 
 	function toggle_Konsole(v: Dynamic): Void
 	{
-		KonController.toggle_View();
+		KonController.visible = !KonController.visible;
 	}
 
 	function clear(v: Dynamic): Void
@@ -146,7 +172,7 @@ class KonsoleDemo extends Visel
 
 	private function on_Stage_Resize(e: Event): Void
 	{
-		invalidate_Visel(Visel.INVALIDATION_FLAG_SIZE);
+		invalidate_Visel(Visel.INVALIDATION_FLAG_STAGE_SIZE);
 	}
 
 	private function on_Stage_Activate(e: Event): Void
@@ -166,9 +192,12 @@ class KonsoleDemo extends Visel
 	override public function draw(): Void
 	{
 		super.draw();
-		if ((invalid_flags_ & Visel.INVALIDATION_FLAG_SIZE) != 0)
+		if ((invalid_flags_ & Visel.INVALIDATION_FLAG_STAGE_SIZE) != 0)
 		{
 			resize(stage.stageWidth, stage.stageHeight);
+		}
+		if ((invalid_flags_ & Visel.INVALIDATION_FLAG_SIZE) != 0)
+		{
 			var r: Root = Root.instance;
 			tb_.movesize(0, height_ - r.tool_height_, width_, r.tool_height_);
 			visible = true;
@@ -192,7 +221,10 @@ class KonsoleDemo extends Visel
 
 	function test2(v: Dynamic): Void
 	{
-		KonController.add_Html("<p>Hello, <font color='#FFFF00'>World</font>! Тест!</p>");
+		KonController.add("Konsole v." + KonController.VERSION + ", ui factor=" + Root.instance.ui_factor_);
+
+		KonController.add_Html("<p>Hello, <font color='#FF8000'>World</font>! Тест!</p>");
+		KonController.add_Html("pure text");
 		KonController.add("1 < 2 & 6\n  4 > 1 & 0");
 		KonController.add("\n");
 		KonController.add('');
@@ -204,6 +236,9 @@ class KonsoleDemo extends Visel
 		foo(Keyboard.A);
 		KonController.add('');
 		Timer.delay(append_Test1, 100);
+
+		var s: String = KonController.get_Text();
+		KonController.add("text.length=" + s.length);
 	}
 
 	private function foo(u: UInt): Void
