@@ -1,7 +1,7 @@
 package com.gs.console;
 
 import com.gs.femto_ui.Root;
-import com.gs.femto_ui.Signal;
+import com.gs.femto_ui.util.Signal;
 import com.gs.femto_ui.util.RingBuf;
 import flash.Lib;
 import flash.Vector;

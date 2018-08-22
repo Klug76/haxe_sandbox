@@ -36,6 +36,7 @@ class Ruler extends Visel
 	private var bg_: Visel;
 	private var crosshair_: Shape;
 	private var zoom_: Bitmap;
+	private var zoom_overlay_: Bitmap;
 	private var size_: Float;
 	private var mat_: Matrix = new Matrix();
 	private var zoom_offset_: Float = 8;
@@ -49,13 +50,16 @@ class Ruler extends Visel
 	private var cur_x_: Float = 0;
 	private var cur_y_: Float = 0;
 
-	public var aux_pt_: Point = new Point();
-	public var aux_rc_: Rectangle = new Rectangle();
+	private var zoom_overlay_bd_: BitmapData;
 	public var zoom_bd_: BitmapData;
+	public var aux_rc_: Rectangle = new Rectangle();
+	public var aux_pt_: Point = new Point();
+	private var aux_pt2_: Point = new Point();
 
 	static private inline var STATE_DEFAULT : Int	= 0;
 	static private inline var STATE_TAP1 	: Int	= 1;
 	static private inline var STATE_TAP2 	: Int	= 2;
+	static private var arr_code = [Keyboard.LEFT, Keyboard.RIGHT, Keyboard.DOWN, Keyboard.UP];
 
 	public function new(k: Konsole)
 	{
@@ -74,7 +78,7 @@ class Ruler extends Visel
 		addChild(bg_);
 
 		crosshair_ = new Shape();
-		addChild(crosshair_);
+		bg_.addChild(crosshair_);
 //#if flash
 		//crosshair_.blendMode = BlendMode.INVERT;//TODO review
 //#end
@@ -106,6 +110,13 @@ class Ruler extends Visel
 		zoom_.x = zoom_offset_;
 		zoom_.y = zoom_offset_;
 		bg_.addChild(zoom_);
+
+		zoom_overlay_bd_ = new BitmapData(size, size, true, 0);
+		zoom_overlay_ = new Bitmap(zoom_overlay_bd_, PixelSnapping.ALWAYS, false);
+		zoom_overlay_.scaleX = zoom_overlay_.scaleY = zoom_factor;
+		zoom_overlay_.x = zoom_offset_;
+		zoom_overlay_.y = zoom_offset_;
+		bg_.addChild(zoom_overlay_);
 
 		k_.signal_show_.add(on_Show_Console);
 	}
@@ -149,8 +160,40 @@ class Ruler extends Visel
 		if (is_Cancel_Key(code))
 		{
 			ev.preventDefault();
-			ev.stopPropagation();
+			ev.stopImmediatePropagation();
+			return;
 		}
+		var prev = tap_state_;
+		aux_pt_.copyFrom(tap1_);
+		aux_pt2_.copyFrom(tap2_);
+		var idx: Int = arr_code.indexOf(code);
+		if (idx >= 0)
+		{
+			ev.preventDefault();
+			ev.stopImmediatePropagation();
+			var replace: Bool = ev.shiftKey || ev.ctrlKey;
+			var arr_d = [-1, 1, 0, 0];
+			var dx: Float = arr_d[idx];
+			var dy: Float = arr_d[3 - idx];//:3 == arr_d.length - 1
+			if (STATE_DEFAULT == tap_state_)
+			{
+				tap_state_ = STATE_TAP1;
+				tap1_.x = stage.mouseX;
+				tap1_.y = stage.mouseY;
+			}
+			else if (replace || (STATE_TAP1 == tap_state_))
+			{
+				tap1_.x += dx;
+				tap1_.y += dy;
+			}
+			else//: if (STATE_TAP2 == tap_state_)
+			{
+				tap2_.x += dx;
+				tap2_.y += dy;
+			}
+		}
+		if ((prev != tap_state_) || !aux_pt_.equals(tap1_) || !aux_pt2_.equals(tap2_))
+			update_Taps();
 	}
 //.............................................................................
 	private function on_Stage_Key_Up(ev : KeyboardEvent) : Void
@@ -160,8 +203,15 @@ class Ruler extends Visel
 		if (is_Cancel_Key(code))
 		{
 			ev.preventDefault();
-			ev.stopPropagation();
+			ev.stopImmediatePropagation();
 			visible = false;
+			return;
+		}
+		var idx: Int = arr_code.indexOf(code);
+		if (idx >= 0)
+		{
+			ev.preventDefault();
+			ev.stopImmediatePropagation();
 		}
 	}
 //.............................................................................
@@ -178,27 +228,37 @@ class Ruler extends Visel
 //.............................................................................
 	private function on_Mouse_Down(ev : MouseEvent) : Void
 	{
-		ev.stopPropagation();
+		ev.stopImmediatePropagation();
+		advance_State(ev.shiftKey || ev.ctrlKey, ev.stageX, ev.stageY);
+		update_Taps();
+	}
+//.............................................................................
+	private function advance_State(replace: Bool, nx: Float, ny: Float) : Void
+	{
 		if ((STATE_DEFAULT == tap_state_) || (STATE_TAP2 == tap_state_))
 		{
 			tap_state_ = STATE_TAP1;
-			tap1_.x = ev.stageX;
-			tap1_.y = ev.stageY;
+			tap1_.x = nx;
+			tap1_.y = ny;
 		}
 		else if (STATE_TAP1 == tap_state_)
 		{
-			if (ev.shiftKey || ev.ctrlKey)
-			{//:replace
-				tap1_.x = ev.stageX;
-				tap1_.y = ev.stageY;
+			if (replace)
+			{//:replace tap 1
+				tap1_.x = nx;
+				tap1_.y = ny;
 			}
 			else
 			{
 				tap_state_ = STATE_TAP2;
-				tap2_.x = ev.stageX;
-				tap2_.y = ev.stageY;
+				tap2_.x = nx;
+				tap2_.y = ny;
 			}
 		}
+	}
+//.............................................................................
+	private function update_Taps() : Void
+	{
 		invalid_flags_ |= Visel.INVALIDATION_FLAG_DATA2;
 		draw();
 		validate();
@@ -241,31 +301,26 @@ class Ruler extends Visel
 	private function dump_Info(): Void
 	{
 		var d: Float = Point.distance(tap1_, tap2_);
-		var w: Float = Util.fabs(tap1_.x - tap2_.x);
-		var h: Float = Util.fabs(tap1_.y - tap2_.y);
+		var dw: Float = Util.fabs(tap1_.x - tap2_.x);
+		var dh: Float = Util.fabs(tap1_.y - tap2_.y);
 		var s: String = "<p>points: <font color='#" + Util.toHex(k_.cfg_.pt1_color_, 6) + "'>[" + tap1_.x + ", " + tap1_.y +
 			"]</font> - <font color='#" + Util.toHex(k_.cfg_.pt2_color_, 6) + "'>[" + tap2_.x + ", " + tap2_.y + "]</font><br>";
-		s += "distance: " + Util.ftoFixed(d, 2) + "<br>";
-		s += "width: " + w + ", height: " + h + "</p>";
+		s += "distance: " + Util.ftoFixed(d, 2) + ", dw: " + dw + ", dh: " + dh + "<br>";
+		s += "bound rect: " + (dw + 1) + "x" + (dh + 1) + " px";
+		s += "</p>";
 
 		k_.add_Html(s);
 
-		if ((tap1_.x == tap2_.x) || (tap1_.y == tap2_.y))
-			label_dist_info_.text = Util.ftoFixed(d, 0);
-		else
-			label_dist_info_.text = Util.ftoFixed(d, 2);
-		aux_pt_.x = (tap1_.x + tap2_.x) * .5;
-		aux_pt_.y = (tap1_.y + tap2_.y) * .5;
-		aux_rc_.setTo(aux_pt_.x, aux_pt_.y, label_dist_info_.width, label_dist_info_.height);
+		label_dist_info_.text = Util.ftoFixed(d, ((tap1_.x == tap2_.x) || (tap1_.y == tap2_.y)) ? 0 : 2);
+		var label_w = label_dist_info_.width;
+		var label_h = label_dist_info_.height;
+		aux_rc_.setTo((tap1_.x + tap2_.x - label_w) * .5, (tap1_.y + tap2_.y - label_h) * .5, label_w, label_h);
 		aux_rc_.inflate(2, 2);
 		find_Popup_Pos(aux_rc_, tap1_, tap2_);
-		aux_rc_.inflate( -2, -2);
+		aux_rc_.inflate(-2, -2);
 
-		aux_pt_.x = aux_rc_.left;
-		aux_pt_.y = aux_rc_.top;
-
-		label_dist_info_.x = aux_pt_.x;
-		label_dist_info_.y = aux_pt_.y;
+		label_dist_info_.x = aux_rc_.left;
+		label_dist_info_.y = aux_rc_.top;
 		label_dist_info_.visible = true;
 	}
 //.............................................................................
@@ -306,7 +361,7 @@ class Ruler extends Visel
 		}
 		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_DATA)) != 0)
 		{
-			paint_Crosshair(cur_x_, cur_y_);
+			paint_Crosshair();
 			print_Cur_Info();
 		}
 		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_DATA2)) != 0)
@@ -316,12 +371,15 @@ class Ruler extends Visel
 		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_DATA | Visel.INVALIDATION_FLAG_DATA2)) != 0)
 		{
 			paint_Zoom();
+			paint_Zoom_Overlay();
 		}
 		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_SIZE)) != 0)
 		{
 			bg_.resize(width_, height_);
 		}
 	}
+//.............................................................................
+//.............................................................................
 //.............................................................................
 	private function print_Cur_Info(): Void
 	{
@@ -348,33 +406,84 @@ class Ruler extends Visel
 		label_cur_pt_.y = ny;
 	}
 //.............................................................................
-	private function paint_Taps(): Void
+//.............................................................................
+	private function paint_Zoom_Overlay(): Void
 	{
-		var gr: Graphics = tap_shape_.graphics;
-		gr.clear();
-		if ((STATE_TAP1 == tap_state_) || (STATE_TAP2 == tap_state_))
+		if (k_.cfg_.custom_zoom_draw_ || (Root.instance.owner_ != stage))
 		{
-			gr.lineStyle(1, k_.cfg_.pt1_color_, 0.75, true, LineScaleMode.NONE, CapsStyle.NONE);
-			paint_Tap(gr, tap1_.x, tap1_.y);
-		}
-		if (STATE_TAP2 == tap_state_)
-		{
-			gr.lineStyle(1, k_.cfg_.pt2_color_, 0.75, true, LineScaleMode.NONE, CapsStyle.NONE);
-			paint_Tap(gr, tap2_.x, tap2_.y);
+			var al: UInt = Math.round(k_.cfg_.crosshair_alpha_ * 255) << 24;
+			var cl: UInt = k_.cfg_.crosshair_color_ | al;
+			//var cl: UInt = 0x80800080;
+			var bd: BitmapData = zoom_overlay_bd_;
+			var bw: Int = bd.width;
+			var bh: Int = bd.height;
 
-			paint_Line_Between(gr, tap1_.x, tap1_.y, tap2_.x, tap2_.y);
+			aux_rc_.setTo(0, 0, bw, bh);
+			bd.fillRect(aux_rc_, 0);
+
+			var bw_half: Int = Math.floor(bw / 2);
+			var bh_half: Int = Math.floor(bh / 2);
+			paint_Box(bd, bw, bh, bw_half,		0,				1,				bh_half - 1,	cl);
+			paint_Box(bd, bw, bh, bw_half,		bh_half + 2,	1,				bh_half - 2,	cl);
+			paint_Box(bd, bw, bh, 0,			bh_half,		bw_half - 1,	1,				cl);
+			paint_Box(bd, bw, bh, bw_half + 2,	bh_half,		bw_half - 2,	1,				cl);
+
+			var nx: Int;
+			var ny: Int;
+			var len: Int = 4;
+			if ((STATE_TAP1 == tap_state_) || (STATE_TAP2 == tap_state_))
+			{
+				cl = k_.cfg_.pt1_color_ | al;
+				aux_pt_.copyFrom(tap1_);
+				aux_pt_.offset(-cur_x_, -cur_y_);
+				aux_pt_.offset(bw_half, bh_half);
+				nx = Math.round(aux_pt_.x);
+				ny = Math.round(aux_pt_.y);
+				paint_Box(bd, bw, bh, nx + 2,			ny,				len,	1,		cl);
+				paint_Box(bd, bw, bh, nx - len - 1,		ny,				len,	1,		cl);
+				paint_Box(bd, bw, bh, nx,				ny - len - 1,	1,		len,	cl);
+				paint_Box(bd, bw, bh, nx,				ny + 2,			1,		len,	cl);
+			}
+			if (STATE_TAP2 == tap_state_)
+			{
+				cl = k_.cfg_.pt2_color_ | al;
+				aux_pt_.copyFrom(tap2_);
+				aux_pt_.offset(-cur_x_, -cur_y_);
+				aux_pt_.offset(bw_half, bh_half);
+				nx = Math.round(aux_pt_.x);
+				ny = Math.round(aux_pt_.y);
+				paint_Box(bd, bw, bh, nx + 2,			ny,				len,	1,		cl);
+				paint_Box(bd, bw, bh, nx - len - 1,		ny,				len,	1,		cl);
+				paint_Box(bd, bw, bh, nx,				ny - len - 1,	1,		len,	cl);
+				paint_Box(bd, bw, bh, nx,				ny + 2,			1,		len,	cl);
+			}
 		}
 	}
 //.............................................................................
-	inline private function paint_Line_Between(gr: Graphics, nx1: Float, ny1: Float, nx2: Float, ny2: Float) : Void
+	private function paint_Box(bd: BitmapData, bw: Int, bh: Int, nx: Int, ny: Int, nw: Int, nh: Int, cl: UInt) : Void
 	{
-		gr.lineStyle(1, 0xFFffFF, 1, true, LineScaleMode.NONE, CapsStyle.NONE);
-		gr.moveTo(nx1, ny1);
-		gr.lineTo(nx2, ny2);
-		//gr.lineStyle(1);
-		//gr.lineGradientStyle(GradientType.LINEAR, [0x000000, 0xFFffFF, 0], [1, 1, 1], [0, 127, 255]);
-		//gr.moveTo(tap1_.x, tap1_.y);
-		//gr.lineTo(tap2_.x, tap2_.y);
+		if (nx < 0)
+		{
+			nw += nx;
+			nx = 0;
+		}
+		if (ny < 0)
+		{
+			nh += ny;
+			ny = 0;
+		}
+		if (nx + nw > bw)
+		{
+			nw = bw - nx;
+		}
+		if (ny + nh > bh)
+		{
+			nh = bh - ny;
+		}
+		if ((nw <= 0) || (nh <= 0))
+			return;
+		aux_rc_.setTo(nx, ny, nw, nh);
+		bd.fillRect(aux_rc_, cl);
 	}
 //.............................................................................
 	private function paint_Zoom(): Void
@@ -390,27 +499,27 @@ class Ruler extends Visel
 		}
 		zoom_.x = zx;
 		zoom_.y = zy;
+		zoom_overlay_.x = zx;
+		zoom_overlay_.y = zy;
 
 		if (k_.cfg_.custom_zoom_draw_)
 			return;
 
 		var ui: DisplayObject = Root.instance.owner_;
-		var bw: Float = zoom_bd_.width;
-		var bh: Float = zoom_bd_.height;
+		var bd: BitmapData = zoom_bd_;
+		var bw: Float = bd.width;
+		var bh: Float = bd.height;
 		aux_rc_.setTo(0, 0, bw, bh);
-		zoom_bd_.fillRect(aux_rc_, stage.color);
+		bd.fillRect(aux_rc_, stage.color);
 		var cnt: Float = size_ * .5;
 		mat_.tx = -cur_x_ + cnt;
 		mat_.ty = -cur_y_ + cnt;
 		try
 		{
-			render_Zoom2D(zoom_bd_, ui, mat_);
+			render_Zoom2D(bd, ui, mat_);
 		}
 		catch (err: Dynamic)
 		{}
-		if (ui == stage)
-			return;//:crosshair will be auto-rendered below
-		paint_Zoom_Crosshair();
 	}
 //.............................................................................
 	private static function render_Zoom2D(bd: BitmapData, ui: DisplayObject, mat: Matrix) : Void
@@ -418,68 +527,84 @@ class Ruler extends Visel
 		bd.draw(ui, mat);
 	}
 //.............................................................................
-	public function paint_Zoom_Crosshair() : Void
-	{
-		var bw: Float = zoom_bd_.width;
-		var bh: Float = zoom_bd_.height;
-		var bw_half: Float = bw / 2;
-		var bh_half: Float = bh / 2;
-		var cl: UInt = k_.cfg_.crosshair_color_;
-		aux_rc_.setTo(bw_half, 0, 1, bh_half - 2);
-		zoom_bd_.fillRect(aux_rc_, cl);
-		aux_rc_.setTo(bw_half, bh_half + 3, 1, bh_half - 3);
-		zoom_bd_.fillRect(aux_rc_, cl);
-
-		aux_rc_.setTo(0, bh_half, bw_half - 2, 1);
-		zoom_bd_.fillRect(aux_rc_, cl);
-		aux_rc_.setTo(bw_half + 3, bh_half, bw_half - 3, 1);
-		zoom_bd_.fillRect(aux_rc_, cl);
-	}
 //.............................................................................
-	inline private function paint_Crosshair(nx: Float, ny: Float) : Void
+	private function paint_Crosshair() : Void
 	{
 		var gr: Graphics = crosshair_.graphics;
 		gr.clear();
-		gr.lineStyle(1, k_.cfg_.crosshair_color_, 0.75, true, LineScaleMode.NONE, CapsStyle.SQUARE);
-		var d: Float = 2;
-		if (ny - d > 0)
+		gr.lineStyle(1, k_.cfg_.crosshair_color_, k_.cfg_.crosshair_alpha_, true, LineScaleMode.NONE, CapsStyle.SQUARE);
+		paint_Crosshair_Ex(gr, cur_x_, cur_y_, width_, height_, 2);
+	}
+//.............................................................................
+	private function paint_Crosshair_Ex(gr: Graphics, nx: Float, ny: Float, nw: Float, nh: Float, offset: Float) : Void
+	{
+		if (ny - offset > 0)
 		{
 			gr.moveTo(nx, 0);
-			gr.lineTo(nx, ny - d);
+			gr.lineTo(nx, ny - offset);
 		}
-		if (ny + d < height_ - 1)
+		if (ny + offset < nh - 1)
 		{
-			gr.moveTo(nx, ny + d);
-			gr.lineTo(nx, height_ - 1);
+			gr.moveTo(nx, ny + offset);
+			gr.lineTo(nx, nh - 1);
 		}
-		d = 2;
-		if (nx - d > 0)
+		if (nx - offset > 0)
 		{
 			gr.moveTo(0, ny);
-			gr.lineTo(nx - d, ny);
+			gr.lineTo(nx - offset, ny);
 		}
-		if (nx + d < width_ - 1)
+		if (nx + offset < nw - 1)
 		{
-			gr.moveTo(nx + d, ny);
-			gr.lineTo(width_ - 1, ny);
+			gr.moveTo(nx + offset, ny);
+			gr.lineTo(nw - 1, ny);
 		}
 	}
 //.............................................................................
 //.............................................................................
-	private function paint_Tap(gr: Graphics, nx: Float, ny: Float) : Void
+	private function paint_Taps() : Void
 	{
-		var d: Float = 2;
-		var dd: Float = 5;
-		gr.moveTo(nx - dd, ny);
-		gr.lineTo(nx - d, ny);
-		gr.moveTo(nx + d, ny);
-		gr.lineTo(nx + dd, ny);
+		var gr: Graphics = tap_shape_.graphics;
+		gr.clear();
+		if ((STATE_TAP1 == tap_state_) || (STATE_TAP2 == tap_state_))
+		{
+			gr.lineStyle(1, k_.cfg_.pt1_color_, k_.cfg_.crosshair_alpha_, true, LineScaleMode.NONE, CapsStyle.NONE);
+			paint_Tap(gr, tap1_.x, tap1_.y, 2, 5);
+		}
+		if (STATE_TAP2 == tap_state_)
+		{
+			gr.lineStyle(1, k_.cfg_.pt2_color_, k_.cfg_.crosshair_alpha_, true, LineScaleMode.NONE, CapsStyle.NONE);
+			paint_Tap(gr, tap2_.x, tap2_.y, 2, 5);
 
-		gr.moveTo(nx, ny - dd);
-		gr.lineTo(nx, ny - d);
-		gr.moveTo(nx, ny + d);
-		gr.lineTo(nx, ny + dd);
+			paint_Line_Between(gr, tap1_.x, tap1_.y, tap2_.x, tap2_.y);
+		}
 	}
+//.............................................................................
+	private function paint_Tap(gr: Graphics, nx: Float, ny: Float, offset: Float, len: Float) : Void
+	{
+		gr.moveTo(nx - len, ny);
+		gr.lineTo(nx - offset, ny);
+		gr.moveTo(nx + offset, ny);
+		gr.lineTo(nx + len, ny);
+
+		gr.moveTo(nx, ny - len);
+		gr.lineTo(nx, ny - offset);
+		gr.moveTo(nx, ny + offset);
+		gr.lineTo(nx, ny + len);
+	}
+//.............................................................................
+//.............................................................................
+	inline private function paint_Line_Between(gr: Graphics, nx1: Float, ny1: Float, nx2: Float, ny2: Float) : Void
+	{
+		gr.lineStyle(1, 0xFFffFF, 1, true, LineScaleMode.NONE, CapsStyle.NONE);
+		gr.moveTo(nx1, ny1);
+		gr.lineTo(nx2, ny2);
+		//?gr.lineStyle(1);
+		//?gr.lineGradientStyle(GradientType.LINEAR, [0x000000, 0xFFffFF, 0], [1, 1, 1], [0, 127, 255]);
+		//?gr.moveTo(tap1_.x, tap1_.y);
+		//?gr.lineTo(tap2_.x, tap2_.y);
+	}
+//.............................................................................
+//.............................................................................
 //.............................................................................
 //.............................................................................
 	public function prepare_Zoom_Paint(): Bool

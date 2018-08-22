@@ -58,7 +58,7 @@ class Thumb extends Visel
 		if ((state_ & Visel.STATE_DRAG) != 0)
 		{
 			state_ &= ~Visel.STATE_DRAG;
-			e.stopPropagation();
+			e.stopImmediatePropagation();
 			stopDrag();
 			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 			var p : Scrollbar = Lib.as(parent, Scrollbar);

@@ -119,7 +119,6 @@ class Scene3D
 			{
 				paint_Zoom();
 			}
-			KonController.paint_Zoom_Crosshair();
 		}
 
 		c.present();

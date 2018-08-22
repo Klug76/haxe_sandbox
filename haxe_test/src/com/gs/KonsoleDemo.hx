@@ -14,7 +14,9 @@ import flash.Vector;
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
+import flash.display.Graphics;
 import flash.display.Loader;
+import flash.display.Shape;
 import flash.display.Sprite;
 import flash.display.Stage;
 import flash.errors.Error;
@@ -53,6 +55,7 @@ class KonsoleDemo extends Visel
 		//cfg.con_text_size_ = 18;
 
 		KonController.start(owner, cfg);
+		//KonController.start(owner.stage, cfg);
 
 		new KonsoleDemo(owner);
 	}
@@ -80,6 +83,7 @@ class KonsoleDemo extends Visel
 		aux_.defaultTextFormat = new TextFormat(null, Std.int(r.def_text_size_));
 
 		add_Bitmap_Asset();
+		add_Box();
 
 		tb_ = new Toolbar(this);
 		tb_.spacing_ = 6;
@@ -114,6 +118,16 @@ class KonsoleDemo extends Visel
 		KonController.add("click " + click_id_++);
 	}
 
+	private function add_Box(): Void
+	{
+		var sp: Shape = new Shape();
+		sp.x = 100;
+		sp.y = 100;
+		var gr: Graphics = sp.graphics;
+		gr.beginFill(0x0000ff, 1);
+		gr.drawRect(0, 0, 10, 20);
+		addChild(sp);
+	}
 
 	private function add_Bitmap_Asset(): Void
 	{
@@ -125,6 +139,7 @@ class KonsoleDemo extends Visel
 		var rq: URLRequest = new URLRequest(uri);
 		asset_.load(rq);
 	}
+
 
 	private function load_Complete_Handler(e: Event): Void
 	{

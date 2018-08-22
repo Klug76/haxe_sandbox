@@ -53,7 +53,7 @@ class Resizer extends Visel
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
 			state_ &= ~Visel.STATE_DOWN;
-			e.stopPropagation();
+			e.stopImmediatePropagation();
 			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 		}
 	}
@@ -66,7 +66,7 @@ class Resizer extends Visel
 		}
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
-			e.stopPropagation();
+			e.stopImmediatePropagation();
 			parent.width = Util.fclamp(start_w_ + e.stageX, min_width_, stage.stageWidth);
 			parent.height = Util.fclamp(start_h_ + e.stageY, min_height_, stage.stageHeight);
 		}
@@ -125,7 +125,7 @@ class Resizer extends Visel
 				}
 				if ((state_ & Visel.STATE_HOVER) == 0)
 				{
-					Util.offset_Vector(ppt, -r.hover_inflation_);
+					Util.inflate_Vector(ppt, -r.hover_inflation_);
 				}
 
 				graphics.beginFill(cl & 0xffffff, dummy_alpha_);

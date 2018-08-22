@@ -1,6 +1,7 @@
-. /explode var|current context
-. zoom: show color under mouse!?
+. /explode var|current context? toJson?
++. zoom: use arrow keys to move crosshair
 +. zoom doesn't work with stage3d - fixed!!!
+	.\patched\std\flash\display3D\Context3D.hx - function drawToBitmapData(destination : flash.display.BitmapData, srcRect: flash.geom.Rectangle = null, destPoint: flash.geom.Point = null) : Void;
 +. bug: mouse click e.g. in disabled button cause underlying ui click - fixed in Viewport
 +. /objects: dump all script objects
 . bug: resize stage cause unusable size
@@ -27,7 +28,8 @@
 		}
 		#if (!flash) return val; #end
 	}
-.how to detect desktop system!?	
+.how to detect desktop system!?
+. zoom: show color under mouse!? too expansive?
 .how to int *= float?
 +.how to cast like 'as'?
 .js-target has no uint, but only int. sux :(
@@ -61,7 +63,7 @@ abstract GameColors( Int ) to Int from Int {
 +.move console to html5
 	.https://github.com/tiagolr/dconsole.git
 .starling + custom 3d test
-.obfuscation: how? 
+.obfuscation: how?
 
 ==========================
 .in haxe: switch doesn't work with flash.ui.Keyboard
@@ -86,13 +88,13 @@ project.xml:
 	<config:ios provisioning-profile="cert/....mobileprovision" />
 https://github.com/openfl/lime/blob/develop/lime/tools/helpers/AIRHelper.hx:
 					if (project.debug) {
-						
+
 						airTarget = "ipa-debug";
-						
+
 					} else {
-						
+
 						airTarget = "ipa-test";
-						
+
 					}
 Lime Command-Line Tools (6.2.0)
 
@@ -131,26 +133,26 @@ unsafe cast:
 (cast findViewById(R.id.myTextView):TextView).setText("Cool");
 ==========================
 http://community.openfl.org/t/starling-and-away3d-together/9666
-private function initProxies():Void 
+private function initProxies():Void
 {
 		trace("initProxies");
-		
+
 		_stage3DManager = Stage3DManager.getInstance(stage);
 		_stage3DProxy = _stage3DManager.getFreeStage3DProxy(false, _profile);
 		_stage3DProxy.addEventListener(Stage3DEvent.CONTEXT3D_CREATED, onContextCreated);
 		_stage3DProxy.antiAlias = _antiAliasing;
 		_stage3DProxy.color = 0x000000;
 }
-	
-private function onContextCreated(event : Stage3DEvent):Void 
+
+private function onContextCreated(event : Stage3DEvent):Void
 {
 		trace("onContextCreated");
-		
+
 		UiData.WIDTH = stage.stageWidth;
 		UiData.HEIGHT = stage.stageHeight;
-		
+
 		_stage3DProxy.context3D.configureBackBuffer(UiData.WIDTH, UiData.HEIGHT, _antiAliasing);
-		
+
 		initAway3D();
 		initStarling();
 		initListeners();
@@ -175,7 +177,7 @@ function buildName(firstName: string, ...restOfName: string[]):string {
     return firstName + " " + restOfName.join(" ");
 }
 // Haxe does not allow writing function of variable-lengthed parameters.
-// But it let us declare such functions when 
+// But it let us declare such functions when
 // writing extern using the special `haxe.extern.Rest` type.
 extern class Namebuilder {
     public function build(first:String, rest:haxe.extern.Rest<String>):String;
@@ -191,9 +193,9 @@ class Test {
 	{
         return "Called with: " + args.join(", ");
     }
-    
+
     static var foo:Dynamic = Reflect.makeVarArgs(_foo);
-    
+
     static function main() {
         trace("Haxe is great!");
         trace(foo(1));

@@ -159,7 +159,7 @@ class Button extends Visel
 			return;
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
-			ev.stopPropagation();
+			ev.stopImmediatePropagation();
 			state_ &= ~Visel.STATE_DOWN;
 			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 		}

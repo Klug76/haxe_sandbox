@@ -123,7 +123,7 @@ class Util
 	}
 //.............................................................................
 //.............................................................................
-	public static function offset_Vector(ppt : Vector<Float>, offset : Float) : Void
+	public static function inflate_Vector(ppt : Vector<Float>, value : Float) : Void
 	{
 		//:stupid but work, lets threat bug as effect
 		var len : Int = ppt.length;
@@ -132,11 +132,11 @@ class Util
 			var d : Float = ppt[i];
 			if (d > 0)
 			{
-				d = offset;
+				d = value;
 			}
 			else
 			{
-				d = -offset;
+				d = -value;
 			}
 			ppt[i] += d;
 		}

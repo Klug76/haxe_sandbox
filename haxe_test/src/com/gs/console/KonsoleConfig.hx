@@ -17,6 +17,7 @@ class KonsoleConfig
 	//public var make_links_ : Bool = false;
 
 	public var con_bg_alpha_	: Float = 0.9;
+	public var crosshair_alpha_	: Float = 0.75;
 
 	public var con_bg_color_	: Int = 0x000080;
 	public var con_text_color_	: Int = 0xFFFF80;//TODO fix me: how to set selection color!?

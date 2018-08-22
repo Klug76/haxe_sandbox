@@ -50,7 +50,7 @@ class Mover extends Visel
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
 			state_ &= ~Visel.STATE_DOWN;
-			e.stopPropagation();
+			e.stopImmediatePropagation();
 			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 		}
 	}
@@ -63,7 +63,7 @@ class Mover extends Visel
 		}
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
-			e.stopPropagation();
+			e.stopImmediatePropagation();
 			var r : Root = Root.instance;
 			parent.x = Util.fclamp(start_x_ + e.stageX, 0, stage.stageWidth - r.tool_width_ * .5);
 			parent.y = Util.fclamp(start_y_ + e.stageY, 0, stage.stageHeight - r.tool_height_ * .5);
@@ -124,7 +124,7 @@ class Mover extends Visel
 				}
 				if ((state_ & Visel.STATE_HOVER) == 0)
 				{
-					Util.offset_Vector(ppt, -r.hover_inflation_);
+					Util.inflate_Vector(ppt, -r.hover_inflation_);
 				}
 
 				graphics.beginFill(cl & 0xffffff, dummy_alpha_);
