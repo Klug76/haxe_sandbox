@@ -1,9 +1,17 @@
 -lib hscript
 -cp src
--swf bin/hxcon.swc
+--macro include('com.gs')
 --flash-strict
 -swf-version 22
+#-D swf-protected
+--each
+
+--next
 -D fdb
 -debug
--dce no
---macro include('com.gs')
+-D advanced-telemetry
+-swf bin/hxcon-debug.swc
+
+--next
+-D native-trace
+-swf bin/hxcon-release.swc

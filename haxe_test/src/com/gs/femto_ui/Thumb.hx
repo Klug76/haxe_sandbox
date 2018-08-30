@@ -16,16 +16,16 @@ class Thumb extends Visel
 		super(owner);
 		create_Listeners();
 	}
-	//.............................................................................
+//.............................................................................
 	private function create_Listeners() : Void
 	{
 		addEventListener(MouseEvent.ROLL_OVER, on_Mouse_Over);
 		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
 	}
-	//.............................................................................
-	private function on_Mouse_Down(e : MouseEvent) : Void
+//.............................................................................
+	private function on_Mouse_Down(ev : MouseEvent) : Void
 	{
-		e.stopPropagation();
+		ev.stopImmediatePropagation();
 		if ((state_ & Visel.STATE_DRAG) != 0)
 		{
 			return;
@@ -50,15 +50,14 @@ class Thumb extends Visel
 		}
 		startDrag(false, drag_rect_);
 	}
-	//.............................................................................
-	private function on_Mouse_Up_Stage(e : MouseEvent) : Void
-	//trace("thumb::mouse up");
+//.............................................................................
+	private function on_Mouse_Up_Stage(ev : MouseEvent) : Void
 	{
 		stage.removeEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage);
 		if ((state_ & Visel.STATE_DRAG) != 0)
 		{
 			state_ &= ~Visel.STATE_DRAG;
-			e.stopImmediatePropagation();
+			ev.stopImmediatePropagation();
 			stopDrag();
 			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 			var p : Scrollbar = Lib.as(parent, Scrollbar);
@@ -68,16 +67,18 @@ class Thumb extends Visel
 			}
 		}
 	}
-	//.............................................................................
-	private function on_Mouse_Move_Stage(e : MouseEvent) : Void
-	//trace("thumb::mouse move");
+//.............................................................................
+	private function on_Mouse_Move_Stage(ev : MouseEvent) : Void
 	{
+		if (disposed)
+			return;
 		if ((state_ & Visel.STATE_DRAG) != 0)
 		{
 			var p : Scrollbar = Lib.as(parent, Scrollbar);
 			if (p != null)
 			{
-				e.updateAfterEvent();
+				ev.stopImmediatePropagation();
+				ev.updateAfterEvent();
 				//trace("thumb::do drag");
 				p.on_Thumb_Do_Drag();
 				return;
@@ -85,11 +86,11 @@ class Thumb extends Visel
 		}
 		stage.removeEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move_Stage);
 	}
-	//.............................................................................
-	//.............................................................................
-	//.............................................................................
-	//.............................................................................
-	private function on_Mouse_Over(e : MouseEvent) : Void
+//.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
+	private function on_Mouse_Over(ev : MouseEvent) : Void
 	{
 		if ((state_ & Visel.STATE_HOVER) != 0)
 		{
@@ -99,16 +100,16 @@ class Thumb extends Visel
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 		addEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out);
 	}
-	//.............................................................................
-	private function on_Mouse_Out(e : MouseEvent) : Void
+//.............................................................................
+	private function on_Mouse_Out(ev : MouseEvent) : Void
 	{
 		state_ &= ~Visel.STATE_HOVER;
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 		removeEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out);
 	}
-	//.............................................................................
-	//.............................................................................
-	//.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
 	override public function draw() : Void
 	{
 		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_SKIN | Visel.INVALIDATION_FLAG_SIZE | Visel.INVALIDATION_FLAG_STATE)) != 0)
@@ -140,8 +141,8 @@ class Thumb extends Visel
 			}
 		}
 	}
-	//.............................................................................
-	//.............................................................................
+//.............................................................................
+//.............................................................................
 	private function get_is_drag_mode() : Bool
 	{
 		return (state_ & Visel.STATE_DRAG) != 0;

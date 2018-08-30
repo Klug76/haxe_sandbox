@@ -48,8 +48,8 @@ class KonsoleDemo extends Visel
 	{
 		var cfg: KonsoleConfig = new KonsoleConfig();
 
-		cfg.width_ = owner.stage.stageWidth * 0.75;
-		cfg.height_ = owner.stage.stageHeight * 0.75;
+		//cfg.zoom_root_ = owner.stage;
+		cfg.zoom_root_ = owner;
 		//cfg.con_bg_color_ = 0xFF000000;
 		//cfg.con_text_color_ = 0x77BB77;
 		//cfg.con_text_size_ = 18;
@@ -68,7 +68,7 @@ class KonsoleDemo extends Visel
 
 		test1(null);
 		test2(null);
-		KonController.visible = true;
+		//KonController.visible = true;
 
 		KonController.register_Object("world", this);
 		KonController.eval("world.counter_");
@@ -77,6 +77,10 @@ class KonsoleDemo extends Visel
 	function create_Children(): Void
 	{
 		var r: Root = Root.instance;
+		if (null == r)
+		{
+			r = Root.create(parent);
+		}
 
 		aux_ = new TextField();
 		aux_.autoSize = TextFieldAutoSize.LEFT;
@@ -121,16 +125,23 @@ class KonsoleDemo extends Visel
 	private function add_Box(): Void
 	{
 		var sp: Shape = new Shape();
-		sp.x = 100;
-		sp.y = 100;
 		var gr: Graphics = sp.graphics;
+		gr.clear();
 		gr.beginFill(0x0000ff, 1);
 		gr.drawRect(0, 0, 10, 20);
+		gr.endFill();
+		sp.x = 100;
+		sp.y = 100;
 		addChild(sp);
 	}
 
 	private function add_Bitmap_Asset(): Void
 	{
+		#if (openfl)
+		var bitmapData = openfl.Assets.getBitmapData("assets/steam1.jpg");
+        var bitmap = new Bitmap (bitmapData);
+        place_Asset(bitmap);
+		#else
 		var uri: String = "https://fishgame.staticgs.com/thumb/collect/steam1.jpg";
 		asset_ = new Loader();
 		asset_.contentLoaderInfo.addEventListener(Event.COMPLETE, load_Complete_Handler);
@@ -138,6 +149,7 @@ class KonsoleDemo extends Visel
 		asset_.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, load_Error_Handler);
 		var rq: URLRequest = new URLRequest(uri);
 		asset_.load(rq);
+		#end
 	}
 
 
@@ -146,6 +158,11 @@ class KonsoleDemo extends Visel
 		//k.add("OK");
 		asset_Cleanup();
 		var b: DisplayObject = asset_.content;
+		place_Asset(b);
+	}
+
+	private function place_Asset(b: DisplayObject) : Void
+	{
 		b.x = 250;
 		b.y = 100;
 		addChild(b);
@@ -253,6 +270,8 @@ class KonsoleDemo extends Visel
 		Timer.delay(append_Test1, 100);
 
 		var s: String = KonController.get_Text();
+		if (null == s)
+			s = "";
 		KonController.add("text.length=" + s.length);
 	}
 

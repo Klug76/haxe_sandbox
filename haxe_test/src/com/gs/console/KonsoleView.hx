@@ -47,7 +47,7 @@ class KonsoleView extends Viewport
 	{
 		var r : Root = Root.instance;
 
-		resize(k_.cfg_.width_, k_.cfg_.height_);
+		resize(k_.cfg_.con_w_factor_ * r.stage_.stageWidth, k_.cfg_.con_h_factor_ * r.stage_.stageHeight);
 		dummy_color = k_.cfg_.con_bg_color_;
 		alpha = k_.cfg_.con_bg_alpha_;
 

@@ -122,9 +122,12 @@ class KonController
 			if (ruler_ != null)
 			{
 				ruler_.visible = !ruler_.visible;
+				if (ruler_.visible)
+					instance_.visible = false;
 				return;
 			}
 			ruler_ = new Ruler(instance_);
+			instance_.visible = false;
 		}
 	}
 //.............................................................................
@@ -141,17 +144,17 @@ class KonController
 //.............................................................................
 	static public function get_Zoom_BitmapData(): BitmapData
 	{
-		return ruler_.zoom_bd_;
+		@:privateAccess return ruler_.zoom_bd_3D_;
 	}
 //.............................................................................
 	static public function get_Zoom_Src_Rect(): Rectangle
 	{
-		return ruler_.aux_rc_;
+		@:privateAccess return ruler_.aux_rc_;
 	}
 //.............................................................................
 	static public function get_Zoom_Dst_Pt(): Point
 	{
-		return ruler_.aux_pt_;
+		@:privateAccess return ruler_.aux_pt_;
 	}
 //.............................................................................
 //.............................................................................

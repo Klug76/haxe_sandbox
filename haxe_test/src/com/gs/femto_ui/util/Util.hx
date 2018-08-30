@@ -83,7 +83,7 @@ class Util
 		#end
 	}
 //.............................................................................
-	public static inline function ftoFixed(v: Float, digits: Int): String
+	public static #if (flash || js) inline #end function ftoFixed(v: Float, digits: Int): String
 	{
 		#if (flash || js)
 			return untyped v.toFixed(digits);

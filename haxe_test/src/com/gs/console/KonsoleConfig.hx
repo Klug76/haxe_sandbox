@@ -1,6 +1,7 @@
 package com.gs.console;
 
 import com.gs.femto_ui.util.Util;
+import flash.display.DisplayObject;
 import flash.errors.Error;
 import com.gs.femto_ui.Root;
 
@@ -13,8 +14,6 @@ class KonsoleConfig
 	//public var max_lines_: Int = 8;//:must be 2^N
 	//public var max_lines_: Int = 128;//:must be 2^N
 	public var max_lines_ : Int = 2048;  //:must be 2^N
-
-	//public var make_links_ : Bool = false;
 
 	public var con_bg_alpha_	: Float = 0.9;
 	public var crosshair_alpha_	: Float = 0.75;
@@ -30,8 +29,8 @@ class KonsoleConfig
 	public var pt1_color_		: Int = 0xff0000;
 	public var pt2_color_		: Int = 0xffff00;
 
-	public var width_			: Float = 600;
-	public var height_			: Float = 450;
+	public var con_w_factor_	: Float = .8;//* stage.stageWidth
+	public var con_h_factor_	: Float = .75;//* stage.stageHeight
 
 	//:scaled by hi-res:
 	public var min_width_		: Float = 128;
@@ -41,7 +40,8 @@ class KonsoleConfig
 	public var zoom_size_		: Float = 48;
 
 	public var zoom_factor_		: Int = 4;
-	public var custom_zoom_draw_: Bool = false;
+	public var zoom_root_		: DisplayObject = null;
+	//public var zoom_3d_			: Bool = false;
 
 	public var font_family_ : String = "Helvetica,Arial,_sans";
 	public var con_font_ : String = null;
@@ -69,7 +69,6 @@ class KonsoleConfig
 		}
 		#end
 		var r: Root = Root.instance;
-
 		if ((r.platform_ == "WIN") || (r.platform_ == "WEB"))//TODO fix me: !Mac::HTML5
 		{
 			if (null == con_font_)

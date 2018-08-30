@@ -31,7 +31,6 @@ class Main extends Sprite
 		cfg.con_bg_color_ = 0xFF000000;
 		cfg.con_text_color_ = 0x77BB77;
 		cfg.con_text_size_ = 18;
-		cfg.custom_zoom_draw_ = true;
 
 		KonController.start(stage, cfg);
 

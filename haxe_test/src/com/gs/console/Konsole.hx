@@ -75,6 +75,7 @@ class Konsole extends RingBuf<LogLine>
 	public function start() : Void
 	{
 		var stage: Stage = Root.instance.stage_;
+		//TODO move out of here (& add gesture)
 		stage.addEventListener(KeyboardEvent.KEY_DOWN, on_Key_Down_Stage, false, 1);
 		stage.addEventListener(KeyboardEvent.KEY_UP, on_Key_Up_Stage, false, 1);
 	}

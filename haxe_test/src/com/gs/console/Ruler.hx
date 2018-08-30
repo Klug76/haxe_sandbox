@@ -6,26 +6,22 @@ import com.gs.femto_ui.Visel;
 import com.gs.femto_ui.util.Util;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
-import flash.display.BlendMode;
 import flash.display.CapsStyle;
 import flash.display.DisplayObject;
-import flash.display.GradientType;
 import flash.display.Graphics;
 import flash.display.LineScaleMode;
 import flash.display.PixelSnapping;
 import flash.display.Shape;
-import flash.display.Sprite;
 import flash.display.StageScaleMode;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
+import flash.events.TouchEvent;
 import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
-import flash.text.TextFormatAlign;
 import flash.ui.Keyboard;
 
 using com.gs.femto_ui.TextFieldExt;
@@ -35,8 +31,9 @@ class Ruler extends Visel
 	private var k_: Konsole;
 	private var bg_: Visel;
 	private var crosshair_: Shape;
-	private var zoom_: Bitmap;
-	private var zoom_overlay_: Bitmap;
+	private var zoom_background_: Bitmap;
+	private var zoom_3D_: Bitmap;
+	private var zoom_2D_: Bitmap;
 	private var size_: Float;
 	private var mat_: Matrix = new Matrix();
 	private var zoom_offset_: Float = 8;
@@ -49,11 +46,12 @@ class Ruler extends Visel
 	private var label_dist_info_: TextField;
 	private var cur_x_: Float = 0;
 	private var cur_y_: Float = 0;
+	private var num_tp_: Int = 0;
 
-	private var zoom_overlay_bd_: BitmapData;
-	public var zoom_bd_: BitmapData;
-	public var aux_rc_: Rectangle = new Rectangle();
-	public var aux_pt_: Point = new Point();
+	private var zoom_bd_3D_: BitmapData;//:see @:privateAccess in KonController
+	private var zoom_bd_2D_: BitmapData;
+	private var aux_rc_: Rectangle = new Rectangle();
+	private var aux_pt_: Point = new Point();
 	private var aux_pt2_: Point = new Point();
 
 	static private inline var STATE_DEFAULT : Int	= 0;
@@ -101,22 +99,30 @@ class Ruler extends Visel
 		bg_.addChild(label_cur_pt_);
 
 		var size: Int = Math.round(k_.cfg_.zoom_size_);
+		size_ = size;
 		var zoom_factor: Int = k_.cfg_.zoom_factor_;
 		zoom_offset2_ = size * zoom_factor + zoom_offset_;
-		zoom_bd_ = new BitmapData(size, size, false, stage.color);
-		size_ = size;
-		zoom_ = new Bitmap(zoom_bd_, PixelSnapping.ALWAYS, false);
-		zoom_.scaleX = zoom_.scaleY = zoom_factor;
-		zoom_.x = zoom_offset_;
-		zoom_.y = zoom_offset_;
-		bg_.addChild(zoom_);
 
-		zoom_overlay_bd_ = new BitmapData(size, size, true, 0);
-		zoom_overlay_ = new Bitmap(zoom_overlay_bd_, PixelSnapping.ALWAYS, false);
-		zoom_overlay_.scaleX = zoom_overlay_.scaleY = zoom_factor;
-		zoom_overlay_.x = zoom_offset_;
-		zoom_overlay_.y = zoom_offset_;
-		bg_.addChild(zoom_overlay_);
+		var tmp = new BitmapData(size, size, false, 0xff000000 | stage.color);
+		zoom_background_ = new Bitmap(tmp, PixelSnapping.ALWAYS, false);
+		zoom_background_.scaleX = zoom_background_.scaleY = zoom_factor;
+		zoom_background_.x = zoom_offset_;
+		zoom_background_.y = zoom_offset_;
+		bg_.addChild(zoom_background_);
+
+		zoom_bd_3D_ = new BitmapData(size, size, true, 0);
+		zoom_3D_ = new Bitmap(zoom_bd_3D_, PixelSnapping.ALWAYS, false);
+		zoom_3D_.scaleX = zoom_3D_.scaleY = zoom_factor;
+		zoom_3D_.x = zoom_offset_;
+		zoom_3D_.y = zoom_offset_;
+		bg_.addChild(zoom_3D_);
+
+		zoom_bd_2D_ = new BitmapData(size, size, true, 0);
+		zoom_2D_ = new Bitmap(zoom_bd_2D_, PixelSnapping.ALWAYS, false);
+		zoom_2D_.scaleX = zoom_2D_.scaleY = zoom_factor;
+		zoom_2D_.x = zoom_offset_;
+		zoom_2D_.y = zoom_offset_;
+		bg_.addChild(zoom_2D_);
 
 		k_.signal_show_.add(on_Show_Console);
 	}
@@ -128,11 +134,21 @@ class Ruler extends Visel
 //.............................................................................
 	override public function on_Show() : Void
 	{
-		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
-		addEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move);
+		if (Root.instance.is_touch_supported_)
+		{
+			addEventListener(TouchEvent.TOUCH_BEGIN, on_Touch_Begin);
+			addEventListener(TouchEvent.TOUCH_END, on_Touch_End);
+			addEventListener(TouchEvent.TOUCH_MOVE, on_Touch_Move);
+		}
+		else
+		{
+			addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
+			addEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up);
+			addEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move);
+		}
 		stage.addEventListener(Event.RESIZE, on_Stage_Resize);
-		stage.addEventListener(KeyboardEvent.KEY_DOWN, on_Stage_Key_Down);
-		stage.addEventListener(KeyboardEvent.KEY_UP, on_Stage_Key_Up);
+		stage.addEventListener(KeyboardEvent.KEY_DOWN, on_Stage_Key_Down, false, 1);
+		stage.addEventListener(KeyboardEvent.KEY_UP, on_Stage_Key_Up, false, 1);
 		on_Stage_Resize(null);
 		reset();
 		bring_To_Top();
@@ -140,8 +156,18 @@ class Ruler extends Visel
 //.............................................................................
 	override public function on_Hide() : Void
 	{
-		removeEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
-		removeEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move);
+		if (Root.instance.is_touch_supported_)
+		{
+			removeEventListener(TouchEvent.TOUCH_BEGIN, on_Touch_Begin);
+			removeEventListener(TouchEvent.TOUCH_END, on_Touch_End);
+			removeEventListener(TouchEvent.TOUCH_MOVE, on_Touch_Move);
+		}
+		else
+		{
+			removeEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
+			removeEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up);
+			removeEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move);
+		}
 		stage.removeEventListener(Event.RESIZE, on_Stage_Resize);
 		stage.removeEventListener(KeyboardEvent.KEY_DOWN, on_Stage_Key_Down);
 		stage.removeEventListener(KeyboardEvent.KEY_UP, on_Stage_Key_Up);
@@ -229,8 +255,33 @@ class Ruler extends Visel
 	private function on_Mouse_Down(ev : MouseEvent) : Void
 	{
 		ev.stopImmediatePropagation();
+	}
+//.............................................................................
+	private function on_Mouse_Up(ev : MouseEvent) : Void
+	{
+		ev.stopImmediatePropagation();
 		advance_State(ev.shiftKey || ev.ctrlKey, ev.stageX, ev.stageY);
 		update_Taps();
+	}
+//.............................................................................
+	private function on_Mouse_Move(ev : MouseEvent) : Void
+	{
+		ev.stopImmediatePropagation();
+		move_Crosshair(ev.stageX,  ev.stageY);
+	}
+//.............................................................................
+	private function move_Crosshair(nx: Float, ny: Float) : Void
+	{
+		if ((cur_x_ != nx) || (cur_y_ != ny))
+		{
+			cur_x_ = nx;
+			cur_y_ = ny;
+			//?ev.updateAfterEvent();
+			invalid_flags_ |= Visel.INVALIDATION_FLAG_DATA;
+			draw();
+			validate();
+			//?TODO if tap1 show realtime distance?
+		}
 	}
 //.............................................................................
 	private function advance_State(replace: Bool, nx: Float, ny: Float) : Void
@@ -273,20 +324,42 @@ class Ruler extends Visel
 	}
 //.............................................................................
 //.............................................................................
-	private function on_Mouse_Move(ev : MouseEvent) : Void
+//.............................................................................
+	private function on_Touch_Begin(ev : TouchEvent) : Void
 	{
-		if ((cur_x_ != ev.stageX) || (cur_y_ != ev.stageY))
+		ev.stopImmediatePropagation();
+		++num_tp_;
+	}
+//.............................................................................
+	private function on_Touch_End(ev : TouchEvent) : Void
+	{
+		ev.stopImmediatePropagation();
+		--num_tp_;
+		if (num_tp_ > 1)
 		{
-			cur_x_ = ev.stageX;
-			cur_y_ = ev.stageY;
-			//?invalidate(Visel.INVALIDATION_FLAG_DATA);
-			//?ev.updateAfterEvent();
-			invalid_flags_ |= Visel.INVALIDATION_FLAG_DATA;
-			draw();
-			validate();
-			//TODO if tap1 show realtime distance
+			visible = false;
+		}
+		else if (ev.isPrimaryTouchPoint)
+		{
+			advance_State(false, ev.stageX, ev.stageY);
+			update_Taps();
 		}
 	}
+//.............................................................................
+	private function on_Touch_Move(ev : TouchEvent) : Void
+	{
+		ev.stopImmediatePropagation();
+		if (ev.isPrimaryTouchPoint)
+		{
+			move_Crosshair(ev.stageX,  ev.stageY);
+		}
+	}
+//.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
 //.............................................................................
 	private function reset(): Void
 	{
@@ -409,54 +482,49 @@ class Ruler extends Visel
 //.............................................................................
 	private function paint_Zoom_Overlay(): Void
 	{
-		if (k_.cfg_.custom_zoom_draw_ || (Root.instance.owner_ != stage))
+		if (k_.cfg_.zoom_root_ == stage)
+			return;
+		var al: UInt = Math.round(k_.cfg_.crosshair_alpha_ * 255) << 24;
+		var cl: UInt = k_.cfg_.crosshair_color_ | al;
+		//var cl: UInt = 0x80800080;
+		var bd: BitmapData = zoom_bd_2D_;
+		var bw: Int = bd.width;
+		var bh: Int = bd.height;
+		var bw_half: Int = Math.floor(bw / 2);
+		var bh_half: Int = Math.floor(bh / 2);
+		paint_Box(bd, bw, bh, bw_half,		0,				1,				bh_half - 1,	cl);
+		paint_Box(bd, bw, bh, bw_half,		bh_half + 2,	1,				bh_half - 2,	cl);
+		paint_Box(bd, bw, bh, 0,			bh_half,		bw_half - 1,	1,				cl);
+		paint_Box(bd, bw, bh, bw_half + 2,	bh_half,		bw_half - 2,	1,				cl);
+
+		var nx: Int;
+		var ny: Int;
+		var len: Int = 4;
+		if ((STATE_TAP1 == tap_state_) || (STATE_TAP2 == tap_state_))
 		{
-			var al: UInt = Math.round(k_.cfg_.crosshair_alpha_ * 255) << 24;
-			var cl: UInt = k_.cfg_.crosshair_color_ | al;
-			//var cl: UInt = 0x80800080;
-			var bd: BitmapData = zoom_overlay_bd_;
-			var bw: Int = bd.width;
-			var bh: Int = bd.height;
-
-			aux_rc_.setTo(0, 0, bw, bh);
-			bd.fillRect(aux_rc_, 0);
-
-			var bw_half: Int = Math.floor(bw / 2);
-			var bh_half: Int = Math.floor(bh / 2);
-			paint_Box(bd, bw, bh, bw_half,		0,				1,				bh_half - 1,	cl);
-			paint_Box(bd, bw, bh, bw_half,		bh_half + 2,	1,				bh_half - 2,	cl);
-			paint_Box(bd, bw, bh, 0,			bh_half,		bw_half - 1,	1,				cl);
-			paint_Box(bd, bw, bh, bw_half + 2,	bh_half,		bw_half - 2,	1,				cl);
-
-			var nx: Int;
-			var ny: Int;
-			var len: Int = 4;
-			if ((STATE_TAP1 == tap_state_) || (STATE_TAP2 == tap_state_))
-			{
-				cl = k_.cfg_.pt1_color_ | al;
-				aux_pt_.copyFrom(tap1_);
-				aux_pt_.offset(-cur_x_, -cur_y_);
-				aux_pt_.offset(bw_half, bh_half);
-				nx = Math.round(aux_pt_.x);
-				ny = Math.round(aux_pt_.y);
-				paint_Box(bd, bw, bh, nx + 2,			ny,				len,	1,		cl);
-				paint_Box(bd, bw, bh, nx - len - 1,		ny,				len,	1,		cl);
-				paint_Box(bd, bw, bh, nx,				ny - len - 1,	1,		len,	cl);
-				paint_Box(bd, bw, bh, nx,				ny + 2,			1,		len,	cl);
-			}
-			if (STATE_TAP2 == tap_state_)
-			{
-				cl = k_.cfg_.pt2_color_ | al;
-				aux_pt_.copyFrom(tap2_);
-				aux_pt_.offset(-cur_x_, -cur_y_);
-				aux_pt_.offset(bw_half, bh_half);
-				nx = Math.round(aux_pt_.x);
-				ny = Math.round(aux_pt_.y);
-				paint_Box(bd, bw, bh, nx + 2,			ny,				len,	1,		cl);
-				paint_Box(bd, bw, bh, nx - len - 1,		ny,				len,	1,		cl);
-				paint_Box(bd, bw, bh, nx,				ny - len - 1,	1,		len,	cl);
-				paint_Box(bd, bw, bh, nx,				ny + 2,			1,		len,	cl);
-			}
+			cl = k_.cfg_.pt1_color_ | al;
+			aux_pt_.copyFrom(tap1_);
+			aux_pt_.offset(-cur_x_, -cur_y_);
+			aux_pt_.offset(bw_half, bh_half);
+			nx = Math.round(aux_pt_.x);
+			ny = Math.round(aux_pt_.y);
+			paint_Box(bd, bw, bh, nx + 2,			ny,				len,	1,		cl);
+			paint_Box(bd, bw, bh, nx - len - 1,		ny,				len,	1,		cl);
+			paint_Box(bd, bw, bh, nx,				ny - len - 1,	1,		len,	cl);
+			paint_Box(bd, bw, bh, nx,				ny + 2,			1,		len,	cl);
+		}
+		if (STATE_TAP2 == tap_state_)
+		{
+			cl = k_.cfg_.pt2_color_ | al;
+			aux_pt_.copyFrom(tap2_);
+			aux_pt_.offset(-cur_x_, -cur_y_);
+			aux_pt_.offset(bw_half, bh_half);
+			nx = Math.round(aux_pt_.x);
+			ny = Math.round(aux_pt_.y);
+			paint_Box(bd, bw, bh, nx + 2,			ny,				len,	1,		cl);
+			paint_Box(bd, bw, bh, nx - len - 1,		ny,				len,	1,		cl);
+			paint_Box(bd, bw, bh, nx,				ny - len - 1,	1,		len,	cl);
+			paint_Box(bd, bw, bh, nx,				ny + 2,			1,		len,	cl);
 		}
 	}
 //.............................................................................
@@ -497,20 +565,23 @@ class Ruler extends Visel
 			zx = zoom_offset_;
 			zy = zoom_offset_;
 		}
-		zoom_.x = zx;
-		zoom_.y = zy;
-		zoom_overlay_.x = zx;
-		zoom_overlay_.y = zy;
+		zoom_background_.x = zx;
+		zoom_background_.y = zy;
+		zoom_3D_.x = zx;
+		zoom_3D_.y = zy;
+		zoom_2D_.x = zx;
+		zoom_2D_.y = zy;
 
-		if (k_.cfg_.custom_zoom_draw_)
-			return;
-
-		var ui: DisplayObject = Root.instance.owner_;
-		var bd: BitmapData = zoom_bd_;
+		var bd: BitmapData = zoom_bd_2D_;
 		var bw: Float = bd.width;
 		var bh: Float = bd.height;
 		aux_rc_.setTo(0, 0, bw, bh);
-		bd.fillRect(aux_rc_, stage.color);
+		bd.fillRect(aux_rc_, 0);
+
+		var ui: DisplayObject = k_.cfg_.zoom_root_;
+		if (null == ui)
+			return;
+
 		var cnt: Float = size_ * .5;
 		mat_.tx = -cur_x_ + cnt;
 		mat_.ty = -cur_y_ + cnt;
@@ -565,15 +636,18 @@ class Ruler extends Visel
 	{
 		var gr: Graphics = tap_shape_.graphics;
 		gr.clear();
+		var ui_factor: Float = Root.instance.ui_factor_;
+		var offs: Float = 2 * ui_factor;
+		var len: Float = 5 * ui_factor;
 		if ((STATE_TAP1 == tap_state_) || (STATE_TAP2 == tap_state_))
 		{
 			gr.lineStyle(1, k_.cfg_.pt1_color_, k_.cfg_.crosshair_alpha_, true, LineScaleMode.NONE, CapsStyle.NONE);
-			paint_Tap(gr, tap1_.x, tap1_.y, 2, 5);
+			paint_Tap(gr, tap1_.x, tap1_.y, offs, len);
 		}
 		if (STATE_TAP2 == tap_state_)
 		{
 			gr.lineStyle(1, k_.cfg_.pt2_color_, k_.cfg_.crosshair_alpha_, true, LineScaleMode.NONE, CapsStyle.NONE);
-			paint_Tap(gr, tap2_.x, tap2_.y, 2, 5);
+			paint_Tap(gr, tap2_.x, tap2_.y, offs, len);
 
 			paint_Line_Between(gr, tap1_.x, tap1_.y, tap2_.x, tap2_.y);
 		}
@@ -609,13 +683,13 @@ class Ruler extends Visel
 //.............................................................................
 	public function prepare_Zoom_Paint(): Bool
 	{
-		var bd: BitmapData = zoom_bd_;
+		var bd: BitmapData = zoom_bd_3D_;
 		var bw: Float = bd.width;
 		var bh: Float = bd.height;
 		var bw_half: Float = bw / 2;
 		var bh_half: Float = bh / 2;
 		aux_rc_.setTo(0, 0, bw, bh);
-		bd.fillRect(aux_rc_, stage.color);
+		bd.fillRect(aux_rc_, 0);
 		var cx: Float = 0;
 		var cy: Float = 0;
 		var nx: Float = cur_x_ - bw_half;

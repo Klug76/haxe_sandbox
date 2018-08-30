@@ -27,22 +27,22 @@ class Resizer extends Visel
 		addEventListener(MouseEvent.ROLL_OVER, on_Mouse_Over);
 	}
 	//.............................................................................
-	private function on_Mouse_Down(e : MouseEvent) : Void
+	private function on_Mouse_Down(ev : MouseEvent) : Void
 	{
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
 			return;
 		}
 		state_ |= Visel.STATE_DOWN;
-		e.stopPropagation();
-		start_w_ = parent.width - e.stageX;
-		start_h_ = parent.height - e.stageY;
+		ev.stopPropagation();
+		start_w_ = parent.width - ev.stageX;
+		start_h_ = parent.height - ev.stageY;
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 		stage.addEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage, false, 1);
 		stage.addEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move_Stage, false, 1);
 	}
 	//.............................................................................
-	private function on_Mouse_Up_Stage(e : MouseEvent) : Void
+	private function on_Mouse_Up_Stage(ev : MouseEvent) : Void
 	{
 		stage.removeEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage);
 		stage.removeEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move_Stage);
@@ -53,12 +53,12 @@ class Resizer extends Visel
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
 			state_ &= ~Visel.STATE_DOWN;
-			e.stopImmediatePropagation();
+			ev.stopImmediatePropagation();
 			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 		}
 	}
 	//.............................................................................
-	private function on_Mouse_Move_Stage(e : MouseEvent) : Void
+	private function on_Mouse_Move_Stage(ev : MouseEvent) : Void
 	{
 		if (disposed)
 		{
@@ -66,13 +66,13 @@ class Resizer extends Visel
 		}
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
-			e.stopImmediatePropagation();
-			parent.width = Util.fclamp(start_w_ + e.stageX, min_width_, stage.stageWidth);
-			parent.height = Util.fclamp(start_h_ + e.stageY, min_height_, stage.stageHeight);
+			ev.stopImmediatePropagation();
+			parent.width = Util.fclamp(start_w_ + ev.stageX, min_width_, stage.stageWidth);
+			parent.height = Util.fclamp(start_h_ + ev.stageY, min_height_, stage.stageHeight);
 		}
 	}
 	//.............................................................................
-	private function on_Mouse_Over(e : MouseEvent) : Void
+	private function on_Mouse_Over(ev : MouseEvent) : Void
 	{
 		if ((state_ & Visel.STATE_HOVER) != 0)
 		{
@@ -83,7 +83,7 @@ class Resizer extends Visel
 		addEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out);
 	}
 	//.............................................................................
-	private function on_Mouse_Out(e : MouseEvent) : Void
+	private function on_Mouse_Out(ev : MouseEvent) : Void
 	{
 		state_ &= ~Visel.STATE_HOVER;
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);

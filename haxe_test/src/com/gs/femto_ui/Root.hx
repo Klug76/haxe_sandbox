@@ -5,6 +5,7 @@ import flash.display.DisplayObject;
 import flash.display.Stage;
 import flash.system.Capabilities;
 import flash.ui.Multitouch;
+import flash.ui.MultitouchInputMode;
 
 class Root
 {
@@ -72,7 +73,8 @@ class Root
 		#end
 		instance_ = this;
 
-		is_touch_supported_ = Multitouch.supportsTouchEvents;
+		//is_touch_supported_ = Multitouch.supportsTouchEvents;
+		is_touch_supported_ = Multitouch.inputMode == MultitouchInputMode.TOUCH_POINT;
 
 		platform_ = Capabilities.version.substr(0, 3);
 		//trace("*** platform_ = " + os_);//:html5 return WEB

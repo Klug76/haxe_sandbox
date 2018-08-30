@@ -24,22 +24,22 @@ class Mover extends Visel
 		addEventListener(MouseEvent.ROLL_OVER, on_Mouse_Over);
 	}
 	//.............................................................................
-	private function on_Mouse_Down(e : MouseEvent) : Void
+	private function on_Mouse_Down(ev : MouseEvent) : Void
 	{
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
 			return;
 		}
 		state_ |= Visel.STATE_DOWN;
-		e.stopPropagation();
-		start_x_ = parent.x - e.stageX;
-		start_y_ = parent.y - e.stageY;
+		ev.stopPropagation();
+		start_x_ = parent.x - ev.stageX;
+		start_y_ = parent.y - ev.stageY;
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 		stage.addEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage, false, 1);
 		stage.addEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move_Stage, false, 1);
 	}
 	//.............................................................................
-	private function on_Mouse_Up_Stage(e : MouseEvent) : Void
+	private function on_Mouse_Up_Stage(ev : MouseEvent) : Void
 	{
 		stage.removeEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage);
 		stage.removeEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move_Stage);
@@ -50,12 +50,12 @@ class Mover extends Visel
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
 			state_ &= ~Visel.STATE_DOWN;
-			e.stopImmediatePropagation();
+			ev.stopImmediatePropagation();
 			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 		}
 	}
 	//.............................................................................
-	private function on_Mouse_Move_Stage(e : MouseEvent) : Void
+	private function on_Mouse_Move_Stage(ev : MouseEvent) : Void
 	{
 		if (disposed)
 		{
@@ -63,14 +63,14 @@ class Mover extends Visel
 		}
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
-			e.stopImmediatePropagation();
+			ev.stopImmediatePropagation();
 			var r : Root = Root.instance;
-			parent.x = Util.fclamp(start_x_ + e.stageX, 0, stage.stageWidth - r.tool_width_ * .5);
-			parent.y = Util.fclamp(start_y_ + e.stageY, 0, stage.stageHeight - r.tool_height_ * .5);
+			parent.x = Util.fclamp(start_x_ + ev.stageX, 0, stage.stageWidth - r.tool_width_ * .5);
+			parent.y = Util.fclamp(start_y_ + ev.stageY, 0, stage.stageHeight - r.tool_height_ * .5);
 		}
 	}
 	//.............................................................................
-	private function on_Mouse_Over(e : MouseEvent) : Void
+	private function on_Mouse_Over(ev : MouseEvent) : Void
 	{
 		if ((state_ & Visel.STATE_HOVER) != 0)
 		{
@@ -81,7 +81,7 @@ class Mover extends Visel
 		addEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out);
 	}
 	//.............................................................................
-	private function on_Mouse_Out(e : MouseEvent) : Void
+	private function on_Mouse_Out(ev : MouseEvent) : Void
 	{
 		state_ &= ~Visel.STATE_HOVER;
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);

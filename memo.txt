@@ -1,10 +1,12 @@
 . /explode var|current context? toJson?
+. zoom doesn't work with starling
 +. zoom: use arrow keys to move crosshair
 +. zoom doesn't work with stage3d - fixed!!!
 	.\patched\std\flash\display3D\Context3D.hx - function drawToBitmapData(destination : flash.display.BitmapData, srcRect: flash.geom.Rectangle = null, destPoint: flash.geom.Point = null) : Void;
 +. bug: mouse click e.g. in disabled button cause underlying ui click - fixed in Viewport
 +. /objects: dump all script objects
 . bug: resize stage cause unusable size
+. bigger size of ui elements for mobile
 . WTF: Parameter default value should be constant
 	. https://try.haxe.org/#60547
 . WTF: swtich(Keyboard.BACK)
