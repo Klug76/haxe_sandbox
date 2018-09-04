@@ -1,11 +1,16 @@
 package com.gs.femto_ui.util;
 
+#if (flash)
 import flash.Vector;
+typedef VectorF = Vector<Void->Void>;
+#else
+typedef VectorF = Array<Void->Void>;
+#end
 
 class Signal
 {
-	private var fn_ : Vector<Void->Void> = new Vector<Void->Void>();
-	private var fn_temp_ : Vector<Void->Void> = new Vector<Void->Void>();
+	private var fn_ : VectorF = new VectorF();
+	private var fn_temp_ : VectorF = new VectorF();
 	private var used_ : Int = 0;
 	private var state_ : Int = 0;
 
@@ -52,12 +57,10 @@ class Signal
 		var i : Int;
 		var fn : Void->Void;
 		//:make copy
-		if (fn_temp_.length < count)
-			fn_temp_.length = count;
 		for (i in 0...count)
 		{
 			fn = fn_[i];
-			fn_temp_[i] = fn;
+			fn_temp_[i] = fn;//:https://haxe.org/manual/std-Array.html: write access in Haxe is unbounded
 		}
 		for (i in 0...count)
 		{
@@ -74,7 +77,7 @@ class Signal
 	{
 		if (fn_.indexOf(fn) < 0)
 		{
-			fn_[used_++] = fn;
+			fn_[used_++] = fn;//:see below
 		}
 		start();
 	}

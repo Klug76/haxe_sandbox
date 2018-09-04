@@ -14,6 +14,9 @@ class Toolbar extends Visel
 	public function new(owner : DisplayObjectContainer)
 	{
 		super(owner);
+#if debug
+		name = "toolbar";
+#end
 	}
 	//.............................................................................
 	//.............................................................................

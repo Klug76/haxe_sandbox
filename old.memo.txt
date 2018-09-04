@@ -1,0 +1,45 @@
+TODO:
+.BUG: replace will be called if ringbuf is full
+.scrollbar(mouse/touch)
+	.bug: no arrow symbols in android
+	.bug: scroll pos is lost after hide/show
+	+.bug: bad xml format if copy/paste as html
+.review logline: kill flags?
+.menu (scrollable by touch) may be like in MapEd
+.update bottom if no scroll
+	?. show few lines only (using height)
+	.?update all at scroll (but no append if log called if scroll pos > 0!?)
+.copy to clipboard (strip html tags)
+	.indicator: text copied (, cleared?) (use icon?)
+.how to use in static Log(...args)
+
+.fast touch-scrollable log view
+	+.colorizable (html)
++.fast append
+	see e:\Flash\Samples\Consoles\other!\looty::insertXMLText
++.bring to top
++.KonsoleView extends Viewport
++.setup mouse drag area (and draw gripper)
+
+.mouse & touch usable HUD
+.not visible - no update
+	. fps, mem monitor
+	.stop invisible monitor (by timeout?)
+.command line
+	.suggestions
+	.touch completion button
+	.bug? cmdline may be covered by soft-keyboard (how move it to top!?)
+		.https://help.adobe.com/en_US/as3/dev/WSfffb011ac560372f6bc38fcc12e0166e73b-7ffe.html
+		.<softKeyboardBehavior>none</softKeyboardBehavior>
++.fps meter
++.memory monitor
+.?display ruler
+.flash display tree
+.starling/feathers display tree (plugin)
++.pool log lines
+.share on ios via e-mail!? goviral!? (plugin)
+
+additional ideas:
+.https://github.com/ProG4mr/dconsole
+	.monitor
+.https://github.com/justpinegames/Logi

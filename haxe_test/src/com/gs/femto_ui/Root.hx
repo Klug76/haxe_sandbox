@@ -14,7 +14,7 @@ class Root
 	private static var instance_ : Root;
 
 	public var frame_signal_ : EnterFrameSignal;
-	public var is_touch_supported_ : Bool;
+	public var is_touch_supported_ : Bool = false;
 	public var desktop_mode_ : Bool;
 	public var platform_: String;
 	public var stage_ : Stage;
@@ -61,7 +61,7 @@ class Root
 //.............................................................................
 	private function init(owner : DisplayObject) : Void
 	{
-		#if debug
+#if debug
 		if (instance_ != null)
 		{
 			throw new Error("Root should be singleton!");
@@ -70,11 +70,11 @@ class Root
 		{
 			throw new Error("Stage not found");
 		}
-		#end
-		instance_ = this;
+#end
 
-		//is_touch_supported_ = Multitouch.supportsTouchEvents;
+#if (openfl || (flash >= 10.1))
 		is_touch_supported_ = Multitouch.inputMode == MultitouchInputMode.TOUCH_POINT;
+#end
 
 		platform_ = Capabilities.version.substr(0, 3);
 		//trace("*** platform_ = " + os_);//:html5 return WEB
@@ -110,6 +110,7 @@ class Root
 			content_down_offset_x_	*= ui_factor_;
 			content_down_offset_y_	*= ui_factor_;
 		}
+		instance_ = this;
 	}
 //.............................................................................
 	private static inline function get_instance() : Root

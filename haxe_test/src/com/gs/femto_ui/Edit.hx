@@ -20,6 +20,9 @@ class Edit extends Visel
 //.............................................................................
 	private function init_Ex(txt : String) : Void
 	{
+#if debug
+		name = "edit";
+#end
 		tf_ = new TextField();
 		tf_.type = TextFieldType.INPUT;
 		tf_.defaultTextFormat = get_Default_Text_Format();

@@ -1,4 +1,4 @@
-package;
+package com.gs.con_test;
 
 import com.gs.femto_ui.util.Util;
 import haxe.unit.TestCase;

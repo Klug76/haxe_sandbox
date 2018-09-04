@@ -1,0 +1,5 @@
+-lib heaps
+-lib hscript
+-cp src
+-js bin/heapstest.js
+-main Main

@@ -41,6 +41,9 @@ class KonsoleView extends Viewport
 		super(Root.instance.stage_);
 		//:super.visible = false;
 		create_Children_Ex();
+#if debug
+		name = "console::view";
+#end
 	}
 //.............................................................................
 	private function create_Children_Ex() : Void

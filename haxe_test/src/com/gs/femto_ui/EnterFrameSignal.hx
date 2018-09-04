@@ -1,9 +1,8 @@
 package com.gs.femto_ui;
 
-import flash.Vector;
+import com.gs.femto_ui.util.Signal;
 import flash.display.Stage;
 import flash.events.Event;
-import com.gs.femto_ui.util.Signal;
 
 class EnterFrameSignal extends Signal
 {

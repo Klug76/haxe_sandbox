@@ -3,30 +3,83 @@ package com.gs.console;
 import com.gs.femto_ui.Root;
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
+import flash.display.Stage;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-
-//haxe -cp src -swf bin/hxlib.swc com.gs.console.KonController -lib hscript -swf-version 22 -dce no -D fdb -debug --macro include('com.gs')
-//-D native-trace
+import flash.events.KeyboardEvent;
 
 class KonController
 {
 	static public inline var VERSION: String = "0.9.0";
-	static private var instance_: Konsole;
-	static private var ruler_: Ruler;
+	static private var instance_: Konsole = null;
+	static private var ruler_: Ruler = null;
+	static private var view_: DisplayObject = null;
+	static private var password_idx_: Int = 0;
 
 	static public function start(owner: DisplayObject, cfg: KonsoleConfig): Void
 	{
 		var r: Root = Root.create(owner);
-		cfg.init();//:use Root
+		cfg.init(r.platform_, r.ui_factor_);//:use Root
 
 		var k: Konsole = new Konsole(cfg);
-		k.set_View(KonsoleView);
-		k.start();
 
 		k.register_Command("ruler", cmd_Ruler, "Show display ruler");
 
 		instance_ = k;
+
+		add_Listeners(r.stage_);
+	}
+//.............................................................................
+	static private function add_Listeners(stage: Stage) : Void
+	{
+		//TODO add gesture
+		stage.addEventListener(KeyboardEvent.KEY_DOWN, on_Key_Down_Stage, false, 1);
+		stage.addEventListener(KeyboardEvent.KEY_UP, on_Key_Up_Stage, false, 1);
+	}
+//.............................................................................
+	static private function on_Key_Down_Stage(e : KeyboardEvent) : Void
+	{
+		//trace("stage::key down: 0x" + Std.string(e.keyCode));
+		var cfg: KonsoleConfig = get_Config();
+		if ((null == cfg) || (null != cfg.password_))
+		{
+			return;
+		}
+		switch (e.keyCode)
+		{
+			case 0xc0:
+				e.preventDefault();
+		}
+	}
+//.............................................................................
+	static private function on_Key_Up_Stage(e : KeyboardEvent) : Void
+	{
+		//trace("stage::key up: 0x" + Std.string(e.keyCode));
+		var cfg: KonsoleConfig = get_Config();
+		if (null == cfg)
+			return;
+		var pass: String = cfg.password_;
+		if (null != pass)
+		{
+			if (e.charCode == pass.charCodeAt(password_idx_))
+			{
+				++password_idx_;
+				if (password_idx_ == pass.length)
+				{
+					visible = true;//?
+					password_idx_ = 0;
+				}
+				return;
+			}
+			password_idx_ = 0;
+			return;
+		}
+		switch (e.keyCode)
+		{
+			case 0xc0:
+				e.preventDefault();
+				visible = !visible;
+		}
 	}
 //.............................................................................
 	static public function add(v: Dynamic) : Void
@@ -45,15 +98,29 @@ class KonController
 	#if swc @:getter(visible) #end
 	static public function get_visible(): Bool
 	{
-		if (instance_ != null)
-			return instance_.visible;
+		if (view_ != null)
+			return view_.visible;
 		return false;
 	}
 	#if swc @:setter(visible) #end
 	static public function set_visible(value: Bool): Bool
 	{
 		if (instance_ != null)
-			instance_.visible = value;
+		{
+			if (value)
+			{
+				if (null == view_)
+					view_ = new KonsoleView(instance_);
+				else
+					view_.visible = true;
+				instance_.signal_show_.fire();
+			}
+			else
+			{
+				if (view_ != null)
+					view_.visible = false;
+			}
+		}
 		return value;
 	}
 //.............................................................................
@@ -123,11 +190,15 @@ class KonController
 			{
 				ruler_.visible = !ruler_.visible;
 				if (ruler_.visible)
-					instance_.visible = false;
+				{
+					if (view_ != null)
+						view_.visible = false;
+				}
 				return;
 			}
 			ruler_ = new Ruler(instance_);
-			instance_.visible = false;
+			if (view_ != null)
+				view_.visible = false;
 		}
 	}
 //.............................................................................

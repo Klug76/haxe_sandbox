@@ -29,6 +29,9 @@ class Viewport extends Visel
 		}
 		super(layer_);
 		create_Children();
+#if debug
+		name = "view";
+#end
 	}
 //.............................................................................
 	private function create_Children() : Void

@@ -169,7 +169,7 @@ class CmdLine extends Edit
 			return;
 		}
 		var t : String = tf_.text;
-		if ((null == stash_) || (history_.index_Of(t) < 0))
+		if ((null == stash_) || !history_.have(t))
 		{
 			stash_ = t;
 		}

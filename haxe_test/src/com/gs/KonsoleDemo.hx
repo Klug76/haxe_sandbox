@@ -66,12 +66,12 @@ class KonsoleDemo extends Visel
 		visible = false;//:draw should make this visible
 		create_Children();
 
-		test1(null);
-		test2(null);
+		//test1(null);
+		//test2(null);
 		//KonController.visible = true;
 
 		KonController.register_Object("world", this);
-		KonController.eval("world.counter_");
+		//KonController.eval("world.counter_");
 	}
 
 	function create_Children(): Void
@@ -261,11 +261,13 @@ class KonsoleDemo extends Visel
 		KonController.add("\n");
 		KonController.add('');
 		foo(Keyboard.ESCAPE);
-#if flash
+#if (flash >= 10.2)
 		foo(Keyboard.BACK);
 		foo(Keyboard.BACK);
 #end
+#if (flash >= 10.1)
 		foo(Keyboard.A);
+#end
 		KonController.add('');
 		Timer.delay(append_Test1, 100);
 
@@ -282,14 +284,12 @@ class KonsoleDemo extends Visel
 		{
 		case Keyboard.ESCAPE:
 			KonController.add("Esc");
-#if flash
+#if (flash >= 10.2)
 		case Keyboard.BACK:
 			KonController.add("Back");
 #end
-		case Keyboard.A:
-			KonController.add("A");
 		}
-#if flash
+#if (flash >= 10.2)
 		if (u == Keyboard.BACK)
 			KonController.add("*Back");
 #end

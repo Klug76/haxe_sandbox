@@ -1,4 +1,4 @@
-package;
+package com.gs.con_test;
 
 import haxe.unit.TestCase;
 import com.gs.femto_ui.util.RingBuf;

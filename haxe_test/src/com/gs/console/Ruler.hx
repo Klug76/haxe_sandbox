@@ -72,7 +72,8 @@ class Ruler extends Visel
 		var r : Root = Root.instance;
 
 		bg_ = new Visel(this);
-		bg_.dummy_color = 0x40000040;
+		bg_.dummy_color = k_.cfg_.ruler_overlay_color_;
+		bg_.dummy_alpha = k_.cfg_.ruler_overlay_alpha_;
 		addChild(bg_);
 
 		crosshair_ = new Shape();
@@ -84,17 +85,15 @@ class Ruler extends Visel
 		tap_shape_ = new Shape();
 		bg_.addChild(tap_shape_);
 
-		var fmt: TextFormat = new TextFormat(null, Std.int(r.def_text_size_), 0x000000, true);
+		var fmt: TextFormat = new TextFormat(null, Std.int(r.def_text_size_), k_.cfg_.ruler_text_color_, true);
 
 		label_dist_info_ = TextField.create_AutoSize_Text_Field("0", fmt);
-		label_dist_info_.backgroundColor = 0xffFFff;
+		label_dist_info_.backgroundColor = k_.cfg_.ruler_bg_color_;
 		label_dist_info_.background = true;
 		bg_.addChild(label_dist_info_);
 
-		fmt = new TextFormat(null, Std.int(r.def_text_size_), 0x000000, true);
-		//:fmt.align = TextFormatAlign.CENTER;
 		label_cur_pt_ = TextField.create_AutoSize_Text_Field("0:0", fmt);
-		label_cur_pt_.backgroundColor = 0xffFFff;
+		label_cur_pt_.backgroundColor = k_.cfg_.ruler_bg_color_;
 		label_cur_pt_.background = true;
 		bg_.addChild(label_cur_pt_);
 
@@ -103,7 +102,7 @@ class Ruler extends Visel
 		var zoom_factor: Int = k_.cfg_.zoom_factor_;
 		zoom_offset2_ = size * zoom_factor + zoom_offset_;
 
-		var tmp = new BitmapData(size, size, false, 0xff000000 | stage.color);
+		var tmp = new BitmapData(size, size, false, 0xff000000 | k_.cfg_.zoom_bg_color_);
 		zoom_background_ = new Bitmap(tmp, PixelSnapping.ALWAYS, false);
 		zoom_background_.scaleX = zoom_background_.scaleY = zoom_factor;
 		zoom_background_.x = zoom_offset_;
@@ -127,25 +126,14 @@ class Ruler extends Visel
 		k_.signal_show_.add(on_Show_Console);
 	}
 //.............................................................................
-	function on_Show_Console() : Void
+	private function on_Show_Console() : Void
 	{
 		bring_To_Top();
 	}
 //.............................................................................
 	override public function on_Show() : Void
 	{
-		if (Root.instance.is_touch_supported_)
-		{
-			addEventListener(TouchEvent.TOUCH_BEGIN, on_Touch_Begin);
-			addEventListener(TouchEvent.TOUCH_END, on_Touch_End);
-			addEventListener(TouchEvent.TOUCH_MOVE, on_Touch_Move);
-		}
-		else
-		{
-			addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
-			addEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up);
-			addEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move);
-		}
+		add_Tap_Listeners();
 		stage.addEventListener(Event.RESIZE, on_Stage_Resize);
 		stage.addEventListener(KeyboardEvent.KEY_DOWN, on_Stage_Key_Down, false, 1);
 		stage.addEventListener(KeyboardEvent.KEY_UP, on_Stage_Key_Up, false, 1);
@@ -156,22 +144,44 @@ class Ruler extends Visel
 //.............................................................................
 	override public function on_Hide() : Void
 	{
+		remove_Tap_Listeners();
+		stage.removeEventListener(Event.RESIZE, on_Stage_Resize);
+		stage.removeEventListener(KeyboardEvent.KEY_DOWN, on_Stage_Key_Down);
+		stage.removeEventListener(KeyboardEvent.KEY_UP, on_Stage_Key_Up);
+	}
+//.............................................................................
+	private function add_Tap_Listeners() : Void
+	{
+#if (openfl || (flash >= 10.1))
+		if (Root.instance.is_touch_supported_)
+		{
+			addEventListener(TouchEvent.TOUCH_BEGIN, on_Touch_Begin);
+			addEventListener(TouchEvent.TOUCH_END, on_Touch_End);
+			addEventListener(TouchEvent.TOUCH_MOVE, on_Touch_Move);
+			return;
+		}
+#end
+		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
+		addEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up);
+		addEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move);
+	}
+//.............................................................................
+	private function remove_Tap_Listeners() : Void
+	{
+#if (openfl || (flash >= 10.1))
 		if (Root.instance.is_touch_supported_)
 		{
 			removeEventListener(TouchEvent.TOUCH_BEGIN, on_Touch_Begin);
 			removeEventListener(TouchEvent.TOUCH_END, on_Touch_End);
 			removeEventListener(TouchEvent.TOUCH_MOVE, on_Touch_Move);
+			return;
 		}
-		else
-		{
-			removeEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
-			removeEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up);
-			removeEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move);
-		}
-		stage.removeEventListener(Event.RESIZE, on_Stage_Resize);
-		stage.removeEventListener(KeyboardEvent.KEY_DOWN, on_Stage_Key_Down);
-		stage.removeEventListener(KeyboardEvent.KEY_UP, on_Stage_Key_Up);
+#end
+		removeEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
+		removeEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up);
+		removeEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move);
 	}
+//.............................................................................
 //.............................................................................
 	private function on_Stage_Resize(ev : Event) : Void
 	{
@@ -190,8 +200,10 @@ class Ruler extends Visel
 			return;
 		}
 		var prev = tap_state_;
-		aux_pt_.copyFrom(tap1_);
-		aux_pt2_.copyFrom(tap2_);
+		aux_pt_.x = tap1_.x;
+		aux_pt_.y = tap1_.y;
+		aux_pt2_.x = tap2_.x;
+		aux_pt2_.y = tap2_.y;
 		var idx: Int = arr_code.indexOf(code);
 		if (idx >= 0)
 		{
@@ -245,7 +257,7 @@ class Ruler extends Visel
 	{
 		if (Keyboard.ESCAPE == code)
 			return true;
-#if flash
+#if (flash >= 10.2)
 		if (Keyboard.BACK == code)
 			return true;
 #end
@@ -387,7 +399,10 @@ class Ruler extends Visel
 		label_dist_info_.text = Util.ftoFixed(d, ((tap1_.x == tap2_.x) || (tap1_.y == tap2_.y)) ? 0 : 2);
 		var label_w = label_dist_info_.width;
 		var label_h = label_dist_info_.height;
-		aux_rc_.setTo((tap1_.x + tap2_.x - label_w) * .5, (tap1_.y + tap2_.y - label_h) * .5, label_w, label_h);
+		aux_rc_.left = (tap1_.x + tap2_.x - label_w) * .5;
+		aux_rc_.top  = (tap1_.y + tap2_.y - label_h) * .5;
+		aux_rc_.width = label_w;
+		aux_rc_.height = label_h;
 		aux_rc_.inflate(2, 2);
 		find_Popup_Pos(aux_rc_, tap1_, tap2_);
 		aux_rc_.inflate(-2, -2);
@@ -486,7 +501,7 @@ class Ruler extends Visel
 			return;
 		var al: UInt = Math.round(k_.cfg_.crosshair_alpha_ * 255) << 24;
 		var cl: UInt = k_.cfg_.crosshair_color_ | al;
-		//var cl: UInt = 0x80800080;
+
 		var bd: BitmapData = zoom_bd_2D_;
 		var bw: Int = bd.width;
 		var bh: Int = bd.height;
@@ -503,7 +518,8 @@ class Ruler extends Visel
 		if ((STATE_TAP1 == tap_state_) || (STATE_TAP2 == tap_state_))
 		{
 			cl = k_.cfg_.pt1_color_ | al;
-			aux_pt_.copyFrom(tap1_);
+			aux_pt_.x = tap1_.x;
+			aux_pt_.y = tap1_.y;
 			aux_pt_.offset(-cur_x_, -cur_y_);
 			aux_pt_.offset(bw_half, bh_half);
 			nx = Math.round(aux_pt_.x);
@@ -516,7 +532,8 @@ class Ruler extends Visel
 		if (STATE_TAP2 == tap_state_)
 		{
 			cl = k_.cfg_.pt2_color_ | al;
-			aux_pt_.copyFrom(tap2_);
+			aux_pt_.x = tap2_.x;
+			aux_pt_.y = tap2_.y;
 			aux_pt_.offset(-cur_x_, -cur_y_);
 			aux_pt_.offset(bw_half, bh_half);
 			nx = Math.round(aux_pt_.x);
@@ -550,7 +567,10 @@ class Ruler extends Visel
 		}
 		if ((nw <= 0) || (nh <= 0))
 			return;
-		aux_rc_.setTo(nx, ny, nw, nh);
+		aux_rc_.left = nx;
+		aux_rc_.top = ny;
+		aux_rc_.width = nw;
+		aux_rc_.height = nh;
 		bd.fillRect(aux_rc_, cl);
 	}
 //.............................................................................
@@ -575,7 +595,10 @@ class Ruler extends Visel
 		var bd: BitmapData = zoom_bd_2D_;
 		var bw: Float = bd.width;
 		var bh: Float = bd.height;
-		aux_rc_.setTo(0, 0, bw, bh);
+		aux_rc_.left = 0;
+		aux_rc_.top = 0;
+		aux_rc_.width = bw;
+		aux_rc_.height = bh;
 		bd.fillRect(aux_rc_, 0);
 
 		var ui: DisplayObject = k_.cfg_.zoom_root_;
@@ -669,13 +692,9 @@ class Ruler extends Visel
 //.............................................................................
 	inline private function paint_Line_Between(gr: Graphics, nx1: Float, ny1: Float, nx2: Float, ny2: Float) : Void
 	{
-		gr.lineStyle(1, 0xFFffFF, 1, true, LineScaleMode.NONE, CapsStyle.NONE);
+		gr.lineStyle(1, k_.cfg_.ruler_line_color_, 1, true, LineScaleMode.NONE, CapsStyle.NONE);
 		gr.moveTo(nx1, ny1);
 		gr.lineTo(nx2, ny2);
-		//?gr.lineStyle(1);
-		//?gr.lineGradientStyle(GradientType.LINEAR, [0x000000, 0xFFffFF, 0], [1, 1, 1], [0, 127, 255]);
-		//?gr.moveTo(tap1_.x, tap1_.y);
-		//?gr.lineTo(tap2_.x, tap2_.y);
 	}
 //.............................................................................
 //.............................................................................
@@ -688,7 +707,10 @@ class Ruler extends Visel
 		var bh: Float = bd.height;
 		var bw_half: Float = bw / 2;
 		var bh_half: Float = bh / 2;
-		aux_rc_.setTo(0, 0, bw, bh);
+		aux_rc_.left = 0;
+		aux_rc_.top = 0;
+		aux_rc_.width = bw;
+		aux_rc_.height = bh;
 		bd.fillRect(aux_rc_, 0);
 		var cx: Float = 0;
 		var cy: Float = 0;
@@ -719,8 +741,12 @@ class Ruler extends Visel
 		}
 		if ((nw > 0) && (nh > 0) && (cx < bw) && (cy < bh))
 		{
-			aux_rc_.setTo(nx, ny, nw, nh);
-			aux_pt_.setTo(cx, cy);
+			aux_rc_.left = nx;
+			aux_rc_.top = ny;
+			aux_rc_.width = nw;
+			aux_rc_.height = nh;
+			aux_pt_.x = cx;
+			aux_pt_.y = cy;
 			return true;
 		}
 		return false;

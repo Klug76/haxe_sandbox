@@ -2,7 +2,9 @@ package
 {
 	import com.gs.console.KonController;
 	import com.gs.console.KonsoleConfig;
+	import flash.display.Graphics;
 	import flash.display.MovieClip;
+	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.ui.Keyboard;
@@ -38,12 +40,28 @@ package
 
 			KonController.start(this, cfg);
 
+			/*
 			var f: Number = 0.2 + 0.1;
 			Log(f.toPrecision(4));
 
 			foo(Keyboard.ESCAPE);
 			foo(Keyboard.BACK);
 			var b: Boolean = KonController.visible;
+			*/
+			add_Box();
+		}
+
+		private function add_Box(): void
+		{
+			var sp: Shape = new Shape();
+			var gr: Graphics = sp.graphics;
+			gr.clear();
+			gr.beginFill(0x0000ff, 1);
+			gr.drawRect(0, 0, 10, 20);
+			gr.endFill();
+			sp.x = 100;
+			sp.y = 100;
+			addChild(sp);
 		}
 
 		private function foo(u: uint): void

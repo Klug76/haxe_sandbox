@@ -1,11 +1,13 @@
 package com.gs.console;
 
+
+#if (flash || openfl)
+import flash.errors.Error;
+#end
+#if flash
 import flash.Lib;
 import flash.Vector;
-import flash.errors.Error;
 import flash.utils.ByteArray;
-
-#if flash
 import flash.xml.XML;
 #end
 
@@ -152,20 +154,23 @@ class StrUtil
 			}
 		}
 #else
+#if openfl
 		if (Std.is(v, Error))
 		{
-			var err: Error = Lib.as(v, Error);
+			var err: Error = cast v;
 			var s: String = err.getStackTrace();
 			if (s != null)
-				return s;
+				return err.toString() + "\n" + s;
 		}
-		else if (Std.is(v, Array))
+		else
+#end
+		if (Std.is(v, Array))
 		{
 			return dump_Array(v);
 		}
 		else if (Std.is(v, Xml))
 		{
-			var x: Xml = Lib.as(v, Xml);
+			var x: Xml = cast v;
 			return haxe.xml.Printer.print(x, /*pretty=*/true);
 		}
 		//else
@@ -191,6 +196,13 @@ class StrUtil
 	}
 #end
 //.............................................................................
+#if flash
+	static private function dump_ByteArray(ba: ByteArray): String
+	{
+		return "ByteArray: position=" + ba.position + ", length=" + ba.length;
+	}
+#end
+//.............................................................................
 	static private function dump_Array(arr: Array<Dynamic>): String
 	{
 		var len: Int = arr.length;
@@ -208,11 +220,6 @@ class StrUtil
 			s += ", ..";
 		s += "], length=" + len0;
 		return s;
-	}
-//.............................................................................
-	static private function dump_ByteArray(ba: ByteArray): String
-	{
-		return "ByteArray: position=" + ba.position + ", length=" + ba.length;
 	}
 //.............................................................................
 	static private function dump_Vector(v: Dynamic, cname: String): String

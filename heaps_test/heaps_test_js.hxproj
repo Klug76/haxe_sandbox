@@ -4,14 +4,14 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="bin\haxetest.swf" />
-    <movie fps="30" />
-    <movie width="800" />
-    <movie height="600" />
-    <movie version="25" />
+    <movie path="bin\heapstest.js" />
+    <movie fps="0" />
+    <movie width="0" />
+    <movie height="0" />
+    <movie version="0" />
     <movie minorVersion="0" />
-    <movie platform="Flash Player" />
-    <movie background="#FFFFFF" />
+    <movie platform="JavaScript" />
+    <movie background="#4A4137" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
@@ -19,25 +19,22 @@
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="fdb" />
-    <option flashStrict="True" />
-    <option noInlineOnDebug="True" />
+    <option directives="" />
+    <option flashStrict="False" />
+    <option noInlineOnDebug="False" />
     <option mainClass="Main" />
-    <option enabledebug="True" />
+    <option enabledebug="False" />
     <option additional="" />
   </build>
   <!-- haxelib libraries -->
   <haxelib>
+    <library name="heaps" />
     <library name="hscript" />
   </haxelib>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>
     <compile path="src\Main.hx" />
   </compileTargets>
-  <!-- Assets to embed into the output SWF -->
-  <library>
-    <!-- example: <asset path="..." id="..." update="..." glyphs="..." mode="..." place="..." sharepoint="..." /> -->
-  </library>
   <!-- Paths to exclude from the Project Explorer tree -->
   <hiddenPaths>
     <hidden path="obj" />
@@ -49,8 +46,8 @@
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
-    <option testMovie="Default" />
-    <option testMovieCommand="" />
+    <option testMovie="Webserver" />
+    <option testMovieCommand="bin/index_js.html" />
   </options>
   <!-- Plugin storage -->
   <storage />

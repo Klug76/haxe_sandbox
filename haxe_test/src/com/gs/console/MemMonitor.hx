@@ -44,7 +44,7 @@ class MemMonitor extends Graph
 //.............................................................................
 	static inline private function get_Used_Memory(): Float
 	{
-		#if flash
+		#if (flash >= 10.1)
 		return System.totalMemoryNumber;
 		#else
 		//TODO review

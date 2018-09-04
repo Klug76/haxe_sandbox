@@ -10,3 +10,7 @@ haxe_swc_lib/src/com/
 test3d/bat/SetupSDK.bat
 test3d/src/com/
 test3d/obj/
+heaps_test/src/com/
+heaps_test/obj/
+heaps_test/bin/heapstest.js
+heaps_test/bin/heapstest.js.map

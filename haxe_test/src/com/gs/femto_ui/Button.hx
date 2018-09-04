@@ -31,6 +31,9 @@ class Button extends Visel
 //.............................................................................
 	private function init_Ex(txt : String, on_Click : Dynamic->Void) : Void
 	{
+#if debug
+		name = "button";
+#end
 		buttonMode = true;
 
 		hover_inflation_ = Root.instance.hover_inflation_;

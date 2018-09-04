@@ -1,3 +1,10 @@
+. refactoring
+	. remove hard-coded tool buttons (setup array in cfg?)
+	. remove flash.* from Konsole (to KonController)
+	. add heaps backend!?
+	. add gesture
+
+
 . /explode var|current context? toJson?
 . zoom doesn't work with starling
 +. zoom: use arrow keys to move crosshair
@@ -6,6 +13,8 @@
 +. bug: mouse click e.g. in disabled button cause underlying ui click - fixed in Viewport
 +. /objects: dump all script objects
 . bug: resize stage cause unusable size
+. custom trace callback
+. lime | kha?
 . bigger size of ui elements for mobile
 . WTF: Parameter default value should be constant
 	. https://try.haxe.org/#60547

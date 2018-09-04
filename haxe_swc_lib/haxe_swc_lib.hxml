@@ -2,7 +2,6 @@
 -cp src
 --macro include('com.gs')
 --flash-strict
--swf-version 22
 #-D swf-protected
 --each
 
@@ -10,8 +9,14 @@
 -D fdb
 -debug
 -D advanced-telemetry
+-swf-version 25
 -swf bin/hxcon-debug.swc
 
 --next
 -D native-trace
+-swf-version 25
 -swf bin/hxcon-release.swc
+
+--next
+-D native-trace
+-swf bin/hxcon-swf-v10.swc

@@ -1,7 +1,12 @@
 package com.gs.femto_ui;
 
-import com.gs.femto_ui.util.Util;
+#if (flash || openfl)
 import flash.Vector;
+#else
+import haxe.ds.Vector;
+#end
+
+import com.gs.femto_ui.util.Util;
 import flash.display.DisplayObjectContainer;
 import flash.display.GraphicsPathCommand;
 import flash.events.MouseEvent;

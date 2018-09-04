@@ -15,6 +15,9 @@ class Thumb extends Visel
 	{
 		super(owner);
 		create_Listeners();
+#if debug
+		name = "thumb";
+#end
 	}
 //.............................................................................
 	private function create_Listeners() : Void

@@ -1,6 +1,10 @@
 package com.gs.femto_ui.util;
 
+#if (flash || openfl)
 import flash.Vector;
+#else
+import haxe.ds.Vector;
+#end
 
 class Util
 {

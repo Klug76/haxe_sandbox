@@ -1,12 +1,13 @@
 package com.gs.console;
 
 import com.gs.femto_ui.util.Util;
-import flash.display.DisplayObject;
-import flash.errors.Error;
-import com.gs.femto_ui.Root;
 
 #if flash
 import flash.text.StyleSheet;
+#end
+#if (flash || openfl)
+import flash.errors.Error;
+import flash.display.DisplayObject;
 #end
 
 class KonsoleConfig
@@ -15,33 +16,41 @@ class KonsoleConfig
 	//public var max_lines_: Int = 128;//:must be 2^N
 	public var max_lines_ : Int = 2048;  //:must be 2^N
 
-	public var con_bg_alpha_	: Float = 0.9;
-	public var crosshair_alpha_	: Float = 0.75;
+	public var con_bg_alpha_		: Float = 0.9;
+	public var crosshair_alpha_		: Float = 0.75;
+	public var ruler_overlay_alpha_	: Float = 0.15;
 
-	public var con_bg_color_	: Int = 0x000080;
-	public var con_text_color_	: Int = 0xFFFF80;//TODO fix me: how to set selection color!?
-	public var con_hint_color_	: Int = 0xFFFFCA;
-	public var cmd_text_color_	: Int = 0xFFFF80;
-	public var btn_copy_color_	: Int = 0x009688;
-	public var btn_tool_color_	: Int = 0x3F51B5;
-	public var btn_clear_color_	: Int = 0xc00020;
-	public var crosshair_color_	: Int = 0xAAcc00;
-	public var pt1_color_		: Int = 0xff0000;
-	public var pt2_color_		: Int = 0xffff00;
+	public var con_bg_color_		: Int = 0x000080;
+	public var con_text_color_		: Int = 0xFFff80;//TODO fix me: how to set selection color!?
+	public var con_hint_color_		: Int = 0xFFffCA;
+	public var cmd_text_color_		: Int = 0xFFff80;
+	public var btn_copy_color_		: Int = 0x009688;
+	public var btn_tool_color_		: Int = 0x3F51B5;
+	public var btn_clear_color_		: Int = 0xc00020;
+	public var crosshair_color_		: Int = 0xAAcc00;
+	public var pt1_color_			: Int = 0xFF0000;
+	public var pt2_color_			: Int = 0xFFff00;
+	public var zoom_bg_color_		: Int = 0xFFffFF;
+	public var ruler_text_color_	: Int = 0x000000;
+	public var ruler_bg_color_		: Int = 0xFFffFF;
+	public var ruler_line_color_	: Int = 0xFFffFF;
+	public var ruler_overlay_color_	: Int = 0x000040;
 
-	public var con_w_factor_	: Float = .8;//* stage.stageWidth
-	public var con_h_factor_	: Float = .75;//* stage.stageHeight
+	public var con_w_factor_		: Float = .8;//* stage.stageWidth
+	public var con_h_factor_		: Float = .75;//* stage.stageHeight
 
 	//:scaled by hi-res:
-	public var min_width_		: Float = 128;
-	public var min_height_		: Float = 128;
-	public var con_text_size_	: Float = 14;
-	public var cmd_height_		: Float = 32;
-	public var zoom_size_		: Float = 48;
+	public var min_width_			: Float = 128;
+	public var min_height_			: Float = 128;
+	public var con_text_size_		: Float = 14;
+	public var cmd_height_			: Float = 32;
+	public var zoom_size_			: Float = 48;
 
-	public var zoom_factor_		: Int = 4;
-	public var zoom_root_		: DisplayObject = null;
-	//public var zoom_3d_			: Bool = false;
+	public var zoom_factor_			: Int = 4;
+
+#if (flash || openfl)
+	public var zoom_root_: DisplayObject = null;
+#end
 
 	public var font_family_ : String = "Helvetica,Arial,_sans";
 	public var con_font_ : String = null;
@@ -54,22 +63,23 @@ class KonsoleConfig
 #end
 
 	public function new()
-	{
+	{}
 
-	}
-
-	public function init(): Void
+	public function init(platform: String, ui_factor: Float): Void
 	{
 		#if debug
 		{
 			if (!((max_lines_ > 0) && ((max_lines_ & (max_lines_ - 1)) == 0)))
 			{
+#if (flash || openfl)
 				throw new Error("max_lines must be 2^N");
+#else
+				throw "max_lines must be 2^N";
+#end
 			}
 		}
 		#end
-		var r: Root = Root.instance;
-		if ((r.platform_ == "WIN") || (r.platform_ == "WEB"))//TODO fix me: !Mac::HTML5
+		if ((platform == "WIN") || (platform == "WEB"))//TODO fix me: !Mac::HTML5
 		{
 			if (null == con_font_)
 			{
@@ -82,7 +92,7 @@ class KonsoleConfig
 			}
 		}
 
-		var factor : Float = r.ui_factor_;
+		var factor : Float = ui_factor;
 		if (factor != 1)
 		{
 			min_width_		*= factor;
@@ -99,7 +109,6 @@ class KonsoleConfig
 		if (null == css_)
 		{
 			css_ = new StyleSheet();
-			var r: Root = Root.instance;
 			css_.setStyle("p", {
 						fontFamily : font_family_,
 						fontSize : con_text_size_,

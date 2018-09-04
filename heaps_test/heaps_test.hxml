@@ -1,0 +1,9 @@
+-lib heaps
+-lib hscript
+-cp src
+-swf bin/heapstest.swf
+-swf-header 800:600:30:4A4137
+-swf-version 25.0
+-D native-trace
+-D fdb
+-main Main
