@@ -1,2 +1,2 @@
-haxe haxe_swc_lib.hxml
+haxe haxe_swc_lib.hxml --times -version
 @pause

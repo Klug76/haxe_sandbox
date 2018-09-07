@@ -2,8 +2,15 @@
 	. remove hard-coded tool buttons (setup array in cfg?)
 	. remove flash.* from Konsole (to KonController)
 	. add heaps backend!?
+		. lime | kha?
 	. add gesture
+	. relax stage != null
+	. compile-time assert
+	. replace haxe.unit (gone in haxe 4 ) with utest | munit | buddy
+		.https://github.com/ciscoheat/buddy - best
+. review mconsole (js printer)
 
+. how to detect v:Dynamic is ByteArray? (ByteArray is abstract in openfl)
 
 . /explode var|current context? toJson?
 . zoom doesn't work with starling
@@ -14,11 +21,10 @@
 +. /objects: dump all script objects
 . bug: resize stage cause unusable size
 . custom trace callback
-. lime | kha?
 . bigger size of ui elements for mobile
 . WTF: Parameter default value should be constant
 	. https://try.haxe.org/#60547
-. WTF: swtich(Keyboard.BACK)
+. WTF: switch(Keyboard.BACK)
 	. https://try.haxe.org/#ae27C
 .bug: html5 scrollbar may be messed up after resizing
 +.eval (hscript)

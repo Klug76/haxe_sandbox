@@ -10,6 +10,10 @@ import com.gs.femto_ui.Button;
 import com.gs.femto_ui.Label;
 import com.gs.femto_ui.Root;
 import com.gs.femto_ui.Viewport;
+import com.gs.femto_ui.util.DumpDefines;
+import com.gs.con_test.TestRingBuf;
+import com.gs.con_test.TestNumUtils;
+import com.gs.con_test.TestStrUtils;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -41,9 +45,9 @@ class Main extends Sprite
 
 		DumpDefines.dump();
 		//trace("Hello, OpenFL");
-		test1();
+		//test1();
 		//test2();
-		//test3();
+		test3();
 	}
 
 	function test1()

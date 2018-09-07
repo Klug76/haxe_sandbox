@@ -1,11 +1,13 @@
 package com.gs.console;
 
+import com.gs.console.KonsoleConfig;
 import com.gs.femto_ui.util.RingBuf;
 import com.gs.femto_ui.util.Signal;
 
 #if (flash || openfl)
 import flash.desktop.Clipboard;
 import flash.desktop.ClipboardFormats;
+import flash.errors.Error;
 import flash.Lib;
 #else
 import haxe.Log;
@@ -29,9 +31,27 @@ class Konsole extends RingBuf<LogLine>
 
 	public function new(cfg : KonsoleConfig)
 	{
-		cfg_ = cfg;
+		set_Config(cfg);
 		super(cfg.max_lines_);
 		init_Ex();
+	}
+//.............................................................................
+	inline private function set_Config(cfg: KonsoleConfig) : Void
+	{
+		cfg_ = cfg;
+		var max_lines: Int = cfg.max_lines_;
+		#if debug
+		{
+			if (!((max_lines > 0) && ((max_lines & (max_lines - 1)) == 0)))
+			{
+				throw
+#if (flash || openfl)
+					new Error
+#end
+						("max_lines must be 2^N");
+			}
+		}
+		#end
 	}
 //.............................................................................
 	private function init_Ex() : Void

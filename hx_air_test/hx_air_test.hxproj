@@ -4,15 +4,14 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="bin\haxetest.swf" />
+    <movie path="bin\hxairtest.swf" />
     <movie fps="30" />
     <movie width="800" />
     <movie height="600" />
-    <movie version="25" />
+    <movie version="30" />
     <movie minorVersion="0" />
-    <movie platform="Flash Player" />
+    <movie platform="AIR" />
     <movie background="#FFFFFF" />
-    <movie preferredSDK="Haxe 4.0.0-preview.4;4.0.0-preview.4;" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
@@ -20,15 +19,16 @@
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="fdb" />
+    <option directives="" />
     <option flashStrict="True" />
-    <option noInlineOnDebug="True" />
+    <option noInlineOnDebug="False" />
     <option mainClass="Main" />
     <option enabledebug="True" />
     <option additional="" />
   </build>
   <!-- haxelib libraries -->
   <haxelib>
+    <library name="air3" />
     <library name="hscript" />
   </haxelib>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
@@ -50,8 +50,8 @@
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
-    <option testMovie="Default" />
-    <option testMovieCommand="" />
+    <option testMovie="Custom" />
+    <option testMovieCommand="bat\RunApp.bat" />
   </options>
   <!-- Plugin storage -->
   <storage />

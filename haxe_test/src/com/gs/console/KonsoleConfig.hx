@@ -1,12 +1,12 @@
 package com.gs.console;
 
+import com.gs.femto_ui.util.StaticAssertion;
 import com.gs.femto_ui.util.Util;
 
 #if flash
 import flash.text.StyleSheet;
 #end
 #if (flash || openfl)
-import flash.errors.Error;
 import flash.display.DisplayObject;
 #end
 
@@ -15,6 +15,7 @@ class KonsoleConfig
 	//public var max_lines_: Int = 8;//:must be 2^N
 	//public var max_lines_: Int = 128;//:must be 2^N
 	public var max_lines_ : Int = 2048;  //:must be 2^N
+	//public var max_lines_ : Int = 1000;
 
 	public var con_bg_alpha_		: Float = 0.9;
 	public var crosshair_alpha_		: Float = 0.75;
@@ -52,11 +53,13 @@ class KonsoleConfig
 	public var zoom_root_: DisplayObject = null;
 #end
 
-	public var font_family_ : String = "Helvetica,Arial,_sans";
-	public var con_font_ : String = null;
-	public var cmd_font_ : String = null;
+	public var font_family_: String = "Helvetica,Arial,_sans";
+	public var con_font_: String = null;
+	public var cmd_font_: String = null;
 
-	public var password_ : String;
+	public var password_: String;
+
+	private var init_: Bool = false;
 
 #if flash
 	private var css_ : StyleSheet;
@@ -64,21 +67,12 @@ class KonsoleConfig
 
 	public function new()
 	{}
-
-	public function init(platform: String, ui_factor: Float): Void
+//.............................................................................
+	public function init_View(platform: String, ui_factor: Float): Void
 	{
-		#if debug
-		{
-			if (!((max_lines_ > 0) && ((max_lines_ & (max_lines_ - 1)) == 0)))
-			{
-#if (flash || openfl)
-				throw new Error("max_lines must be 2^N");
-#else
-				throw "max_lines must be 2^N";
-#end
-			}
-		}
-		#end
+		if (init_)
+			return;
+		init_ = true;
 		if ((platform == "WIN") || (platform == "WEB"))//TODO fix me: !Mac::HTML5
 		{
 			if (null == con_font_)

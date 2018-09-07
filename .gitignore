@@ -14,3 +14,6 @@ heaps_test/src/com/
 heaps_test/obj/
 heaps_test/bin/heapstest.js
 heaps_test/bin/heapstest.js.map
+hx_air_test/src/com/
+hx_air_test/obj/
+hx_air_test/bat/SetupSDK.bat

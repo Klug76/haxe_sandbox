@@ -1,24 +1,30 @@
 package com.gs.femto_ui;
 
+import flash.Lib;
 import flash.errors.Error;
 import flash.display.DisplayObject;
 import flash.display.Stage;
+import flash.events.Event;
+import flash.events.IEventDispatcher;
 import flash.system.Capabilities;
+
+#if (openfl || (flash >= 10.1))
 import flash.ui.Multitouch;
 import flash.ui.MultitouchInputMode;
+#end
 
 class Root
 {
 	public static var instance(get, never) : Root;
 
-	private static var instance_ : Root;
+	private static var instance_ : Root = null;
 
 	public var frame_signal_ : EnterFrameSignal;
 	public var is_touch_supported_ : Bool = false;
-	public var desktop_mode_ : Bool;
-	public var platform_: String;
-	public var stage_ : Stage;
-	public var owner_ : DisplayObject;
+	public var desktop_mode_ : Bool = false;
+	public var platform_: String = null;
+	public var stage_ : Stage = null;
+	public var owner_ : DisplayObject = null;
 
 	public var color_gripper_	: Int = 0x95D13A;
 	public var color_movesize_	: Int = 0x0040c0;
@@ -66,31 +72,47 @@ class Root
 		{
 			throw new Error("Root should be singleton!");
 		}
-		if ((null == owner) || (null == owner.stage))
-		{
-			throw new Error("Stage not found");
-		}
 #end
 
 #if (openfl || (flash >= 10.1))
 		is_touch_supported_ = Multitouch.inputMode == MultitouchInputMode.TOUCH_POINT;
 #end
-
 		platform_ = Capabilities.version.substr(0, 3);
 		//trace("*** platform_ = " + os_);//:html5 return WEB
 		desktop_mode_ = (platform_ == "WIN") || (platform_ == "MAC");// || (platform_ == "LNX");
 
+		if (null == owner)
+			owner = Lib.current;
 		owner_ = owner;
-		stage_ = owner.stage;
 
-		frame_signal_ = new EnterFrameSignal(stage_);
+		var stg: Stage = owner.stage;
+		if (null == stg)
+			owner_.addEventListener(Event.ADDED_TO_STAGE, on_Added_To_Stage);
+		else
+			init_Ex(stg);
+
+		instance_ = this;
+	}
+//.............................................................................
+	private function on_Added_To_Stage(e: Event): Void
+	{
+		owner_.removeEventListener(Event.ADDED_TO_STAGE, on_Added_To_Stage);
+		init_Ex(owner_.stage);
+	}
+//.............................................................................
+	private function init_Ex(stg: Stage) : Void
+	{
+		if (stage_ != null)
+			return;
+		stage_ = stg;
+		frame_signal_ = new EnterFrameSignal(stg);
 
 		var res_x : Float = Capabilities.screenResolutionX;
 		var res_y : Float = Capabilities.screenResolutionY;
 		if (desktop_mode_)
 		{
-			res_x = stage_.stageWidth;
-			res_y = stage_.stageHeight;
+			res_x = stg.stageWidth;
+			res_y = stg.stageHeight;
 		}
 		var m : Float = Math.min(res_x, res_y);
 		if (m >= 1080)
@@ -110,7 +132,6 @@ class Root
 			content_down_offset_x_	*= ui_factor_;
 			content_down_offset_y_	*= ui_factor_;
 		}
-		instance_ = this;
 	}
 //.............................................................................
 	private static inline function get_instance() : Root

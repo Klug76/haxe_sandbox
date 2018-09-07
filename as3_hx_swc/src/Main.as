@@ -37,6 +37,7 @@ package
 			cfg.con_bg_color_ = 0xFF000000;
 			cfg.con_text_color_ = 0x77BB77;
 			cfg.con_text_size_ = 18;
+			cfg.zoom_root_ = this;
 
 			KonController.start(this, cfg);
 

@@ -5,8 +5,6 @@ import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.Sprite;
-import flash.events.Event;
-import flash.events.IEventDispatcher;
 
 /*
 	 * 	Sprite -> DisplayObjectContainer -> InteractiveObject -> DisplayObject -> EventDispatcher -> Object

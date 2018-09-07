@@ -4,6 +4,8 @@ import com.gs.femto_ui.Root;
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.Stage;
+import flash.events.Event;
+import flash.events.IEventDispatcher;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.events.KeyboardEvent;
@@ -19,7 +21,8 @@ class KonController
 	static public function start(owner: DisplayObject, cfg: KonsoleConfig): Void
 	{
 		var r: Root = Root.create(owner);
-		cfg.init(r.platform_, r.ui_factor_);//:use Root
+		if (null == cfg)
+			cfg = new KonsoleConfig();
 
 		var k: Konsole = new Konsole(cfg);
 
@@ -27,10 +30,21 @@ class KonController
 
 		instance_ = k;
 
-		add_Listeners(r.stage_);
+		var stg: Stage = r.stage_;
+		if (stg != null)
+			add_Stage_Listeners(stg);
+		else
+			r.owner_.addEventListener(Event.ADDED_TO_STAGE, on_Added_To_Stage);
 	}
 //.............................................................................
-	static private function add_Listeners(stage: Stage) : Void
+	static function on_Added_To_Stage(e: Event): Void
+	{
+		var r: Root = Root.instance;
+		r.owner_.removeEventListener(Event.ADDED_TO_STAGE, on_Added_To_Stage);
+		add_Stage_Listeners(r.owner_.stage);
+	}
+//.............................................................................
+	static private function add_Stage_Listeners(stage: Stage) : Void
 	{
 		//TODO add gesture
 		stage.addEventListener(KeyboardEvent.KEY_DOWN, on_Key_Down_Stage, false, 1);
@@ -66,7 +80,7 @@ class KonController
 				++password_idx_;
 				if (password_idx_ == pass.length)
 				{
-					visible = true;//?
+					show();
 					password_idx_ = 0;
 				}
 				return;
@@ -78,7 +92,7 @@ class KonController
 		{
 			case 0xc0:
 				e.preventDefault();
-				visible = !visible;
+				toggle();
 		}
 	}
 //.............................................................................
@@ -94,25 +108,28 @@ class KonController
 			instance_.add_Html(html);
 	}
 //.............................................................................
-	static public var visible (get, set) : Bool;
-	#if swc @:getter(visible) #end
-	static public function get_visible(): Bool
+	static public function get_Visible(): Bool
 	{
 		if (view_ != null)
 			return view_.visible;
 		return false;
 	}
-	#if swc @:setter(visible) #end
-	static public function set_visible(value: Bool): Bool
+	static public function set_Visible(value: Bool): Bool
 	{
 		if (instance_ != null)
 		{
 			if (value)
 			{
 				if (null == view_)
+				{
+					var r: Root = Root.instance;
+					instance_.cfg_.init_View(r.platform_, r.ui_factor_);
 					view_ = new KonsoleView(instance_);
+				}
 				else
+				{
 					view_.visible = true;
+				}
 				instance_.signal_show_.fire();
 			}
 			else
@@ -122,6 +139,18 @@ class KonController
 			}
 		}
 		return value;
+	}
+	static public function toggle(): Void
+	{
+		set_Visible(!get_Visible());
+	}
+	static public function show(): Void
+	{
+		set_Visible(true);
+	}
+	static public function hide(): Void
+	{
+		set_Visible(false);
 	}
 //.............................................................................
 //.............................................................................

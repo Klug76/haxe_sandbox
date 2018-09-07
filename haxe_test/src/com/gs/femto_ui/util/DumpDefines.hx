@@ -1,4 +1,4 @@
-package;
+package com.gs.femto_ui.util;
 
 class DumpDefines
 {

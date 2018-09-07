@@ -182,7 +182,7 @@ class KonsoleDemo extends Visel
 
 	function toggle_Konsole(v: Dynamic): Void
 	{
-		KonController.visible = !KonController.visible;
+		KonController.toggle();
 	}
 
 	function clear(v: Dynamic): Void
