@@ -19,7 +19,11 @@ package flash.display3D;
 	function createVertexBuffer(numVertices : Int, data32PerVertex : Int, ?bufferUsage : Context3DBufferUsage) : VertexBuffer3D;
 	function createVideoTexture() : flash.display3D.textures.VideoTexture;
 	function dispose(recreate : Bool = true) : Void;
+	#if (air25)
 	function drawToBitmapData(destination : flash.display.BitmapData, srcRect: flash.geom.Rectangle = null, destPoint: flash.geom.Point = null) : Void;
+	#else
+	function drawToBitmapData(destination : flash.display.BitmapData) : Void;
+	#end
 	function drawTriangles(indexBuffer : IndexBuffer3D, firstIndex : Int = 0, numTriangles : Int = -1) : Void;
 	function present() : Void;
 	function setBlendFactors(sourceFactor : Context3DBlendFactor, destinationFactor : Context3DBlendFactor) : Void;

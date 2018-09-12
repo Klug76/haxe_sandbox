@@ -394,7 +394,7 @@ class Ruler extends Visel
 		s += "bound rect: " + (dw + 1) + "x" + (dh + 1) + " px";
 		s += "</p>";
 
-		k_.add_Html(s);
+		k_.log_Html(s);
 
 		label_dist_info_.text = Util.ftoFixed(d, ((tap1_.x == tap2_.x) || (tap1_.y == tap2_.y)) ? 0 : 2);
 		var label_w = label_dist_info_.width;

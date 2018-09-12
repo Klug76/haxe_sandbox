@@ -1,11 +1,12 @@
 . refactoring
 	. remove hard-coded tool buttons (setup array in cfg?)
+	. remove hard-coded fps, mem (setup in cfg?)
 	. remove flash.* from Konsole (to KonController)
 	. add heaps backend!?
 		. lime | kha?
 	. add gesture
-	. relax stage != null
-	. compile-time assert
+	+. relax stage != null
+	. compile-time assert?
 	. replace haxe.unit (gone in haxe 4 ) with utest | munit | buddy
 		.https://github.com/ciscoheat/buddy - best
 . review mconsole (js printer)

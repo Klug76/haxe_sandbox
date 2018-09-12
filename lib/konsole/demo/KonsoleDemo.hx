@@ -1,4 +1,4 @@
-package com.gs;
+package;
 
 import com.gs.console.KonController;
 import com.gs.console.Konsole;
@@ -35,6 +35,9 @@ import haxe.Timer;
 #if flash
 import flash.xml.XML;
 #end
+
+import com.gs.console.KonController.Log;
+import com.gs.console.KonController.Log_Html;
 
 class KonsoleDemo extends Visel
 {
@@ -119,7 +122,7 @@ class KonsoleDemo extends Visel
 
 	private function on_Click(ev: MouseEvent) : Void
 	{
-		KonController.add("click " + click_id_++);
+		Log("click " + click_id_++);
 	}
 
 	private function add_Box(): Void
@@ -170,7 +173,7 @@ class KonsoleDemo extends Visel
 
 	private function load_Error_Handler(e: Event): Void
 	{
-		KonController.add(e.toString());
+		Log(e.toString());
 	}
 
 	private function asset_Cleanup(): Void
@@ -238,12 +241,12 @@ class KonsoleDemo extends Visel
 
 	private function cmd_Foo(dummy: Array<String>): Void
 	{
-		KonController.add("command::foo()");
+		Log("command::foo()");
 	}
 
 	private function cmd_Zoo(dummy: Array<String>): Void
 	{
-		KonController.add("command::zoo()");
+		Log("command::zoo()");
 	}
 
 	function test1(v: Dynamic): Void
@@ -253,13 +256,13 @@ class KonsoleDemo extends Visel
 
 	function test2(v: Dynamic): Void
 	{
-		KonController.add("Konsole v." + KonController.VERSION + ", ui factor=" + Root.instance.ui_factor_);
+		Log("Konsole v." + KonController.VERSION + ", ui factor=" + Root.instance.ui_factor_);
 
-		KonController.add_Html("<p>Hello, <font color='#FF8000'>World</font>! Тест!</p>");
-		KonController.add_Html("pure text");
-		KonController.add("1 < 2 & 6\n  4 > 1 & 0");
-		KonController.add("\n");
-		KonController.add('');
+		Log_Html("<p>Hello, <font color='#FF8000'>World</font>! Тест!</p>");
+		Log_Html("pure text");
+		Log("1 < 2 & 6\n  4 > 1 & 0");
+		Log("\n");
+		Log('');
 		foo(Keyboard.ESCAPE);
 #if (flash >= 10.2)
 		foo(Keyboard.BACK);
@@ -268,30 +271,30 @@ class KonsoleDemo extends Visel
 #if (flash >= 10.1)
 		foo(Keyboard.A);
 #end
-		KonController.add('');
+		Log('');
 		Timer.delay(append_Test1, 100);
 
 		var s: String = KonController.get_Text();
 		if (null == s)
 			s = "";
-		KonController.add("text.length=" + s.length);
+		Log("text.length=" + s.length);
 	}
 
 	private function foo(u: UInt): Void
 	{
-		KonController.add(u);
+		Log(u);
 		switch(u)
 		{
 		case Keyboard.ESCAPE:
-			KonController.add("Esc");
+			Log("Esc");
 #if (flash >= 10.2)
 		case Keyboard.BACK:
-			KonController.add("Back");
+			Log("Back");
 #end
 		}
 #if (flash >= 10.2)
 		if (u == Keyboard.BACK)
-			KonController.add("*Back");
+			Log("*Back");
 #end
 	}
 
@@ -320,7 +323,7 @@ class KonsoleDemo extends Visel
 		if ((counter_ & 1) != 0)
 			s = "<b>" + s + "</b>";
 		s = "<p>" + s + "</p>";
-		KonController.add_Html(s);
+		Log_Html(s);
 	}
 
 	function eat_Mem(v: Dynamic): Void
@@ -336,7 +339,7 @@ class KonsoleDemo extends Visel
 		}
 		catch (err: Dynamic)
 		{
-			KonController.add(err);
+			Log(err);
 		}
 		try
 		{
@@ -344,7 +347,7 @@ class KonsoleDemo extends Visel
 		}
 		catch (err: Dynamic)
 		{
-			KonController.add(err);
+			Log(err);
 		}
 	}
 
@@ -377,71 +380,71 @@ class KonsoleDemo extends Visel
 #else
 		var x = Xml.parse(s);
 #end
-		KonController.add(x);
+		Log(x);
 	}
 
 	function log_Data(ev: Dynamic): Void
 	{
-		KonController.add("null:");
-		KonController.add(null);
+		Log("null:");
+		Log(null);
 
-		KonController.add("NaN:");
-		KonController.add(Math.sqrt( -1));
+		Log("NaN:");
+		Log(Math.sqrt( -1));
 
 		var b: Bool = true;
-		KonController.add("Bool:");
-		KonController.add(b);
-		KonController.add(!b);
+		Log("Bool:");
+		Log(b);
+		Log(!b);
 
 		var n: Int = 1100101;
-		KonController.add("Int:");
-		KonController.add(n);
+		Log("Int:");
+		Log(n);
 
 
 		var u: UInt = 0xdeadbeaf;
-		KonController.add("UInt:");
-		KonController.add(Type.typeof(u));
-		KonController.add(u);
+		Log("UInt:");
+		Log(Type.typeof(u));
+		Log(u);
 
 		var f: Float = 1. / 3;
-		KonController.add("Float:");
-		KonController.add(f);
+		Log("Float:");
+		Log(f);
 
 		var ai: Array<Int> = [for (i in 1...41) i];
-		KonController.add("Array:");
-		KonController.add(ai);
+		Log("Array:");
+		Log(ai);
 
-		KonController.add("Vector<Int>:");
+		Log("Vector<Int>:");
 		var vi: Vector<Int> = new Vector<Int>();
-		KonController.add(vi);
+		Log(vi);
 		vi.push(1);
 		vi.push(8);
 		vi.push(2);
-		KonController.add(vi);
+		Log(vi);
 
-		KonController.add("Vector<Float>:");
+		Log("Vector<Float>:");
 		var vf: Vector<Float> = new Vector<Float>();
 		vf.push(f);
 		vf.push(f);
-		KonController.add(vf);
+		Log(vf);
 
-		KonController.add("Vector<String>:");
+		Log("Vector<String>:");
 		var vs: Vector<String> = new Vector<String>();
 		vs.push("foo");
 		vs.push("bar");
-		KonController.add(vs);
+		Log(vs);
 
-		KonController.add("ByteArray:");
+		Log("ByteArray:");
 		var ba: ByteArray = new ByteArray();
 		//ba.writeByte('0'.code);
 		//ba.writeByte('1'.code);
 		//k.add(ba);
 		for (i in 0...100)
 			ba.writeByte(i & 0xFF);
-		KonController.add(ba);
+		Log(ba);
 
 		var ob: Dynamic = Json.parse('{"key1":[{"key2":5},67,null,"test"],"key3":[true,false]}');
-		KonController.add("Object:");
-		KonController.add(ob);
+		Log("Object:");
+		Log(ob);
 	}
 }

@@ -1,12 +1,14 @@
 package;
 
 import com.gs.console.KonController;
+import com.gs.console.KonController.Log;
 import com.gs.console.KonsoleConfig;
 import flash.Lib;
 import flash.display.Sprite;
 import flash.display.StageAlign;
 import flash.display.StageScaleMode;
 import flash.events.Event;
+import haxe.Log;
 
 class Main extends Sprite
 {
@@ -34,7 +36,7 @@ class Main extends Sprite
 
 		KonController.start(stage, cfg);
 
-		KonController.add("Hello");
+		trace("Hello");
 
 		new Scene3D();
 	}

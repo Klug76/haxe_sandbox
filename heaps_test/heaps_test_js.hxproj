@@ -16,6 +16,8 @@
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
     <class path="src" />
+    <class path="..\lib\femto_ui\femto_ui-core" />
+    <class path="..\lib\konsole\konsole-core" />
   </classpaths>
   <!-- Build options -->
   <build>

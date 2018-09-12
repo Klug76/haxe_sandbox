@@ -1,5 +1,7 @@
 -lib hscript
 -cp src
+-cp ../lib/femto_ui/femto_ui-core
+-cp ../lib/konsole/konsole-core
 --macro include('com.gs')
 --flash-strict
 #-D swf-protected

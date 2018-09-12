@@ -1,15 +1,11 @@
 package com.gs.femto_ui;
 
-#if (flash || openfl)
-import flash.Vector;
-#else
-import haxe.ds.Vector;
-#end
 
 import com.gs.femto_ui.util.Util;
 import flash.display.DisplayObjectContainer;
 import flash.display.GraphicsPathCommand;
 import flash.events.MouseEvent;
+import flash.Vector;
 
 class Mover extends Visel
 {

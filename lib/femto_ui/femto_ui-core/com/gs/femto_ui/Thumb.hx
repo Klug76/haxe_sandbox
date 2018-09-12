@@ -1,7 +1,6 @@
 package com.gs.femto_ui;
 
 import flash.Lib;
-import flash.display.DisplayObjectContainer;
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 

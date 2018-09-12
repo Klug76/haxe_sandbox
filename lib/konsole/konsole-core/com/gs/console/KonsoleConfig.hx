@@ -1,6 +1,6 @@
 package com.gs.console;
 
-import com.gs.femto_ui.util.StaticAssertion;
+//import com.gs.femto_ui.util.StaticAssertion;
 import com.gs.femto_ui.util.Util;
 
 #if flash
@@ -16,6 +16,8 @@ class KonsoleConfig
 	//public var max_lines_: Int = 128;//:must be 2^N
 	public var max_lines_ : Int = 2048;  //:must be 2^N
 	//public var max_lines_ : Int = 1000;
+
+	public var redirect_trace_		: Bool = true;
 
 	public var con_bg_alpha_		: Float = 0.9;
 	public var crosshair_alpha_		: Float = 0.75;
@@ -57,6 +59,7 @@ class KonsoleConfig
 	public var con_font_: String = null;
 	public var cmd_font_: String = null;
 
+	public var toggle_key_: UInt = 0xC0;//'`' key
 	public var password_: String;
 
 	private var init_: Bool = false;

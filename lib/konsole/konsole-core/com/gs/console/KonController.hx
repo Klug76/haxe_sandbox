@@ -5,7 +5,6 @@ import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.Stage;
 import flash.events.Event;
-import flash.events.IEventDispatcher;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.events.KeyboardEvent;
@@ -51,22 +50,21 @@ class KonController
 		stage.addEventListener(KeyboardEvent.KEY_UP, on_Key_Up_Stage, false, 1);
 	}
 //.............................................................................
-	static private function on_Key_Down_Stage(e : KeyboardEvent) : Void
+	static private function on_Key_Down_Stage(ev : KeyboardEvent) : Void
 	{
-		//trace("stage::key down: 0x" + Std.string(e.keyCode));
 		var cfg: KonsoleConfig = get_Config();
 		if ((null == cfg) || (null != cfg.password_))
 		{
 			return;
 		}
-		switch (e.keyCode)
+		if (ev.keyCode == cfg.toggle_key_)
 		{
-			case 0xc0:
-				e.preventDefault();
+			ev.preventDefault();
+			ev.stopImmediatePropagation();
 		}
 	}
 //.............................................................................
-	static private function on_Key_Up_Stage(e : KeyboardEvent) : Void
+	static private function on_Key_Up_Stage(ev : KeyboardEvent) : Void
 	{
 		//trace("stage::key up: 0x" + Std.string(e.keyCode));
 		var cfg: KonsoleConfig = get_Config();
@@ -75,7 +73,7 @@ class KonController
 		var pass: String = cfg.password_;
 		if (null != pass)
 		{
-			if (e.charCode == pass.charCodeAt(password_idx_))
+			if (ev.charCode == pass.charCodeAt(password_idx_))
 			{
 				++password_idx_;
 				if (password_idx_ == pass.length)
@@ -88,24 +86,24 @@ class KonController
 			password_idx_ = 0;
 			return;
 		}
-		switch (e.keyCode)
+		if (ev.keyCode == cfg.toggle_key_)
 		{
-			case 0xc0:
-				e.preventDefault();
-				toggle();
+			ev.preventDefault();
+			ev.stopImmediatePropagation();
+			toggle();
 		}
 	}
 //.............................................................................
-	static public function add(v: Dynamic) : Void
+	static public function Log(v: Dynamic) : Void
 	{
 		if (instance_ != null)
-			instance_.add(v);
+			instance_.log(v);
 	}
 //.............................................................................
-	static public function add_Html(html: String) : Void
+	static public function Log_Html(html: String) : Void
 	{
 		if (instance_ != null)
-			instance_.add_Html(html);
+			instance_.log_Html(html);
 	}
 //.............................................................................
 	static public function get_Visible(): Bool

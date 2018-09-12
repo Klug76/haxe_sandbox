@@ -12,10 +12,13 @@
     <movie minorVersion="0" />
     <movie platform="Flash Player" />
     <movie background="#4A4137" />
+    <movie preferredSDK="Haxe 4.0.0-preview.4;4.0.0-preview.4;" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
     <class path="src" />
+    <class path="..\lib\femto_ui\femto_ui-core" />
+    <class path="..\lib\konsole\konsole-core" />
   </classpaths>
   <!-- Build options -->
   <build>

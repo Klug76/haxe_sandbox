@@ -3,14 +3,15 @@ package com.gs.console;
 import com.gs.console.KonsoleConfig;
 import com.gs.femto_ui.util.RingBuf;
 import com.gs.femto_ui.util.Signal;
+import haxe.PosInfos;
+
+import haxe.Log;
 
 #if (flash || openfl)
 import flash.desktop.Clipboard;
 import flash.desktop.ClipboardFormats;
 import flash.errors.Error;
 import flash.Lib;
-#else
-import haxe.Log;
 #end
 
 class Konsole extends RingBuf<LogLine>
@@ -22,6 +23,8 @@ class Konsole extends RingBuf<LogLine>
 	public var cfg_ : KonsoleConfig;
 
 	public var signal_show_: Signal = new Signal();
+
+	private var prev_trace_: Dynamic = null;
 
 	public static inline var APPEND : Int = 1;
 	public static inline var REPLACE : Int = 2;
@@ -66,6 +69,12 @@ class Konsole extends RingBuf<LogLine>
 
 		register_Command("commands", list_All_Commands, "Show a list of all slash commands");
 		register_Command("objects", list_All_Objects, "Show a list of all eval objects");
+
+		if (cfg_.redirect_trace_)
+		{
+			prev_trace_ = Log.trace;
+			Log.trace = custom_trace;
+		}
 	}
 //.............................................................................
 	public function register_Command(cmd : String, f : Array<String>->Void, hint : String = null) : Void
@@ -94,29 +103,43 @@ class Konsole extends RingBuf<LogLine>
 //.............................................................................
 //.............................................................................
 //.............................................................................
-	public function add(v: Dynamic) : Void
+	private function custom_trace(v : Dynamic, ?infos : PosInfos) : Void
 	{
-		var s: String = StrUtil.dump_Dynamic(v);
+		prev_trace_(v, infos);
+		var s: String = StrUtil.nice_Dump(v);
+		if (null == s)
+			s = "";
+		var it: LogLine = add_Line();
+		it.html_ = null;
+		it.text_ = s;
+	}
+//.............................................................................
+	public function log(v: Dynamic) : Void
+	{
+		var s: String = StrUtil.nice_Dump(v);
 		if (null == s)
 			s = "";
 #if (flash || openfl)
 		Lib.trace(s);
 #else
-		Log.trace(s);//TODO fix me: omit line #
+		if (prev_trace_ != null)
+			prev_trace_(v);
+		else
+			Log.trace(v);//TODO fix me: omit line #
 #end
-		var it : LogLine = add_Line();
+		var it: LogLine = add_Line();
 		it.html_ = null;
 		it.text_ = s;
 	}
 //.............................................................................
 //.............................................................................
 //html must be in simple format surrounded by <p> tag
-	public function add_Html(html : String) : Void
+	public function log_Html(html: String) : Void
 	{
 		if (!validate_Html(html))
 		{
-			add("WARNING: unsupported or bad html:");
-			add(html);
+			log("WARNING: unsupported or bad html:");
+			log(html);
 			return;
 		}
 		var s : String = StrUtil.strip_Tags(html);
@@ -124,9 +147,13 @@ class Konsole extends RingBuf<LogLine>
 #if (flash || openfl)
 		Lib.trace(s);//:will add \n
 #else
-		Log.trace(s);//TODO fix me: omit line #
+		if (prev_trace_ != null)
+			prev_trace_(s);
+		else
+			Log.trace(s);//TODO fix me: omit line #
 #end
 		var it : LogLine = add_Line();
+		it.text_ = null;
 		it.html_ = html;
 	}
 //.............................................................................
@@ -227,7 +254,7 @@ class Konsole extends RingBuf<LogLine>
 				return;
 			}
 		}
-		add(s + "=" + get_Eval().interpretate(s));
+		log(s + "=" + get_Eval().interpretate(s));
 	}
 //.............................................................................
 	private function get_Eval() : Eval
@@ -291,7 +318,7 @@ class Konsole extends RingBuf<LogLine>
 		}
 		v.sort(sort_Ascending);  //:Array.ascending not defined but mentioned in help
 		s += v.join("");
-		add_Html(s);
+		log_Html(s);
 	}
 //.............................................................................
 	function sort_Ascending(a: String, b: String): Int
@@ -304,7 +331,6 @@ class Konsole extends RingBuf<LogLine>
 //.............................................................................
 	private function list_All_Objects(dummy: Array<String>) : Void
 	{
-		var fnt: String = " <font color='#" + cfg_.con_hint_color_ + "'>";
 		var s : String = "<p>object list:</p>";
 		var v : Array<String> = new Array<String>();
 		var count: Int = vec_obj_.length;
@@ -318,7 +344,7 @@ class Konsole extends RingBuf<LogLine>
 		}
 		v.sort(sort_Ascending);  //:Array.ascending not defined but mentioned in help
 		s += v.join("");
-		add_Html(s);
+		log_Html(s);
 	}
 //.............................................................................
 //.............................................................................
@@ -342,7 +368,7 @@ class Konsole extends RingBuf<LogLine>
 		//var html : String = get_Html();
 		//Clipboard.generalClipboard.setData(ClipboardFormats.HTML_FORMAT, html);
 //#end
-		add_Html("<p><font color='#0080C0' size='-2'>Copied log to clipboard.</font></p>");
+		log_Html("<p><font color='#0080C0' size='-2'>Copied log to clipboard.</font></p>");
 	}
 //.............................................................................
 //.............................................................................

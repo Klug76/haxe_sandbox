@@ -3,6 +3,7 @@ package com.gs.console;
 import com.gs.femto_ui.Edit;
 import com.gs.femto_ui.Root;
 import com.gs.femto_ui.util.RingBuf;
+import com.gs.femto_ui.util.Util;
 import flash.display.DisplayObjectContainer;
 import flash.events.KeyboardEvent;
 import flash.text.TextFormat;
@@ -28,8 +29,10 @@ class CmdLine extends Edit
 	{
 		history_ = new RingBuf<String>(history_size_);
 		history_.push("/commands");
-		addEventListener(KeyboardEvent.KEY_DOWN, on_Key_Down_Edit, false, 1);
-		addEventListener(KeyboardEvent.KEY_UP, on_Key_Up_Edit, false, 1);
+		tf_.addEventListener(KeyboardEvent.KEY_DOWN, on_Key_Down_Edit, false, 1);
+		tf_.addEventListener(KeyboardEvent.KEY_UP, on_Key_Up_Edit, false, 1);
+		if (null == k_.cfg_.password_)
+			tf_.restrict = "^`";
 	}
 //.............................................................................
 	override public function get_Default_Text_Format() : TextFormat
@@ -38,86 +41,41 @@ class CmdLine extends Edit
 		return new TextFormat(k_.cfg_.cmd_font_, Std.int(r.input_text_size_), k_.cfg_.cmd_text_color_);
 	}
 //.............................................................................
-//.............................................................................
-	private function on_Key_Down_Edit(e : KeyboardEvent) : Void
+	private function stop_Event(ev: KeyboardEvent): Void
 	{
-		//trace("cmd::key down: 0x" + e.keyCode.toString(16));
-		var key = e.keyCode;
-		/*
-		switch (key)
+		trace("cmd::key " + ev.type + ": 0x" + Util.toHex(ev.keyCode));
+		ev.preventDefault();
+		ev.stopImmediatePropagation();
+	}
+//.............................................................................
+	private function on_Key_Down_Edit(ev : KeyboardEvent) : Void
+	{
+		//trace("cmd::key down: 0x" + ev.keyCode.toString(16));
+		switch (ev.keyCode)
 		{
-			case 0xc0:
-				if (null == k_.cfg_.password_)
-				{
-					e.preventDefault();
-				}
-			case Keyboard.ENTER:
-				e.preventDefault();
-			case Keyboard.UP:
-				e.preventDefault();
-		}
-		*/
-		if (0xc0 == key)
-		{
-			if (null == k_.cfg_.password_)
-			{
-				e.preventDefault();
-			}
-		}
-		else if ((Keyboard.ENTER == key) || (Keyboard.DOWN == key) || (Keyboard.UP == key))
-		{
-			e.preventDefault();
+			case Keyboard.ENTER,
+				 Keyboard.DOWN,
+				 Keyboard.UP:
+				stop_Event(ev);
 		}
 	}
 //.............................................................................
-	private function on_Key_Up_Edit(e : KeyboardEvent) : Void
+	private function on_Key_Up_Edit(ev : KeyboardEvent) : Void
 	{
-		//trace("cmd::key up: 0x" + e.keyCode.toString(16));
-		var key = e.keyCode;
-		/*
-		switch (key)
+		//trace("cmd::key up: 0x" + ev.keyCode.toString(16));
+		switch (ev.keyCode)
 		{
-			case 0xc0:
-				if (null == k_.cfg_.password_)
-				{
-					e.preventDefault();
-				}
 			case Keyboard.ENTER:
-				e.preventDefault();
+				stop_Event(ev);
 				exec();
-			//case Keyboard.TAB: conflict with tab focus
-			//e.preventDefault();
-			//complete();
-			//break;
 			case Keyboard.UP:
+				stop_Event(ev);
 				get_History_Up();
-				e.preventDefault();
 			case Keyboard.DOWN:
+				stop_Event(ev);
 				get_History_Down();
-				e.preventDefault();
-		}
-		*/
-		if (0xc0 == key)
-		{
-			if (null == k_.cfg_.password_)
-			{
-				e.preventDefault();
-			}
-		}
-		else if (Keyboard.ENTER == key)
-		{
-			e.preventDefault();
-			exec();
-		}
-		else if (Keyboard.DOWN == key)
-		{
-			e.preventDefault();
-			get_History_Down();
-		}
-		else if (Keyboard.UP == key)
-		{
-			e.preventDefault();
-			get_History_Up();
+			//case Keyboard.TAB: conflict with tab focus!??
+			//	complete();
 		}
 	}
 //.............................................................................

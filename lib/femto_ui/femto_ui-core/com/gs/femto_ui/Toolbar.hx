@@ -2,7 +2,6 @@ package com.gs.femto_ui;
 
 import flash.Lib;
 import flash.display.DisplayObjectContainer;
-import flash.events.Event;
 
 class Toolbar extends Visel
 {
@@ -42,7 +41,6 @@ class Toolbar extends Visel
 		var nw : Float;
 		var pw : Float = width_ - x_border_ * 2;
 		var nh : Float = height_ - y_border_ * 2;
-		var i : Int;
 		var child : Visel;
 		var total_w : Float = 0;
 		var dx : Float = spacing_;

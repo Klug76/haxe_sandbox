@@ -11,7 +11,7 @@ class TestStrUtils extends TestCase
 	public function test1()
 	{
 		var arr = [1, 3, 2];
-		var s = StrUtil.dump_Dynamic(arr);
+		var s = StrUtil.nice_Print(arr);
 		//trace(s);
 		assertEquals("[1, 3, 2], length=3", s);
 	}

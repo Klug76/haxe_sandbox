@@ -6,7 +6,6 @@ import flash.errors.Error;
 #end
 #if flash
 import flash.Lib;
-import flash.Vector;
 import flash.utils.ByteArray;
 import flash.xml.XML;
 #end
@@ -57,7 +56,6 @@ class StrUtil
 	static private function escape_LSpace(re: EReg): String
 	{
 		var s: String = re.matched(0);
-		var i: Int;
 		var temp: Array<String> = [for (i in 0...s.length + 1) ""];
 		return temp.join("&nbsp;");
 	}
@@ -93,7 +91,7 @@ class StrUtil
 //.............................................................................
 //.............................................................................
 //.............................................................................
-	static public function dump_Dynamic(v : Dynamic): String
+	static public function nice_Dump(v : Dynamic): String
 	{
 #if flash
 		if (untyped __is__(v, String))
@@ -214,7 +212,7 @@ class StrUtil
 		{
 			if (i > 0)
 				s += ", ";
-			s += dump_Dynamic(arr[i]);
+			s += nice_Dump(arr[i]);
 		}
 		if (len != len0)
 			s += ", ..";
@@ -233,7 +231,7 @@ class StrUtil
 		{
 			if (i > 0)
 				s += ", ";
-			s += dump_Dynamic(v[i]);
+			s += nice_Dump(v[i]);
 		}
 		if (len != len0)
 			s += ", ..";

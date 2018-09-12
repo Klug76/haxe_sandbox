@@ -1,10 +1,11 @@
 package;
 
-import com.gs.KonsoleDemo;
 import flash.Lib;
 import flash.display.Sprite;
 import flash.display.StageAlign;
 import flash.display.StageScaleMode;
+
+import KonsoleDemo;
 //import haxe.unit.TestCase;
 //import haxe.unit.TestRunner;
 

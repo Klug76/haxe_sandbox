@@ -5,7 +5,6 @@ import flash.errors.Error;
 import flash.display.DisplayObject;
 import flash.display.Stage;
 import flash.events.Event;
-import flash.events.IEventDispatcher;
 import flash.system.Capabilities;
 
 #if (openfl || (flash >= 10.1))

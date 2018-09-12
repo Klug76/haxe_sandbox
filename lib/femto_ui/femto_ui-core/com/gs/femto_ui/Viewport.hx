@@ -1,10 +1,7 @@
 package com.gs.femto_ui;
 
-import flash.Lib;
-import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 import flash.display.Stage;
-import flash.display.StageScaleMode;
 import flash.events.Event;
 import flash.events.MouseEvent;
 

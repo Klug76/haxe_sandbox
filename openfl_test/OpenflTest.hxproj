@@ -19,6 +19,9 @@
     <class path="E:\HaxeToolkit\haxe\lib\lime\7,0,0\src" />
     <class path="E:\HaxeToolkit\haxe\lib\hscript\2,2,0" />
     <class path="Source" />
+    <class path="..\lib\femto_ui\femto_ui-core" />
+    <class path="..\lib\konsole\konsole-core" />
+    <class path="..\lib\konsole\demo" />
     <class path="Export\html5\haxe" />
   </classpaths>
   <!-- Build options -->

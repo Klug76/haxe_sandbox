@@ -6,7 +6,6 @@ import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import format.agal.Tools;
 import flash.display.Stage;
 
 typedef K = flash.ui.Keyboard;

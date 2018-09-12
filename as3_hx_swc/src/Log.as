@@ -4,7 +4,7 @@
 
 	public function Log(o: *): void
 	{
-		KonController.add(o);
+		KonController.Log(o);
 	}
 
 }

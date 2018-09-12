@@ -2,7 +2,6 @@ package com.gs.femto_ui;
 
 import com.gs.femto_ui.util.Util;
 import flash.display.DisplayObjectContainer;
-import flash.events.Event;
 import flash.events.MouseEvent;
 
 class Scrollbar extends Button

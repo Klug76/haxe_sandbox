@@ -41,15 +41,9 @@ package
 
 			KonController.start(this, cfg);
 
-			/*
-			var f: Number = 0.2 + 0.1;
-			Log(f.toPrecision(4));
-
-			foo(Keyboard.ESCAPE);
-			foo(Keyboard.BACK);
-			var b: Boolean = KonController.visible;
-			*/
 			add_Box();
+
+			Log("Hello!");
 		}
 
 		private function add_Box(): void
@@ -65,19 +59,6 @@ package
 			addChild(sp);
 		}
 
-		private function foo(u: uint): void
-		{
-			Log("u=" + u);
-			switch(u)
-			{
-			case Keyboard.ESCAPE:
-				Log("Esc");
-				break;
-			case Keyboard.BACK:
-				Log("Back");
-				break;
-			}
-		}
 	}
 
 }

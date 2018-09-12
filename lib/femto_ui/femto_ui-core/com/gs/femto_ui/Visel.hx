@@ -22,6 +22,10 @@ class Visel extends Sprite
 	private var state_ : Int = 0;
 	private var invalid_flags_ : Int = 0;
 
+	public var dummy_color_ : Int = 0;
+	public var dummy_alpha_ : Float = -1;
+	public var tag_ : Int = 0;
+
 	public static inline var STATE_DISPOSED : Int	= 1;
 	public static inline var STATE_DISABLED : Int	= 2;
 	public static inline var STATE_HOVER : Int		= 4;
@@ -39,10 +43,6 @@ class Visel extends Sprite
 	public static inline var INVALIDATION_FLAG_DATA2 : Int		= 0x80;
 	public static inline var INVALIDATION_FLAG_STAGE_SIZE : Int	= 0x100;
 	public static inline var INVALIDATION_FLAG_ALL : Int		= ~0;
-
-	public var dummy_color_ : Int = 0;
-	public var dummy_alpha_ : Float = -1;
-	public var tag_ : Int = 0;
 
 	public function new(owner : DisplayObjectContainer)
 	{

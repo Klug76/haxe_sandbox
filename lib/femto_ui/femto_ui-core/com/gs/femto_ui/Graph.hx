@@ -9,8 +9,6 @@ import flash.display.Graphics;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
 import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
-import flash.text.TextFieldType;
 import flash.text.TextFormat;
 
 using com.gs.femto_ui.TextFieldExt;

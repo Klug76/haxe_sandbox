@@ -4,8 +4,8 @@ package com.gs.console;
 class LogLine
 {
     //public var id_: int;
-    public var text_ : String;
-    public var html_ : String;
+    public var text_ : String = null;
+    public var html_ : String = null;
 
     public function new()
     {
