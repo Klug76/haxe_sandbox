@@ -10,6 +10,7 @@
 	. replace haxe.unit (gone in haxe 4 ) with utest | munit | buddy
 		.https://github.com/ciscoheat/buddy - best
 	.BUG: \Pictures\heaps_difference.png
+	.test button overlap & event propagation (kha)
 . review mconsole (js printer)
 
 . how to detect v:Dynamic is ByteArray? (ByteArray is abstract in openfl)
