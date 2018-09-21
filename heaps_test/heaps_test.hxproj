@@ -6,8 +6,8 @@
     <movie input="" />
     <movie path="bin\heapstest.swf" />
     <movie fps="30" />
-    <movie width="800" />
-    <movie height="600" />
+    <movie width="1200" />
+    <movie height="800" />
     <movie version="25" />
     <movie minorVersion="0" />
     <movie platform="Flash Player" />
@@ -19,6 +19,7 @@
     <class path="src" />
     <class path="..\lib\femto_ui\femto_ui-core" />
     <class path="..\lib\konsole\konsole-core" />
+    <class path="..\lib\femto_ui\backend\femto_ui-fl" />
   </classpaths>
   <!-- Build options -->
   <build>

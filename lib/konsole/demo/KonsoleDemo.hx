@@ -1,15 +1,16 @@
 package;
 
-import com.gs.console.KonController;
-import com.gs.console.Konsole;
-import com.gs.console.KonsoleConfig;
-import com.gs.console.KonsoleView;
-import com.gs.console.Ruler;
-import com.gs.femto_ui.Button;
-import com.gs.femto_ui.Root;
-import com.gs.femto_ui.Toolbar;
-import com.gs.femto_ui.Visel;
-import com.gs.femto_ui.util.Util;
+import gs.femto_ui.InfoClick;
+import gs.konsole.KonController;
+import gs.konsole.Konsole;
+import gs.konsole.KonsoleConfig;
+import gs.konsole.KonsoleView;
+import gs.konsole.Ruler;
+import gs.femto_ui.Button;
+import gs.femto_ui.Root;
+import gs.femto_ui.Toolbar;
+import gs.femto_ui.Visel;
+import gs.femto_ui.util.Util;
 import flash.Vector;
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
@@ -36,8 +37,8 @@ import haxe.Timer;
 import flash.xml.XML;
 #end
 
-import com.gs.console.KonController.Log;
-import com.gs.console.KonController.Log_Html;
+import gs.konsole.KonController.Log;
+import gs.konsole.KonController.Log_Html;
 
 class KonsoleDemo extends Visel
 {
@@ -183,24 +184,24 @@ class KonsoleDemo extends Visel
 		asset_.contentLoaderInfo.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, load_Error_Handler);
 	}
 
-	function toggle_Konsole(v: Dynamic): Void
+	function toggle_Konsole(_): Void
 	{
 		KonController.toggle();
 	}
 
-	function clear(v: Dynamic): Void
+	function clear(_): Void
 	{
 		KonController.clear();
 	}
 
-	function add_Tool_Button(cl: Int, txt: String, f: Dynamic->Void): Button
+	function add_Tool_Button(cl: Int, txt: String, f: InfoClick->Void): Button
 	{
 		var r: Root = Root.instance;
 		var b: Button = new Button(tb_, txt, f);
 		var w: Float = r.tool_width_;
 		aux_.text = txt;
 		w = Util.fmax(w, aux_.width + 8);
-		b.resize(w, r.tool_height_);
+		b.resize_Visel(w, r.tool_height_);
 		b.dummy_color = cl;
 		return b;
 	}
@@ -224,12 +225,12 @@ class KonsoleDemo extends Visel
 		stage.frameRate = 15;
 	}
 
-	override public function draw(): Void
+	override public function draw_Visel(): Void
 	{
-		super.draw();
+		super.draw_Visel();
 		if ((invalid_flags_ & Visel.INVALIDATION_FLAG_STAGE_SIZE) != 0)
 		{
-			resize(stage.stageWidth, stage.stageHeight);
+			resize_Visel(stage.stageWidth, stage.stageHeight);
 		}
 		if ((invalid_flags_ & Visel.INVALIDATION_FLAG_SIZE) != 0)
 		{
@@ -249,12 +250,12 @@ class KonsoleDemo extends Visel
 		Log("command::zoo()");
 	}
 
-	function test1(v: Dynamic): Void
+	function test1(_): Void
 	{
 		add_Counter();
 	}
 
-	function test2(v: Dynamic): Void
+	function test2(_): Void
 	{
 		Log("Konsole v." + KonController.VERSION + ", ui factor=" + Root.instance.ui_factor_);
 
@@ -326,12 +327,12 @@ class KonsoleDemo extends Visel
 		Log_Html(s);
 	}
 
-	function eat_Mem(v: Dynamic): Void
+	function eat_Mem(_): Void
 	{
 		arr_ = [for (i in 0...1000000) i];
 	}
 
-	function log_Error(v: Dynamic): Void
+	function log_Error(_): Void
 	{
 		try
 		{
@@ -361,18 +362,18 @@ class KonsoleDemo extends Visel
 		throw "string::error";
 	}
 
-	function do_Command(ev: Dynamic): Void
+	function do_Command(_): Void
 	{
 		var cmd = "/ruler";
 		KonController.eval(cmd);
 	}
 
-	function eval_Test(ev: Dynamic): Void
+	function eval_Test(_): Void
 	{
 		KonController.eval("2+3");
 	}
 
-	function log_Xml(v: Dynamic): Void
+	function log_Xml(_): Void
 	{
 		var s: String = '<root><hello name="world!">Haxe is suxx!</hello><hello name="world!">Haxe is sux!</hello></root>';
 #if flash
@@ -383,7 +384,7 @@ class KonsoleDemo extends Visel
 		Log(x);
 	}
 
-	function log_Data(ev: Dynamic): Void
+	function log_Data(_): Void
 	{
 		Log("null:");
 		Log(null);
