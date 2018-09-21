@@ -12,3 +12,5 @@ heaps_test/bin/heapstest.js
 heaps_test/bin/heapstest.js.map
 hx_air_test/obj/
 hx_air_test/bat/SetupSDK.bat
+!bak/
+kha_test/build/
