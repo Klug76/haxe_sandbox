@@ -1,4 +1,5 @@
 package gs.femto_ui;
+
 import haxe.Timer;
 
 using gs.femto_ui.RootBase.NativeUIContainer;
@@ -30,6 +31,9 @@ class Button extends ButtonBase
 //.............................................................................
 	private function init_Ex(txt : String, on_Click : InfoClick->Void) : Void
 	{
+#if debug
+		name = "button";
+#end
 		init_Base();
 
 		hover_inflation_ = Root.instance.hover_inflation_;

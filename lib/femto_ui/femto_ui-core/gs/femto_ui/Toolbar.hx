@@ -1,7 +1,6 @@
 package gs.femto_ui;
 
-import flash.Lib;
-import flash.display.DisplayObjectContainer;
+using gs.femto_ui.RootBase.NativeUIContainer;
 
 class Toolbar extends Visel
 {
@@ -10,7 +9,7 @@ class Toolbar extends Visel
 	public var y_border_ : Float = 0;
 	public var align_ : Int = Align.NEAR;
 
-	public function new(owner : DisplayObjectContainer)
+	public function new(owner : NativeUIContainer)
 	{
 		super(owner);
 #if debug
@@ -31,7 +30,7 @@ class Toolbar extends Visel
 	public function update_Layout() : Void
 	{
 		//trace("hbox::height=" + height_);
-		var count : Int = numChildren;
+		var count : Int = num_Children;
 		if (count <= 0)
 		{
 			return;
@@ -48,7 +47,7 @@ class Toolbar extends Visel
 		{
 			for (i in 0...count)
 			{
-				child = Lib.as(getChildAt(i), Visel);
+				child = get_Child_As(i, Visel);
 				if (null == child)
 					continue;
 				nw = child.width;
@@ -71,7 +70,7 @@ class Toolbar extends Visel
 		}
 		for (i in 0...count)
 		{
-			child = Lib.as(getChildAt(i), Visel);
+			child = get_Child_As(i, Visel);
 			if (null == child)
 				continue;
 			nw = child.width;

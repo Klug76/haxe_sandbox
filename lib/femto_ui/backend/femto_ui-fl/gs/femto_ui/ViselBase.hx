@@ -51,9 +51,22 @@ class ViselBase extends Sprite
 		}
 	}
 //.............................................................................
-	public function add_Child(v: Visel): Void
+	inline public function add_Child(v: Visel): Void
 	{
 		addChild(v);
+	}
+//.............................................................................
+//.............................................................................
+	public var num_Children(get, never): Int;
+	inline private function get_num_Children(): Int
+	{
+		return super.numChildren;
+	}
+//.............................................................................
+	inline public function get_Child_As<T>(idx: Int, c : Class<T>): Null<T>
+	{
+		var v = getChildAt(idx);
+		return untyped __as__(v, c);
 	}
 //.............................................................................
 //.............................................................................

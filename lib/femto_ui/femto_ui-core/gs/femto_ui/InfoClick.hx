@@ -1,5 +1,4 @@
 package gs.femto_ui;
-import gs.femto_ui.InfoClick;
 
 class InfoClick
 {

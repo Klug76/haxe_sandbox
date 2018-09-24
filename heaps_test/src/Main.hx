@@ -5,6 +5,7 @@ import gs.femto_ui.InfoClick;
 import gs.femto_ui.Label;
 import gs.femto_ui.Button;
 import gs.femto_ui.Root;
+import gs.femto_ui.Toolbar;
 import gs.femto_ui.Visel;
 import hxd.Event;
 import hxd.Key;
@@ -24,6 +25,7 @@ class Main extends App
 	var v_: Visel;
 	var al_: Label;
 	var b_: Button;
+	var tb_: Toolbar;
 	var debug_counter_: Int = 0;
 
 	static function main()
@@ -97,6 +99,21 @@ class Main extends App
 		b_.movesize(20, 20 + 100, 220, 60);
 		b_.auto_repeat = true;
 
+		tb_ = new Toolbar(panel);
+		tb_.dummy_color_ = 0x00008f;
+		tb_.dummy_alpha_ = .5;
+		tb_.spacing_ = 8;
+		tb_.x_border_ = 8;
+		tb_.move_Visel(10, panel.height - 60);
+		tb_.resize_Visel(panel.width - 20, 60);
+
+		var btn = new Button(tb_, "1", on_Click);
+		btn.dummy_color = 0xc02040;
+		btn.resize_Visel(120, 42);
+		btn = new Button(tb_, "2", on_Click);
+		btn.dummy_color = 0x202040;
+		btn.resize_Visel(120, 42);
+
 		add_Text();
 
 		hxd.Stage.getInstance().addEventTarget(onEvent);
@@ -113,12 +130,12 @@ class Main extends App
 	{
 		switch(event.kind)
 		{
-			case EKeyDown:
-				trace('DOWN keyCode: 0x${StringTools.hex(event.keyCode, 2)}');
-			case EKeyUp:
-				trace('UP keyCode: 0x${StringTools.hex(event.keyCode, 2)}');
-				on_Key_Down(event);
-			case _:
+		case EKeyDown:
+			trace('DOWN keyCode: 0x${StringTools.hex(event.keyCode, 2)}');
+		case EKeyUp:
+			trace('UP keyCode: 0x${StringTools.hex(event.keyCode, 2)}');
+			on_Key_Down(event);
+		case _:
 		}
 	}
 
@@ -171,7 +188,7 @@ class Main extends App
 	{
 		var maxw = 220;
 		var mask = new h2d.Mask(maxw, 260, s2d);
-		mask.x = 120;
+		mask.x = 10;
 		mask.y = 300;
 		var t = new h2d.HtmlText(hxd.res.DefaultFont.get(), mask);
 		//var t = new h2d.Text(hxd.res.DefaultFont.get(), s2d);

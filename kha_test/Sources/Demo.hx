@@ -5,6 +5,7 @@ import gs.femto_ui.Button;
 import gs.femto_ui.InfoClick;
 import gs.femto_ui.Label;
 import gs.femto_ui.Root;
+import gs.femto_ui.Toolbar;
 import gs.femto_ui.Visel;
 import kha.Framebuffer;
 import kha.Scheduler;
@@ -21,6 +22,7 @@ class Demo
 	var v_: Visel;
 	var al_: Label;
 	var b_: Button;
+	var tb_: Toolbar;
 	var debug_counter_: Int = 0;
 
 	public function new()
@@ -55,9 +57,10 @@ class Demo
 		v_.resize_Visel(150, 100);
 
 		var panel: Visel = new Visel(root_);
-		panel.move_Visel(220, 120);
-		panel.resize_Visel(root_.width, root_.height);
+		panel.move_Visel(220, 40);
+		panel.resize_Visel(root_.width - 230, root_.height - 60);
 		panel.dummy_color_ = 0x443322;
+		panel.dummy_alpha_ = 0.25;
 
 		al_ = new Label(panel, "Foo");
 		al_.dummy_color_ = 0x8f008f;
@@ -69,6 +72,22 @@ class Demo
 		b_.dummy_alpha_ = 1;
 		b_.movesize(20, 20 + 100, 220, 60);
 		b_.auto_repeat = true;
+
+		tb_ = new Toolbar(panel);
+		tb_.dummy_color_ = 0x00008f;
+		tb_.dummy_alpha_ = .5;
+		tb_.spacing_ = 8;
+		tb_.x_border_ = 8;
+		tb_.move_Visel(10, panel.height - 60);
+		tb_.resize_Visel(panel.width - 20, 60);
+
+		var btn = new Button(tb_, "1", on_Click);
+		btn.dummy_color = 0xc02040;
+		btn.resize_Visel(120, 42);
+		btn = new Button(tb_, "2", on_Click);
+		btn.dummy_color = 0x202040;
+		btn.resize_Visel(120, 42);
+
 
 		Keyboard.get().notify(on_Key_Down, on_Key_Up);
 	}

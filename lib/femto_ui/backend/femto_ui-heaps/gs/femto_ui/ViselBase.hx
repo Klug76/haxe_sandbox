@@ -36,7 +36,7 @@ class ViselBase extends Sprite
 		super.onRemove();
 	}
 //.............................................................................
-	public function add_Child(v: Visel): Void
+	inline public function add_Child(v: Visel): Void
 	{
 		addChild(v);
 	}
@@ -47,6 +47,26 @@ class ViselBase extends Sprite
 			++pos;
 		super.addChildAt(s, pos);
 	}
+//.............................................................................
+//.............................................................................
+	public var num_Children(get, never): Int;
+	inline private function get_num_Children(): Int
+	{
+		return super.numChildren;
+	}
+//.............................................................................
+	inline public function get_Child_As<T>(idx: Int, c : Class<T>): Null<T>
+	{
+		if (background_ != null)
+			++idx;
+		var v = super.getChildAt(idx);
+		if (Std.is(v, c))
+			return cast v;
+		return null;
+	}
+//.............................................................................
+//.............................................................................
+//.............................................................................
 //.............................................................................
 	public var width(get, set): Float;
 	inline private function get_width() : Float

@@ -15,9 +15,6 @@ class ButtonBase extends Visel
 //.............................................................................
 	inline private function init_Base() : Void
 	{
-#if debug
-		name = "button";
-#end
 		buttonMode = true;//:If true, this sprite behaves as a button, which means that it triggers the display of the hand
 		//:cursor when the pointer passes over the sprite and can receive a click event if the enter or space keys are
 		//:pressed when the sprite has focus.

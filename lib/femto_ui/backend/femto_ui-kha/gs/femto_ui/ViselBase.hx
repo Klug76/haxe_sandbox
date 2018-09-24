@@ -13,6 +13,8 @@ class ViselBase
 	private var width_: Float = 0;
 	private var height_: Float = 0;
 
+	public var name(default, default): String = null;
+
 	public function new(?owner: Visel)
 	{
 		if (owner != null)
@@ -33,6 +35,20 @@ class ViselBase
 		}
 		child_.insert(idx, v);
 		v.parent_ = cast this;
+	}
+//.............................................................................
+	public var num_Children(get, never): Int;
+	private function get_num_Children(): Int
+	{
+		return child_.length;
+	}
+//.............................................................................
+	public function get_Child_As<T>(idx: Int, c : Class<T>): Null<T>
+	{
+		var v = child_[idx];
+		if (Std.is(v, c))
+			return cast v;
+		return null;
 	}
 //.............................................................................
 	public function get_Child_Index(v: Visel) : Int
