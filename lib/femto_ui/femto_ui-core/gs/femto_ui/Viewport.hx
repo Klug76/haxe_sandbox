@@ -17,17 +17,17 @@ class Viewport extends Visel
 	private var min_content_height_ : Float;
 	static private var layer_: Sprite = null;
 
-	public function new(stg : Stage)
+	public function new()
 	{
 		if (null == layer_)
 		{
 			layer_ = new Sprite();
-			stg.addChild(layer_);
+			Root.instance.stage_.addChild(layer_);
 		}
 		super(layer_);
 		create_Children();
 #if debug
-		name = "view";
+		name = "viewport";
 #end
 	}
 //.............................................................................
@@ -133,7 +133,7 @@ class Viewport extends Visel
 //.............................................................................
 	public function activate() : Void
 	{
-		//:some sort of bring_To_Top()
+		//:some sort of bring_To_Top()?
 		if (stage != null)
 		{
 			stage.addChild(layer_);

@@ -39,7 +39,7 @@ class KonsoleView extends Viewport
 	public function new(k : Konsole)
 	{
 		k_ = k;
-		super(Root.instance.stage_);
+		super();
 		//:super.visible = false;
 		create_Children_Ex();
 #if debug
@@ -192,7 +192,7 @@ class KonsoleView extends Viewport
 		var r: Root = Root.instance;
 		if (null == fps_view_)
 		{
-			fps_view_ = new Viewport(stage);
+			fps_view_ = new Viewport();
 			var m : FpsMonitor = new FpsMonitor(fps_view_);
 			fps_view_.content = m;
 			fps_view_.movesize(100 * r.ui_factor_, 100 * r.ui_factor_, m.width + r.small_tool_width_, m.height);
@@ -206,7 +206,7 @@ class KonsoleView extends Viewport
 		var r: Root = Root.instance;
 		if (null == mem_view_)
 		{
-			mem_view_ = new Viewport(stage);
+			mem_view_ = new Viewport();
 			var m : MemMonitor = new MemMonitor(mem_view_);
 			mem_view_.content = m;
 			mem_view_.movesize(100 * r.ui_factor_, 120 * r.ui_factor_ + m.height, m.width + r.small_tool_width_, m.height);

@@ -17,6 +17,10 @@ class Visel extends ViselBase
 	public var dummy_alpha_ : Float = -1;
 	public var tag_ : Int = 0;
 
+#if debug
+	public static var debug_counter_: Int = 0;
+#end
+
 	public static inline var STATE_DISPOSED : Int	= 1;
 	public static inline var STATE_DISABLED : Int	= 2;
 	public static inline var STATE_HOVER : Int		= 4;
@@ -37,6 +41,10 @@ class Visel extends ViselBase
 
 	public function new(owner : NativeUIContainer)
 	{
+#if debug
+		++debug_counter_;
+		//trace("Visel::new(), debug_counter=" + debug_counter_);
+#end
 		super(owner);
 	}
 //.............................................................................
@@ -45,7 +53,10 @@ class Visel extends ViselBase
 		if (disposed)
 			return;
 		state_ |= STATE_DISPOSED;
-		//trace("~Visel::destroy()");
+#if debug
+		--debug_counter_;
+		//trace("~Visel::destroy(), debug_counter=" + debug_counter_);
+#end
 		destroy_Base();
 	}
 //.............................................................................
@@ -63,6 +74,7 @@ class Visel extends ViselBase
 //.............................................................................
 	private function on_Invalidate() : Void
 	{
+		//trace("Visel::on_Invalidate");
 		Root.instance.frame_signal_.remove(on_Invalidate);
 		if (disposed)
 			return;

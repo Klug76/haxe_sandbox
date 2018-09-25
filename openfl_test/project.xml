@@ -5,9 +5,10 @@
 	<app main="Main" path="Export" file="OpenflTest" />
 
 	<source path="Source" />
-	<source path="..\lib\femto_ui\femto_ui-core" />
-	<source path="..\lib\konsole\konsole-core" />
-	<source path="..\lib\konsole\demo" />
+	<source path="../lib/femto_ui/femto_ui-core" />
+	<source path="../lib/femto_ui/backend/femto_ui-fl" />
+	<source path="../lib/konsole/konsole-core" />
+	<source path="../lib/konsole/demo" />
 
 	<haxelib name="openfl" />
 	<haxelib name="hscript" />

@@ -2,7 +2,7 @@ package;
 
 
 import KonsoleDemo;
-import com.gs.femto_ui.util.DumpDefines;
+import gs.femto_ui.util.DumpDefines;
 import flash.display.Sprite;
 
 //TODO review: \Pictures\bug_bug.png
@@ -25,7 +25,7 @@ class Main extends Sprite
 		//trace("Hello, OpenFL");
 		//test1();
 		test3();
-		DumpDefines.dump();
+		//DumpDefines.dump();
 	}
 
 	/*

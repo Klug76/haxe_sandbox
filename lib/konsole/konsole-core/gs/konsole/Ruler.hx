@@ -47,6 +47,7 @@ class Ruler extends Visel
 	private var cur_x_: Float = 0;
 	private var cur_y_: Float = 0;
 	private var num_tp_: Int = 0;
+	private var touch_mode_: Bool = false;
 
 	private var zoom_bd_3D_: BitmapData;//:see @:privateAccess in KonController
 	private var zoom_bd_2D_: BitmapData;
@@ -153,14 +154,12 @@ class Ruler extends Visel
 	private function add_Tap_Listeners() : Void
 	{
 #if (openfl || (flash >= 10.1))
-		if (Root.instance.is_touch_supported_)
-		{
-			addEventListener(TouchEvent.TOUCH_BEGIN, on_Touch_Begin);
-			addEventListener(TouchEvent.TOUCH_END, on_Touch_End);
-			addEventListener(TouchEvent.TOUCH_MOVE, on_Touch_Move);
-			return;
-		}
+		//trace("add touch listeners");
+		addEventListener(TouchEvent.TOUCH_BEGIN, on_Touch_Begin);
+		addEventListener(TouchEvent.TOUCH_END, on_Touch_End);
+		addEventListener(TouchEvent.TOUCH_MOVE, on_Touch_Move);
 #end
+		//trace("add mouse listeners");
 		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
 		addEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up);
 		addEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move);
@@ -169,13 +168,9 @@ class Ruler extends Visel
 	private function remove_Tap_Listeners() : Void
 	{
 #if (openfl || (flash >= 10.1))
-		if (Root.instance.is_touch_supported_)
-		{
-			removeEventListener(TouchEvent.TOUCH_BEGIN, on_Touch_Begin);
-			removeEventListener(TouchEvent.TOUCH_END, on_Touch_End);
-			removeEventListener(TouchEvent.TOUCH_MOVE, on_Touch_Move);
-			return;
-		}
+		removeEventListener(TouchEvent.TOUCH_BEGIN, on_Touch_Begin);
+		removeEventListener(TouchEvent.TOUCH_END, on_Touch_End);
+		removeEventListener(TouchEvent.TOUCH_MOVE, on_Touch_Move);
 #end
 		removeEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
 		removeEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up);
@@ -266,11 +261,15 @@ class Ruler extends Visel
 //.............................................................................
 	private function on_Mouse_Down(ev : MouseEvent) : Void
 	{
+		if (touch_mode_)
+			return;
 		ev.stopImmediatePropagation();
 	}
 //.............................................................................
 	private function on_Mouse_Up(ev : MouseEvent) : Void
 	{
+		if (touch_mode_)
+			return;
 		ev.stopImmediatePropagation();
 		advance_State(ev.shiftKey || ev.ctrlKey, ev.stageX, ev.stageY);
 		update_Taps();
@@ -278,6 +277,8 @@ class Ruler extends Visel
 //.............................................................................
 	private function on_Mouse_Move(ev : MouseEvent) : Void
 	{
+		if (touch_mode_)
+			return;
 		ev.stopImmediatePropagation();
 		move_Crosshair(ev.stageX,  ev.stageY);
 	}
@@ -339,12 +340,14 @@ class Ruler extends Visel
 //.............................................................................
 	private function on_Touch_Begin(ev : TouchEvent) : Void
 	{
+		touch_mode_ = true;
 		ev.stopImmediatePropagation();
 		++num_tp_;
 	}
 //.............................................................................
 	private function on_Touch_End(ev : TouchEvent) : Void
 	{
+		touch_mode_ = true;
 		ev.stopImmediatePropagation();
 		--num_tp_;
 		if (num_tp_ > 1)
@@ -360,6 +363,7 @@ class Ruler extends Visel
 //.............................................................................
 	private function on_Touch_Move(ev : TouchEvent) : Void
 	{
+		touch_mode_ = true;
 		ev.stopImmediatePropagation();
 		if (ev.isPrimaryTouchPoint)
 		{

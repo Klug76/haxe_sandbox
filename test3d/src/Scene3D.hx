@@ -1,6 +1,6 @@
 package;
 
-import com.gs.console.KonController;
+import gs.konsole.KonController;
 import flash.display.BitmapData;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
@@ -9,7 +9,6 @@ import flash.geom.Rectangle;
 import flash.display.Stage;
 
 typedef K = flash.ui.Keyboard;
-
 
 class Shader extends hxsl.Shader
 {

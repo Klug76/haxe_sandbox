@@ -43,6 +43,15 @@ class Demo
 		Root.instance.font_ = fnt;
 		Root.instance.def_text_size_ *= 1.5;
 
+		//test_Visel();
+
+		add_UI();
+
+		Keyboard.get().notify(on_Key_Down, on_Key_Up);
+	}
+
+	function add_UI()
+	{
 		root_ = new Visel(null);
 		root_.x = 0;
 		root_.y = 0;
@@ -87,9 +96,6 @@ class Demo
 		btn = new Button(tb_, "2", on_Click);
 		btn.dummy_color = 0x202040;
 		btn.resize_Visel(120, 42);
-
-
-		Keyboard.get().notify(on_Key_Down, on_Key_Up);
 	}
 
 	function on_Click(ev: InfoClick)
@@ -140,6 +146,11 @@ class Demo
     private function on_Key_Up(code: KeyCode) : Void
 	{
 
+	}
+
+	function test_Visel()
+	{
+		Test1.run_All();
 	}
 
 	function update(): Void

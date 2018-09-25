@@ -1,25 +1,11 @@
 package;
 
-import gs.femto_ui.InfoClick;
-import gs.konsole.KonController;
-import gs.konsole.Konsole;
-import gs.konsole.KonsoleConfig;
-import gs.konsole.KonsoleView;
-import gs.konsole.Ruler;
-import gs.femto_ui.Button;
-import gs.femto_ui.Root;
-import gs.femto_ui.Toolbar;
-import gs.femto_ui.Visel;
-import gs.femto_ui.util.Util;
 import flash.Vector;
-import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.Loader;
 import flash.display.Shape;
-import flash.display.Sprite;
-import flash.display.Stage;
 import flash.errors.Error;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
@@ -31,14 +17,23 @@ import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 import flash.ui.Keyboard;
 import flash.utils.ByteArray;
+import gs.femto_ui.Button;
+import gs.femto_ui.InfoClick;
+import gs.femto_ui.Root;
+import gs.femto_ui.Toolbar;
+import gs.femto_ui.Visel;
+import gs.femto_ui.util.Util;
+import gs.konsole.KonController;
+import gs.konsole.KonController.Log;
+import gs.konsole.KonController.Log_Html;
+import gs.konsole.KonsoleConfig;
 import haxe.Json;
 import haxe.Timer;
+
 #if flash
 import flash.xml.XML;
 #end
 
-import gs.konsole.KonController.Log;
-import gs.konsole.KonController.Log_Html;
 
 class KonsoleDemo extends Visel
 {
@@ -54,6 +49,7 @@ class KonsoleDemo extends Visel
 
 		//cfg.zoom_root_ = owner.stage;
 		cfg.zoom_root_ = owner;
+		//cfg.redirect_trace_ = false;
 		//cfg.con_bg_color_ = 0xFF000000;
 		//cfg.con_text_color_ = 0x77BB77;
 		//cfg.con_text_size_ = 18;

@@ -1,6 +1,6 @@
 ﻿package
 {
-	import com.gs.console.KonController;
+	import gs.konsole.KonController;
 
 	public function Log(o: *): void
 	{

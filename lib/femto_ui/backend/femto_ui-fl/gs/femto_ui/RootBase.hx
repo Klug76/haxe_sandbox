@@ -1,24 +1,24 @@
 package gs.femto_ui;
 
 import flash.Lib;
+import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Stage;
 import flash.events.Event;
 import flash.system.Capabilities;
 
-#if (openfl || (flash >= 10.1))
-import flash.ui.Multitouch;
-import flash.ui.MultitouchInputMode;
+#if (!openfl && (flash >= 10.1))
+import flash.system.TouchscreenType;
 #end
 
+typedef NativeUIObject = DisplayObject;
 typedef NativeUIContainer = DisplayObjectContainer;
 
 class RootBase
 {
 	public var frame_signal_ : EnterFrameSignal = new EnterFrameSignal();
 
-	public var is_touch_supported_ : Bool = false;
-	public var desktop_mode_ : Bool = false;
+	public var is_touch_supported_: Bool = false;
 	public var platform_: String = null;
 
 	public var stage_ : Stage = null;
@@ -35,12 +35,13 @@ class RootBase
 	private function init() : Void
 	{
 
-#if (openfl || (flash >= 10.1))
-		is_touch_supported_ = Multitouch.inputMode == MultitouchInputMode.TOUCH_POINT;
+#if (!openfl && (flash >= 10.1))
+		is_touch_supported_ = Capabilities.touchscreenType == TouchscreenType.FINGER;
 #end
 		platform_ = Capabilities.version.substr(0, 3);
-		//trace("*** platform_ = " + os_);//:html5 return WEB
-		desktop_mode_ = (platform_ == "WIN") || (platform_ == "MAC");// || (platform_ == "LNX");
+
+		//trace("*** is_touch_supported_=" + is_touch_supported_);
+		//trace("*** platform_ = " + platform_);//:html5 return WEB
 
 		var stg: Stage = owner_.stage;
 		if (null == stg)
@@ -58,15 +59,8 @@ class RootBase
 			return;
 		stage_ = owner_.stage;
 		frame_signal_.init(stage_);
-		var res_x : Float = Capabilities.screenResolutionX;
-		var res_y : Float = Capabilities.screenResolutionY;
-		if (desktop_mode_)
-		{
-			res_x = stage_.stageWidth;
-			res_y = stage_.stageHeight;
-		}
 		var r: Root = cast this;
-		r.init_Ex(res_x, res_y);
+		r.init_Ex(stage_.stageWidth, stage_.stageHeight);
 	}
 //.............................................................................
 //.............................................................................

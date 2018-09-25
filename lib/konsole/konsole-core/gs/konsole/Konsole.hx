@@ -119,14 +119,18 @@ class Konsole extends RingBuf<LogLine>
 		var s: String = StrUtil.nice_Dump(v);
 		if (null == s)
 			s = "";
-#if (flash || openfl)
-		Lib.trace(s);
-#else
 		if (prev_trace_ != null)
-			prev_trace_(v);
+		{
+			prev_trace_(s);
+		}
 		else
+		{
+#if (flash || openfl)
+			Lib.trace(s);
+#else
 			Log.trace(v);//TODO fix me: omit line #
 #end
+		}
 		var it: LogLine = add_Line();
 		it.html_ = null;
 		it.text_ = s;
@@ -144,14 +148,18 @@ class Konsole extends RingBuf<LogLine>
 		}
 		var s : String = StrUtil.strip_Tags(html);
 		s = StrUtil.remove_Last_Lf(s);  //:remove last </p>=>\n
-#if (flash || openfl)
-		Lib.trace(s);//:will add \n
-#else
 		if (prev_trace_ != null)
+		{
 			prev_trace_(s);
+		}
 		else
+		{
+#if (flash || openfl)
+			Lib.trace(s);//:will add \n
+#else
 			Log.trace(s);//TODO fix me: omit line #
 #end
+		}
 		var it : LogLine = add_Line();
 		it.text_ = null;
 		it.html_ = html;

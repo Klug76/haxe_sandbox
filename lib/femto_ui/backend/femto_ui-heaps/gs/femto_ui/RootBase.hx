@@ -5,6 +5,7 @@ import gs.femto_ui.util.Signal;
 import h2d.Sprite;
 import hxd.System;
 
+typedef NativeUIObject = Sprite;
 typedef NativeUIContainer = Sprite;
 
 class RootBase
@@ -12,7 +13,6 @@ class RootBase
 	public var frame_signal_ : Signal = new Signal();
 
 	public var is_touch_supported_ : Bool = false;
-	public var desktop_mode_ : Bool = false;
 	public var platform_: String = null;
 
 	public var owner_: NativeUIContainer = null;
@@ -39,7 +39,6 @@ class RootBase
 		default:
 			platform_ = "???";//TODO fix me
 		};
-		desktop_mode_ = !System.getValue(SystemValue.IsMobile);
 		var r: Root = cast this;
 		r.init_Ex(System.width, System.height);
 	}

@@ -20,6 +20,7 @@
     <class path="E:\HaxeToolkit\haxe\lib\hscript\2,2,0" />
     <class path="Source" />
     <class path="..\lib\femto_ui\femto_ui-core" />
+    <class path="..\lib\femto_ui\backend\femto_ui-fl" />
     <class path="..\lib\konsole\konsole-core" />
     <class path="..\lib\konsole\demo" />
     <class path="Export\html5\haxe" />

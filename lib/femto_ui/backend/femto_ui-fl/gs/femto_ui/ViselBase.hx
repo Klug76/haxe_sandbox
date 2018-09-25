@@ -4,10 +4,11 @@ import flash.Lib;
 import flash.display.Graphics;
 import flash.display.Sprite;
 
+using gs.femto_ui.RootBase.NativeUIObject;
+using gs.femto_ui.RootBase.NativeUIContainer;
 /*
 Sprite -> DisplayObjectContainer -> InteractiveObject -> DisplayObject -> EventDispatcher -> Object
 */
-using gs.femto_ui.RootBase.NativeUIContainer;
 //.............................................................................
 class ViselBase extends Sprite
 {
@@ -24,49 +25,70 @@ class ViselBase extends Sprite
 //.............................................................................
 	inline private function destroy_Base() : Void
 	{
-		destroy_Children();
+		remove_Children();
 		if (parent != null)
 			parent.removeChild(this);
 	}
 //.............................................................................
-	public function destroy_Children() : Void
+	public function remove_Children() : Void
 	{
-		var i : Int = numChildren - 1;
-		while (i >= 0)
+		while (numChildren > 0)
 		{
-			var od = getChildAt(i);
-			if (od != null)
-			{
-				var child : Visel = Lib.as(od, Visel);
-				if (child != null)
-				{
-					child.destroy_Visel();
-				}
-				else
-				{
-					removeChildAt(i);
-				}
-			}
-			--i;
+			var od = getChildAt(0);
+			var child : Visel = Lib.as(od, Visel);
+			removeChildAt(0);
+			if (child != null)
+				child.destroy_Visel();
 		}
 	}
 //.............................................................................
-	inline public function add_Child(v: Visel): Void
+	inline public function remove_Child(od: NativeUIObject) : Void
 	{
-		addChild(v);
+		removeChild(od);
+		var v: Visel = Lib.as(od, Visel);
+		if (v != null)
+			v.destroy_Visel();
 	}
 //.............................................................................
+	inline public function remove_Child_At(idx: Int) : Void
+	{
+		var od: NativeUIObject = removeChildAt(idx);
+		var v: Visel = Lib.as(od, Visel);
+		if (v != null)
+			v.destroy_Visel();
+	}
+//.............................................................................
+	inline public function add_Child(v: NativeUIObject): NativeUIObject
+	{
+		return addChild(v);
+	}
+//.............................................................................
+	inline public function add_Child_At(v: NativeUIObject, idx: Int): NativeUIObject
+	{
+		return addChildAt(v, idx);
+	}
+//.............................................................................
+//.............................................................................
+	inline public function get_Child_Index(v: NativeUIObject): Int
+	{
+		return getChildIndex(v);
+	}
 //.............................................................................
 	public var num_Children(get, never): Int;
 	inline private function get_num_Children(): Int
 	{
-		return super.numChildren;
+		return numChildren;
+	}
+//.............................................................................
+	inline public function get_Child_At(idx: Int): NativeUIObject
+	{
+		return getChildAt(idx);
 	}
 //.............................................................................
 	inline public function get_Child_As<T>(idx: Int, c : Class<T>): Null<T>
 	{
 		var v = getChildAt(idx);
-		return untyped __as__(v, c);
+		return Lib.as(v, c);
 	}
 //.............................................................................
 //.............................................................................

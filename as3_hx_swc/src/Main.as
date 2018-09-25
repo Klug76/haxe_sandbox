@@ -1,7 +1,7 @@
 package
 {
-	import com.gs.console.KonController;
-	import com.gs.console.KonsoleConfig;
+	import gs.konsole.KonController;
+	import gs.konsole.KonsoleConfig;
 	import flash.display.Graphics;
 	import flash.display.MovieClip;
 	import flash.display.Shape;

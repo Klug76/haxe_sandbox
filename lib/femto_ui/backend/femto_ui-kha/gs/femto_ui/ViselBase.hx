@@ -21,29 +21,41 @@ class ViselBase
 			owner.add_Child(cast this);
 	}
 //.............................................................................
-	public function add_Child(v: Visel): Void
+	inline public function add_Child(v: Visel): Visel
 	{
-		add_Child_At(v, child_.length);
+		return add_Child_At(v, child_.length);
 	}
 //.............................................................................
-	public function add_Child_At(v: Visel, idx: Int) : Void
+	inline public function add_Child_At(v: Visel, idx: Int) : Visel
 	{
 		if (v.parent_ == cast this)
 		{
 			set_Child_Index(v, idx);
-			return;
+			return v;
 		}
 		child_.insert(idx, v);
 		v.parent_ = cast this;
+		return v;
+	}
+//.............................................................................
+	public var parent(get, never): Visel;
+	inline private function get_parent(): Visel
+	{
+		return parent_;
 	}
 //.............................................................................
 	public var num_Children(get, never): Int;
-	private function get_num_Children(): Int
+	inline private function get_num_Children(): Int
 	{
 		return child_.length;
 	}
 //.............................................................................
-	public function get_Child_As<T>(idx: Int, c : Class<T>): Null<T>
+	inline public function get_Child_At(idx: Int): Visel
+	{
+		return child_[idx];
+	}
+//.............................................................................
+	inline public function get_Child_As<T>(idx: Int, c : Class<T>): Null<T>
 	{
 		var v = child_[idx];
 		if (Std.is(v, c))
@@ -51,12 +63,12 @@ class ViselBase
 		return null;
 	}
 //.............................................................................
-	public function get_Child_Index(v: Visel) : Int
+	inline public function get_Child_Index(v: Visel) : Int
 	{
 		return child_.indexOf(v);
 	}
 //.............................................................................
-	public function set_Child_Index(v: Visel, idx: Int) : Void
+	inline public function set_Child_Index(v: Visel, idx: Int) : Void
 	{
 		var old: Int = get_Child_Index(v);
 		if (old == idx)
@@ -65,19 +77,34 @@ class ViselBase
 		child_.insert(idx, v);
 	}
 //.............................................................................
-	public function remove_Child(v: Visel): Void
+	inline public function remove_Child(v: Visel): Void
 	{
-		if (v.parent_ == this)
+		if (v.parent_ == this)//TODO assert
 		{
 			v.parent_ = null;
 			child_.remove(v);
+			v.destroy_Visel();
 		}
+	}
+//.............................................................................
+	inline public function remove_Child_At(idx: Int) : Void
+	{
+		var ch: Visel = child_[idx];
+		remove_Child(ch);//TODO: need 4 removeAt
+	}
+//.............................................................................
+	public function remove_Children() : Void
+	{
+		while( num_Children > 0 )
+			remove_Child(get_Child_At(0));
 	}
 //.............................................................................
 	inline private function destroy_Base() : Void
 	{
+		remove_Children();
 		if (parent_ != null)
 			parent_.remove_Child(cast this);
+		parent_ = null;
 	}
 //.............................................................................
 	public var x(default, default): Float;
@@ -202,7 +229,7 @@ class ViselBase
 	public function bring_To_Top() : Void
 	{
 		if (parent_ != null)
-			parent_.add_Child_At(cast this, 0);
+			parent_.add_Child(cast this);
 	}
 //.............................................................................
 }

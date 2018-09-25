@@ -1,6 +1,6 @@
 package;
 
-import com.gs.console.KonController;
+import gs.konsole.KonController;
 import flash.Lib;
 import flash.display.Graphics;
 import flash.display.Shape;

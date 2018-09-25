@@ -4,6 +4,7 @@ import h2d.Graphics;
 import h2d.Interactive;
 import h2d.Sprite;
 
+using gs.femto_ui.RootBase.NativeUIObject;
 using gs.femto_ui.RootBase.NativeUIContainer;
 
 class ViselBase extends Sprite
@@ -24,42 +25,87 @@ class ViselBase extends Sprite
 //.............................................................................
 	inline private function destroy_Base() : Void
 	{
-		remove();//:will destroy children
 		background_ = null;
+		remove_Children();//:will destroy background_
+		remove();
 	}
 //.............................................................................
-	override function onRemove()
+//.............................................................................
+	public function remove_Children() : Void
 	{
-		//trace("Visel::on_Remove()");
-		var v: Visel = cast this;
-		v.destroy_Visel();
-		super.onRemove();
+		var idx: Int = 0;
+		if (background_ != null)
+			++idx;
+		while ( numChildren > idx )
+			remove_Child( getChildAt(idx) );
 	}
 //.............................................................................
-	inline public function add_Child(v: Visel): Void
+	inline public function remove_Child(od: NativeUIObject) : Void
+	{
+		removeChild(od);
+		if (Std.is(od, Visel))
+		{
+			var v: Visel = cast od;
+			v.destroy_Visel();
+		}
+	}
+//.............................................................................
+	inline public function remove_Child_At(idx: Int) : Void
+	{
+		var od: NativeUIObject = get_Child_At(idx);
+		od.remove();
+		if (Std.is(od, Visel))
+		{
+			var v: Visel = cast od;
+			v.destroy_Visel();
+		}
+	}
+//.............................................................................
+	inline public function add_Child(v: NativeUIObject): NativeUIObject
 	{
 		addChild(v);
+		return v;
 	}
 //.............................................................................
-	override function addChildAt(s, pos)
+//.............................................................................
+	inline public function add_Child_At(v: NativeUIObject, idx: Int): NativeUIObject
 	{
 		if (background_ != null)
-			++pos;
-		super.addChildAt(s, pos);
+			++idx;
+		addChildAt(v, idx);
+		return v;
 	}
 //.............................................................................
+//.............................................................................
+	inline public function get_Child_Index(v: NativeUIObject): Int
+	{
+		var idx = getChildIndex(v);
+		if ((background_ != null) && (idx > 0))
+			--idx;
+		return idx;
+	}
 //.............................................................................
 	public var num_Children(get, never): Int;
 	inline private function get_num_Children(): Int
 	{
-		return super.numChildren;
+		var result: Int = numChildren;
+		if (background_ != null)
+			--result;
+		return result;
+	}
+//.............................................................................
+	inline public function get_Child_At(idx: Int): NativeUIObject
+	{
+		if (background_ != null)
+			++idx;
+		return getChildAt(idx);
 	}
 //.............................................................................
 	inline public function get_Child_As<T>(idx: Int, c : Class<T>): Null<T>
 	{
 		if (background_ != null)
 			++idx;
-		var v = super.getChildAt(idx);
+		var v = getChildAt(idx);
 		if (Std.is(v, c))
 			return cast v;
 		return null;
@@ -172,6 +218,7 @@ class ViselBase extends Sprite
 	{
 		if (background_ != null)
 			return;
+		//trace("Visel::alloc_Background()");
 		var bg = new Graphics(this);
 		addChildAt(bg, 0);
 		background_ = bg;

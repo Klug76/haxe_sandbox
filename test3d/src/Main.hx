@@ -1,8 +1,8 @@
 package;
 
-import com.gs.console.KonController;
-import com.gs.console.KonController.Log;
-import com.gs.console.KonsoleConfig;
+import gs.konsole.KonController;
+import gs.konsole.KonController.Log;
+import gs.konsole.KonsoleConfig;
 import flash.Lib;
 import flash.display.Sprite;
 import flash.display.StageAlign;

@@ -6,6 +6,7 @@ import gs.femto_ui.Label;
 import gs.femto_ui.Button;
 import gs.femto_ui.Root;
 import gs.femto_ui.Toolbar;
+//import gs.femto_ui.Viewport;
 import gs.femto_ui.Visel;
 import hxd.Event;
 import hxd.Key;
@@ -14,8 +15,8 @@ import h2d.Bitmap;
 import hxd.App;
 
 #if flash
-//import com.gs.console.KonController;
-import flash.Lib;
+	//import com.gs.console.KonController;
+	import flash.Lib;
 #end
 
 class Main extends App
@@ -26,6 +27,7 @@ class Main extends App
 	var al_: Label;
 	var b_: Button;
 	var tb_: Toolbar;
+	//var vp_: Viewport;
 	var debug_counter_: Int = 0;
 
 	static function main()
@@ -66,22 +68,40 @@ class Main extends App
 		ni.onOver = function(_) b.alpha = 0.5;
 		ni.onOut = function(_) b.alpha = 1.0;
 
+		add_Root();
 
-#if flash
+		add_UI();
+
+		//test_Visel();
+
+		add_Text();
+
+		hxd.Stage.getInstance().addEventTarget(onEvent);
+
+		trace("LEAVE init");
+	}
+
+	function add_Root()
+	{
+		#if flash
 		var ui_owner = Lib.current;
-#else
+		#else
 		var ui_owner = s2d;
-#end
+		#end
 		Root.create(ui_owner);
+	}
 
-		v_ = new Visel(ui_owner);
+	function add_UI()
+	{
+		var r: Root = Root.instance;
+		v_ = new Visel(r.owner_);
 		v_.dummy_color_ = 0xff00ff;
 		v_.dummy_alpha_ = .75;
 		v_.x = 400;
 		v_.y = 20;
 		v_.resize_Visel(150, 100);
 
-		var panel: Visel = new Visel(ui_owner);
+		var panel: Visel = new Visel(r.owner_);
 		panel.move_Visel(50, 100);
 		panel.resize_Visel(800, 600);
 		panel.dummy_color = 0x443322;
@@ -107,18 +127,12 @@ class Main extends App
 		tb_.move_Visel(10, panel.height - 60);
 		tb_.resize_Visel(panel.width - 20, 60);
 
-		var btn = new Button(tb_, "1", on_Click);
+		var btn = new Button(tb_, "1", on_Click1);
 		btn.dummy_color = 0xc02040;
 		btn.resize_Visel(120, 42);
 		btn = new Button(tb_, "2", on_Click);
 		btn.dummy_color = 0x202040;
 		btn.resize_Visel(120, 42);
-
-		add_Text();
-
-		hxd.Stage.getInstance().addEventTarget(onEvent);
-
-		trace("LEAVE init");
 	}
 
 	function on_Click(ev: InfoClick)
@@ -126,63 +140,88 @@ class Main extends App
 		trace("click #" + debug_counter_++ + ", " + ev.mx_ + ": " + ev.my_);
 	}
 
+	function on_Click1(ev: InfoClick)
+	{
+		/*
+		if (null == vp_)
+		{
+			vp_ = new Viewport();
+			vp_.dummy_color_ = 0x408040;
+			vp_.dummy_alpha_ = 0.5;
+			vp_.movesize(10, 20, 320, 200);
+		}
+		else
+		{
+			vp_.visible = !vp_.visible;
+		}
+		*/
+	}
+	/*
+			p.find("#fps").text(Std.string(engine.fps));
+			p.find("#calls").text(numberFormat(engine.drawCalls));
+			p.find("#tris").text(numberFormat(engine.drawTriangles));
+	*/
+
 	function onEvent(event : Event)
 	{
-		switch(event.kind)
+		switch (event.kind)
 		{
-		case EKeyDown:
-			trace('DOWN keyCode: 0x${StringTools.hex(event.keyCode, 2)}');
-		case EKeyUp:
-			trace('UP keyCode: 0x${StringTools.hex(event.keyCode, 2)}');
-			on_Key_Down(event);
-		case _:
+			case EKeyDown:
+				trace('DOWN keyCode: 0x${StringTools.hex(event.keyCode, 2)}');
+			case EKeyUp:
+				trace('UP keyCode: 0x${StringTools.hex(event.keyCode, 2)}');
+				on_Key_Down(event);
+			case _:
 		}
 	}
-
 
 	function on_Key_Down(event: Event)
 	{
-		switch(event.keyCode)
+		switch (event.keyCode)
 		{
-		case Key.V:
-			v_.visible = !v_.visible;
-		case Key.A:
-			v_.dummy_alpha = if (v_.dummy_alpha < 0.5) 1. else 0.25;
-		case Key.C:
-			v_.dummy_color = v_.dummy_color ^ 0xff00ff;
-		case Key.W:
-			v_.width = 200 - v_.width;
-		case Key.H:
-			v_.height = 450 - v_.height;
-		case Key.R:
-			v_.resize_Visel(200 - v_.width, 450 - v_.height);
-		case Key.DELETE:
-			v_.destroy_Visel();
-		case Key.Q:
-			al_.h_align =
-			switch(al_.h_align)
-			{
-			case Align.NEAR:
-				Align.CENTER;
-			case Align.CENTER:
-				Align.FAR;
-			case Align.FAR:
-				Align.NEAR;
-			}
-		case Key.Z:
-			al_.v_align =
-			switch(al_.v_align)
-			{
-			case Align.NEAR:
-				Align.CENTER;
-			case Align.CENTER:
-				Align.FAR;
-			case Align.FAR:
-				Align.NEAR;
-			}
+			case Key.V:
+				v_.visible = !v_.visible;
+			case Key.A:
+				v_.dummy_alpha = if (v_.dummy_alpha < 0.5) 1. else 0.25;
+			case Key.C:
+				v_.dummy_color = v_.dummy_color ^ 0xff00ff;
+			case Key.W:
+				v_.width = 200 - v_.width;
+			case Key.H:
+				v_.height = 450 - v_.height;
+			case Key.R:
+				v_.resize_Visel(200 - v_.width, 450 - v_.height);
+			case Key.DELETE:
+				v_.destroy_Visel();
+			case Key.Q:
+				al_.h_align =
+					switch (al_.h_align)
+				{
+					case Align.NEAR:
+						Align.CENTER;
+					case Align.CENTER:
+						Align.FAR;
+					case Align.FAR:
+						Align.NEAR;
+				}
+			case Key.Z:
+				al_.v_align =
+					switch (al_.v_align)
+				{
+					case Align.NEAR:
+						Align.CENTER;
+					case Align.CENTER:
+						Align.FAR;
+					case Align.FAR:
+						Align.NEAR;
+				}
 		}
 	}
 
+	function test_Visel()
+	{
+		Test1.run_All();
+	}
 
 	function add_Text()
 	{
