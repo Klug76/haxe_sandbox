@@ -10,6 +10,9 @@
 	. replace haxe.unit (gone in haxe 4 ) with utest | munit | buddy
 		.https://github.com/ciscoheat/buddy - best
 	.BUG: \Pictures\heaps_difference.png
+	.BUG: in heaps: interactive & background conflict
+	.BUG: event listeners leaks in visels
+	.viewport: restore size after win32::window min/max resizing
 	.test button overlap & event propagation (kha)
 . review mconsole (js printer)
 

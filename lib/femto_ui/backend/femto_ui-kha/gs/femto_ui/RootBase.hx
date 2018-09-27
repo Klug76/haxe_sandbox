@@ -28,9 +28,20 @@ class RootBase
 		//is_touch_supported_ = ?;//TODO fix me
 		platform_ = "PC";//TODO fix me
 		var r: Root = cast this;
-		r.init_Ex(System.windowWidth(), System.windowHeight());
+		r.init_Ex();
 	}
 //.............................................................................
+	public var stage_width(get, never): Float;
+	inline private function get_stage_width(): Float
+	{
+		return System.windowWidth();
+	}
+//.............................................................................
+	public var stage_height(get, never): Float;
+	inline private function get_stage_height(): Float
+	{
+		return System.windowHeight();
+	}
 //.............................................................................
 //.............................................................................
 //.............................................................................

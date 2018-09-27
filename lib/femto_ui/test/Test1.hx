@@ -6,6 +6,7 @@ import buddy.reporting.TraceReporter;
 import buddy.BuddySuite;
 import gs.femto_ui.Root;
 import gs.femto_ui.Visel;
+import gs.femto_ui.Button;
 using buddy.Should;
 
 class Test1 extends BuddySuite
@@ -17,18 +18,23 @@ class Test1 extends BuddySuite
 		{
 			var N: Int = 10;
 			var v: Visel = null;
+
+#if debug
 			var dcount: Int = Visel.debug_counter_;
+#end
 
             beforeAll(function(done)
 			{
 				v = new Visel(null);
+				v.debug_probe1();
+				//v = new Button(null, "", null);
 				v.dummy_color = 0xc0c0c0;
 				v.resize_Visel(32, 32);
                 haxe.Timer.delay(function()
 				{
 
                     done(); // Call the done() function when the async operation is complete.
-                }, 100);
+                }, 50);
             });
 
             it("test children",
@@ -70,8 +76,9 @@ class Test1 extends BuddySuite
 				v.remove_Children();
 	            v.num_Children.should.be(0);
 				v.destroy_Visel();
-
+#if debug
 				Visel.debug_counter_.should.be(dcount);
+#end
             });
 
         });

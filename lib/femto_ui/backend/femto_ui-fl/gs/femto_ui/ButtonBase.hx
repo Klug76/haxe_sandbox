@@ -13,14 +13,26 @@ class ButtonBase extends Visel
 		super(owner);
 	}
 //.............................................................................
-	inline private function init_Base() : Void
+	override private function init_Base() : Void
 	{
+		super.init_Base();
 		buttonMode = true;//:If true, this sprite behaves as a button, which means that it triggers the display of the hand
 		//:cursor when the pointer passes over the sprite and can receive a click event if the enter or space keys are
 		//:pressed when the sprite has focus.
 		//:tabEnabled = true;//:For a Sprite object or MovieClip object with buttonMode = true, the value is true.
+		addEventListener(MouseEvent.CLICK, on_Mouse_Click);
+		addEventListener(MouseEvent.ROLL_OVER, on_Mouse_Over);
+		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
 	}
 //.............................................................................
+//.............................................................................
+	override private function destroy_Base(): Void
+	{
+		super.destroy_Base();
+		removeEventListener(MouseEvent.CLICK, on_Mouse_Click);
+		removeEventListener(MouseEvent.ROLL_OVER, on_Mouse_Over);
+		removeEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
+	}
 //.............................................................................
 //.............................................................................
 //.............................................................................
@@ -46,7 +58,7 @@ class ButtonBase extends Visel
 					if ((state_ & Visel.STATE_DOWN) != 0)
 						cl = r.color_pressed_;
 					if ((state_ & Visel.STATE_HOVER) != 0)
-						frame = b.hover_inflation_;
+						frame = b.hover_inflation_;//:may be custom
 				}
 				graphics.beginFill(cl, dummy_alpha_);
 				graphics.drawRoundRect(-frame, -frame, width_ + 2 * frame, height_ + 2 * frame, r.round_frame_, r.round_frame_);
@@ -70,12 +82,6 @@ class ButtonBase extends Visel
 		}
 	}
 //.............................................................................
-	private function add_Mouse_Listeners() : Void
-	{
-		addEventListener(MouseEvent.CLICK, on_Mouse_Click);
-		addEventListener(MouseEvent.ROLL_OVER, on_Mouse_Over);
-		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
-	}
 //.............................................................................
 	private function on_Mouse_Down(ev : MouseEvent) : Void
 	{

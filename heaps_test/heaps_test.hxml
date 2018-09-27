@@ -1,9 +1,24 @@
 -lib heaps
 -lib hscript
+-lib buddy
 -cp src
--swf bin/heapstest.swf
--swf-header 800:600:30:4A4137
--swf-version 25.0
+-cp "../lib/femto_ui/femto_ui-core"
+-cp "../lib/femto_ui/backend/femto_ui-heaps"
+-cp "../lib/femto_ui/test"
+--flash-strict
+-swf-version 25
 -D native-trace
--D fdb
 -main Main
+
+--each
+
+--next
+-D fdb
+-debug
+-swf-header 800:600:30:4A4137
+-swf bin/heapstest.swf
+
+--next
+-dce full
+-D analyzer-optimize
+-as3 as3_gen

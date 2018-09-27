@@ -1,20 +1,21 @@
 package gs.femto_ui;
 
 import h2d.Graphics;
+import h2d.Object;
 import h2d.Interactive;
-import h2d.Sprite;
+import hxd.Cursor;
 
 using gs.femto_ui.RootBase.NativeUIObject;
 using gs.femto_ui.RootBase.NativeUIContainer;
 
-class ViselBase extends Sprite
+class ViselBase extends Object
 {
 	private var width_ : Float = 0;
 	private var height_ : Float = 0;
 
 	private var background_: Graphics = null;
-
 	private var interactive_: Interactive = null;
+
 	private var enable_interactive_: Bool = false;
 
 	public function new(?owner: NativeUIContainer)
@@ -22,11 +23,14 @@ class ViselBase extends Sprite
 		super(owner);
 	}
 //.............................................................................
+	private function init_Base() : Void
+	{}
 //.............................................................................
-	inline private function destroy_Base() : Void
+	private function destroy_Base() : Void
 	{
 		background_ = null;
-		remove_Children();//:will destroy background_
+		interactive_ = null;
+		remove_Children();//:will destroy background_, interactive_
 		remove();
 	}
 //.............................................................................
@@ -35,6 +39,8 @@ class ViselBase extends Sprite
 	{
 		var idx: Int = 0;
 		if (background_ != null)
+			++idx;
+		if (interactive_ != null)
 			++idx;
 		while ( numChildren > idx )
 			remove_Child( getChildAt(idx) );
@@ -72,6 +78,8 @@ class ViselBase extends Sprite
 	{
 		if (background_ != null)
 			++idx;
+		if (interactive_ != null)
+			++idx;
 		addChildAt(v, idx);
 		return v;
 	}
@@ -82,6 +90,8 @@ class ViselBase extends Sprite
 		var idx = getChildIndex(v);
 		if ((background_ != null) && (idx > 0))
 			--idx;
+		if ((interactive_ != null) && (idx > 0))
+			--idx;
 		return idx;
 	}
 //.............................................................................
@@ -91,6 +101,8 @@ class ViselBase extends Sprite
 		var result: Int = numChildren;
 		if (background_ != null)
 			--result;
+		if (interactive_ != null)
+			--result;
 		return result;
 	}
 //.............................................................................
@@ -98,14 +110,14 @@ class ViselBase extends Sprite
 	{
 		if (background_ != null)
 			++idx;
+		if (interactive_ != null)
+			++idx;
 		return getChildAt(idx);
 	}
 //.............................................................................
 	inline public function get_Child_As<T>(idx: Int, c : Class<T>): Null<T>
 	{
-		if (background_ != null)
-			++idx;
-		var v = getChildAt(idx);
+		var v = get_Child_At(idx);
 		if (Std.is(v, c))
 			return cast v;
 		return null;
@@ -183,7 +195,7 @@ class ViselBase extends Sprite
 		{
 			var cl = v.dummy_color_ & 0xFFffFF;
 			var al = v.dummy_alpha_;
-			if ((al >= 0) && (v.width_ > 0) && (v.height_ > 0))
+			if ((al > 0) && (v.width_ > 0) && (v.height_ > 0))
 			{
 				alloc_Background();
 				var bg = background_;
@@ -212,16 +224,29 @@ class ViselBase extends Sprite
 		}
 	}
 //.............................................................................
+	private function alloc_Interactive(cursor: Cursor/* = Cursor.Button*/, propagateEvents = true): Interactive
+	{
+		if (interactive_ != null)
+			return interactive_;
+		var ni: Interactive = new Interactive(width_, height_);
+		ni.cursor = cursor;
+		ni.propagateEvents = propagateEvents;
+		add_Child_At(ni, 0);
+		interactive_ = ni;
+		enable_interactive_ = true;
+		return ni;
+	}
 //.............................................................................
 //.............................................................................
-	private function alloc_Background(): Void
+	private function alloc_Background(): Graphics
 	{
 		if (background_ != null)
-			return;
+			return background_;
 		//trace("Visel::alloc_Background()");
-		var bg = new Graphics(this);
-		addChildAt(bg, 0);
+		var bg = new Graphics();
+		add_Child_At(bg, 0);
 		background_ = bg;
+		return bg;
 	}
 //.............................................................................
 	private function clear_Background(): Void
@@ -236,15 +261,6 @@ class ViselBase extends Sprite
 		enable_interactive_ = value;
 	}
 //.............................................................................
-	private function alloc_Interactive(): Void
-	{
-		if (interactive_ != null)
-			return;
-		interactive_ = new Interactive(width_, height_, this);
-		interactive_.propagateEvents = true;
-		enable_interactive_ = true;
-	}
-//.............................................................................
 //.............................................................................
 //.............................................................................
 //.............................................................................
@@ -255,4 +271,9 @@ class ViselBase extends Sprite
 			parent.addChild(this);
 	}
 //.............................................................................
+//TODO kill
+	public function debug_probe1() : Void
+	{
+		alloc_Interactive(Cursor.Button);
+	}
 }

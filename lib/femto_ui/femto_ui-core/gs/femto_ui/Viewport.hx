@@ -53,6 +53,8 @@ class Viewport extends Visel
 
 		if (visible)
 			add_Listeners();
+		on_Show = resume;
+		on_Hide = suspend;
 	}
 //.............................................................................
 	override public function destroy_Visel() : Void
@@ -142,7 +144,7 @@ class Viewport extends Visel
 //.............................................................................
 //.............................................................................
 //.............................................................................
-	override public function on_Show() : Void
+	private function resume() : Void
 	{
 		add_Listeners();
 		safe_Position();
@@ -151,7 +153,7 @@ class Viewport extends Visel
 			content_.visible = true;
 	}
 //.............................................................................
-	override public function on_Hide() : Void
+	private function suspend() : Void
 	{
 		remove_Listeners();
 		if (content_ != null)

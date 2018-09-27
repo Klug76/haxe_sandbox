@@ -22,7 +22,7 @@ class LabelBase extends Visel
 		nx += x;
 		ny += y;
 		update_Last_Coords(nx, ny);
-		render_Base(gr, nx, ny);
+		render_Base_Background(gr, nx, ny);
 		render_Text(gr, nx, ny);
 		render_Children(gr, nx, ny);
 	}

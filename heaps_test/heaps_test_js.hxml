@@ -1,5 +1,6 @@
 -lib heaps
 -lib hscript
+-lib buddy
 -cp src
 -js bin/heapstest.js
 -main Main

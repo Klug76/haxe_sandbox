@@ -15,18 +15,10 @@ class Toolbar extends Visel
 #if debug
 		name = "toolbar";
 #end
+		on_Resize = update_Layout;
 	}
-	//.............................................................................
-	//.............................................................................
-	override public function draw_Visel() : Void
-	{
-		super.draw_Visel();
-		if ((invalid_flags_ & Visel.INVALIDATION_FLAG_SIZE) != 0)
-		{
-			update_Layout();
-		}
-	}
-	//.............................................................................
+//.............................................................................
+//.............................................................................
 	public function update_Layout() : Void
 	{
 		//trace("hbox::height=" + height_);

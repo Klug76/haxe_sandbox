@@ -2,8 +2,6 @@ package gs.femto_ui.util;
 
 #if (flash || openfl)
 import flash.Vector;
-#else
-import haxe.ds.Vector;
 #end
 
 class Util
@@ -127,6 +125,7 @@ class Util
 	}
 //.............................................................................
 //.............................................................................
+#if (flash || openfl)
 	public static function inflate_Vector(ppt : Vector<Float>, value : Float) : Void
 	{
 		//:stupid but work, lets threat bug as effect
@@ -145,5 +144,6 @@ class Util
 			ppt[i] += d;
 		}
 	}
+#end
 //.............................................................................
 }

@@ -22,6 +22,8 @@ class ViselBase extends Sprite
 			owner.addChild(this);
 	}
 //.............................................................................
+	private function init_Base() : Void
+	{}
 //.............................................................................
 	inline private function destroy_Base() : Void
 	{
@@ -154,7 +156,7 @@ class ViselBase extends Sprite
 //.............................................................................
 //.............................................................................
 //.............................................................................
-	inline private function draw_Base() : Void
+	inline private function draw_Base_Background() : Void
 	{
 		var v: Visel = cast this;
 		if ((v.invalid_flags_ & (Visel.INVALIDATION_FLAG_SKIN | Visel.INVALIDATION_FLAG_SIZE | Visel.INVALIDATION_FLAG_STATE)) != 0)

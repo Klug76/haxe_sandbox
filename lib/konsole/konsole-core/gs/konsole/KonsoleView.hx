@@ -231,17 +231,17 @@ class KonsoleView extends Viewport
 	}
 //.............................................................................
 //.............................................................................
-	override public function on_Show() : Void
+	override private function resume() : Void
 	{
-		super.on_Show();
+		super.resume();
 		add_Signals();
 		on_Enter_Frame();
 	}
 //.............................................................................
-	override public function on_Hide() : Void
+	override private function suspend() : Void
 	{
 		remove_Signals();
-		super.on_Hide();
+		super.suspend();
 	}
 //.............................................................................
 //.............................................................................

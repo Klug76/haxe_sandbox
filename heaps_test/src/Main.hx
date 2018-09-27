@@ -4,6 +4,8 @@ import gs.femto_ui.Align;
 import gs.femto_ui.InfoClick;
 import gs.femto_ui.Label;
 import gs.femto_ui.Button;
+import gs.femto_ui.Mover;
+import gs.femto_ui.Resizer;
 import gs.femto_ui.Root;
 import gs.femto_ui.Toolbar;
 //import gs.femto_ui.Viewport;
@@ -70,9 +72,9 @@ class Main extends App
 
 		add_Root();
 
-		add_UI();
+		//add_UI();
 
-		//test_Visel();
+		test_Visel();
 
 		add_Text();
 
@@ -83,11 +85,11 @@ class Main extends App
 
 	function add_Root()
 	{
-		#if flash
-		var ui_owner = Lib.current;
-		#else
+		//#if flash
+		//var ui_owner = Lib.current;
+		//#else
 		var ui_owner = s2d;
-		#end
+		//#end
 		Root.create(ui_owner);
 	}
 
@@ -110,7 +112,7 @@ class Main extends App
 		al_ = new Label(panel, "Foo");
 		al_.dummy_color_ = 0x8f008f;
 		al_.dummy_alpha_ = 0.5;
-		al_.movesize(20, 20, 220, 60);
+		al_.movesize(120, 20, 220, 60);
 
 		b_ = new Button(panel, "Click me!", on_Click);
 		b_.tag_ = 1100101;
@@ -133,6 +135,18 @@ class Main extends App
 		btn = new Button(tb_, "2", on_Click);
 		btn.dummy_color = 0x202040;
 		btn.resize_Visel(120, 42);
+
+		var m: Mover = new Mover(panel);
+		m.resize_Visel(64, 64);
+		m.dummy_color = r.color_movesize_;
+
+		var rz: Resizer = new Resizer(panel);
+		rz.dummy_color = r.color_movesize_;
+
+		panel.on_Resize = function()
+		{
+			rz.movesize(panel.width - 64, panel.height - 64, 64, 64);
+		};
 	}
 
 	function on_Click(ev: InfoClick)
@@ -266,3 +280,4 @@ class Main extends App
 		Root.instance.update();
 	}
 }
+

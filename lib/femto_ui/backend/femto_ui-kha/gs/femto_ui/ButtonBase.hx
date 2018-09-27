@@ -14,19 +14,23 @@ class ButtonBase extends Visel
 		super(owner);
 	}
 //.............................................................................
-	inline private function init_Base() : Void
-	{}
-//.............................................................................
-//.............................................................................
-//.............................................................................
-//.............................................................................
-//.............................................................................
-	private function add_Mouse_Listeners() : Void
+	override private function init_Base(): Void
 	{
+		super.init_Base();
 		Mouse.get().notify(on_Mouse_Down, on_Mouse_Up, on_Mouse_Move, null);
 	}
 //.............................................................................
-	private function on_Mouse_Down(button: Int, mouseX: Int, mouseY: Int) : Void
+	override private function destroy_Base(): Void
+	{
+		super.destroy_Base();
+		Mouse.get().remove(on_Mouse_Down, on_Mouse_Up, on_Mouse_Move, null);
+	}
+//.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
+//.............................................................................
+	private function on_Mouse_Down(button: Int, mouseX: Int, mouseY: Int): Void
 	{
 		if (!hit_Test(mouseX, mouseY))
 			return;
@@ -38,7 +42,7 @@ class ButtonBase extends Visel
 		b.handle_Tap(mouseX - last_x_, mouseY - last_y_);//TODO fix me: button | tap id
 	}
 //.............................................................................
-	private function on_Mouse_Up(button: Int, mouseX: Int, mouseY: Int) : Void
+	private function on_Mouse_Up(button: Int, mouseX: Int, mouseY: Int): Void
 	{
 		if (disposed)
 			return;
@@ -54,7 +58,7 @@ class ButtonBase extends Visel
 		}
 	}
 //.............................................................................
-	private function on_Mouse_Move(mouseX: Int, mouseY: Int, mx: Int, my: Int) : Void
+	private function on_Mouse_Move(mouseX: Int, mouseY: Int, mx: Int, my: Int): Void
 	{
 		if (hit_Test(mouseX, mouseY))
 		{
@@ -74,7 +78,7 @@ class ButtonBase extends Visel
 //.............................................................................
 //.............................................................................
 //.............................................................................
-	override public function draw_Visel() : Void
+	override public function draw_Visel(): Void
 	{
 		var r: Root = Root.instance;
 		var b: Button = cast this;
@@ -93,7 +97,7 @@ class ButtonBase extends Visel
 		}
 	}
 //.............................................................................
-	override public function render_To(gr: Graphics, nx: Float, ny: Float) : Void
+	override public function render_To(gr: Graphics, nx: Float, ny: Float): Void
 	{
 		if (!visible)
 			return;
@@ -104,7 +108,7 @@ class ButtonBase extends Visel
 		render_Children(gr, nx, ny);
 	}
 //.............................................................................
-	private function render_Button_Background(gr: Graphics, nx: Float, ny: Float) : Void
+	private function render_Button_Background(gr: Graphics, nx: Float, ny: Float): Void
 	{
 		var r : Root = Root.instance;
 		var b: Button = cast this;

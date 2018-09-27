@@ -60,9 +60,21 @@ class RootBase
 		stage_ = owner_.stage;
 		frame_signal_.init(stage_);
 		var r: Root = cast this;
-		r.init_Ex(stage_.stageWidth, stage_.stageHeight);
+		r.init_Ex();
 	}
 //.............................................................................
+//.............................................................................
+	public var stage_width(get, never): Float;
+	inline private function get_stage_width(): Float
+	{
+		return stage_.stageWidth;
+	}
+//.............................................................................
+	public var stage_height(get, never): Float;
+	inline private function get_stage_height(): Float
+	{
+		return stage_.stageHeight;
+	}
 //.............................................................................
 	public function update(): Void
 	{

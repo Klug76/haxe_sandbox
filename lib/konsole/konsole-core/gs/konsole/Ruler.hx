@@ -65,7 +65,6 @@ class Ruler extends Visel
 		k_ = k;
 		super(Root.instance.stage_);
 		init_Ex();
-		on_Show();
 	}
 //.............................................................................
 	private function init_Ex() : Void
@@ -125,6 +124,10 @@ class Ruler extends Visel
 		bg_.addChild(zoom_2D_);
 
 		k_.signal_show_.add(on_Show_Console);
+
+		on_Show = resume;
+		on_Hide = suspend;
+		resume();
 	}
 //.............................................................................
 	private function on_Show_Console() : Void
@@ -132,7 +135,7 @@ class Ruler extends Visel
 		bring_To_Top();
 	}
 //.............................................................................
-	override public function on_Show() : Void
+	function resume() : Void
 	{
 		add_Tap_Listeners();
 		stage.addEventListener(Event.RESIZE, on_Stage_Resize);
@@ -143,7 +146,7 @@ class Ruler extends Visel
 		bring_To_Top();
 	}
 //.............................................................................
-	override public function on_Hide() : Void
+	function suspend() : Void
 	{
 		remove_Tap_Listeners();
 		stage.removeEventListener(Event.RESIZE, on_Stage_Resize);

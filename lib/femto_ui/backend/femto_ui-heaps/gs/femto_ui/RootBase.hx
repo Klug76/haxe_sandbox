@@ -2,11 +2,11 @@ package gs.femto_ui;
 
 import gs.femto_ui.util.Signal;
 
-import h2d.Sprite;
+import h2d.Object;
 import hxd.System;
 
-typedef NativeUIObject = Sprite;
-typedef NativeUIContainer = Sprite;
+typedef NativeUIObject = Object;
+typedef NativeUIContainer = Object;
 
 class RootBase
 {
@@ -40,9 +40,20 @@ class RootBase
 			platform_ = "???";//TODO fix me
 		};
 		var r: Root = cast this;
-		r.init_Ex(System.width, System.height);
+		r.init_Ex();
 	}
 //.............................................................................
+	public var stage_width(get, never): Float;
+	inline private function get_stage_width(): Float
+	{
+		return System.width;
+	}
+//.............................................................................
+	public var stage_height(get, never): Float;
+	inline private function get_stage_height(): Float
+	{
+		return System.height;
+	}
 //.............................................................................
 //.............................................................................
 //.............................................................................

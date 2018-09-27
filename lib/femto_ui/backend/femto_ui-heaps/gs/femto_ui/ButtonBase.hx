@@ -13,10 +13,17 @@ class ButtonBase extends Visel
 		super(owner);
 	}
 //.............................................................................
-	inline private function init_Base() : Void
+	override private function init_Base() : Void
 	{
-		alloc_Interactive();
-		interactive_.cursor = Cursor.Button;
+		super.init_Base();
+		alloc_Interactive(Cursor.Button);
+
+		var ni: Interactive = interactive_;
+		ni.onClick = on_Mouse_Click;
+		ni.onOver = on_Mouse_Over;
+		ni.onOut = on_Mouse_Out;
+		ni.onPush = on_Mouse_Down;
+		ni.onRelease = on_Mouse_Up;
 	}
 //.............................................................................
 //.............................................................................
@@ -47,8 +54,7 @@ class ButtonBase extends Visel
 						frame = b.hover_inflation_;
 				}
 				cl &= 0xFFffFF;
-				alloc_Background();
-				var bg = background_;
+				var bg = alloc_Background();
 				bg.clear();
 				bg.beginFill(cl, al);
 				//bg.drawRoundRect(-frame, -frame, width_ + 2 * frame, height_ + 2 * frame, r.round_frame_, r.round_frame_);
@@ -79,15 +85,6 @@ class ButtonBase extends Visel
 	}
 //.............................................................................
 //.............................................................................
-	private function add_Mouse_Listeners() : Void
-	{
-		var ni: Interactive = interactive_;
-		ni.onClick = on_Mouse_Click;
-		ni.onOver = on_Mouse_Over;
-		ni.onOut = on_Mouse_Out;
-		ni.onPush = on_Mouse_Down;
-		ni.onRelease = on_Mouse_Up;
-	}
 //.............................................................................
 	private function on_Mouse_Down(ev : Event) : Void
 	{
@@ -125,6 +122,8 @@ class ButtonBase extends Visel
 //.............................................................................
 	private function on_Mouse_Out(ev : Event) : Void
 	{
+		if ((state_ & Visel.STATE_HOVER) == 0)
+			return;
 		state_ &= ~Visel.STATE_HOVER;
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 	}

@@ -34,8 +34,6 @@ class Button extends ButtonBase
 #if debug
 		name = "button";
 #end
-		init_Base();
-
 		hover_inflation_ = Root.instance.hover_inflation_;
 
 		label_ = new Label(this, txt);
@@ -46,7 +44,6 @@ class Button extends ButtonBase
 
 		on_click_ = on_Click;
 
-		add_Mouse_Listeners();
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 	}
 //.............................................................................

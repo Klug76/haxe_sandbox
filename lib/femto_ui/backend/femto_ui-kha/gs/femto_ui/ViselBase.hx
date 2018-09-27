@@ -13,6 +13,9 @@ class ViselBase
 	private var width_: Float = 0;
 	private var height_: Float = 0;
 
+	public var x(default, default): Float = 0;
+	public var y(default, default): Float = 0;
+
 	public var name(default, default): String = null;
 
 	public function new(?owner: Visel)
@@ -20,6 +23,9 @@ class ViselBase
 		if (owner != null)
 			owner.add_Child(cast this);
 	}
+//.............................................................................
+	private function init_Base() : Void
+	{}
 //.............................................................................
 	inline public function add_Child(v: Visel): Visel
 	{
@@ -99,7 +105,7 @@ class ViselBase
 			remove_Child(get_Child_At(0));
 	}
 //.............................................................................
-	inline private function destroy_Base() : Void
+	private function destroy_Base() : Void
 	{
 		remove_Children();
 		if (parent_ != null)
@@ -107,8 +113,6 @@ class ViselBase
 		parent_ = null;
 	}
 //.............................................................................
-	public var x(default, default): Float;
-	public var y(default, default): Float;
 //.............................................................................
 //.............................................................................
 //.............................................................................
@@ -170,8 +174,10 @@ class ViselBase
 //.............................................................................
 //.............................................................................
 //.............................................................................
-	inline private function draw_Base(): Void
-	{}
+	inline private function draw_Base_Background(): Void
+	{
+		//:nop
+	}
 //.............................................................................
 	public function render_To(gr: Graphics, nx: Float, ny: Float) : Void
 	{
@@ -180,12 +186,11 @@ class ViselBase
 		nx += x;
 		ny += y;
 		update_Last_Coords(nx, ny);
-		render_Base(gr, nx, ny);
+		render_Base_Background(gr, nx, ny);
 		render_Children(gr, nx, ny);
-		return;
 	}
 //.............................................................................
-	private function render_Base(gr: Graphics, nx: Float, ny: Float) : Void
+	private function render_Base_Background(gr: Graphics, nx: Float, ny: Float) : Void
 	{
 		var v: Visel = cast this;
 		var al = v.dummy_alpha_;
@@ -223,7 +228,7 @@ class ViselBase
 //.............................................................................
 	inline private function enable_Base(value : Bool): Void
 	{
-
+		//:nop
 	}
 //.............................................................................
 	public function bring_To_Top() : Void

@@ -46,6 +46,7 @@ class Visel extends ViselBase
 		//trace("Visel::new(), debug_counter=" + debug_counter_);
 #end
 		super(owner);
+		init_Base();
 	}
 //.............................................................................
 	public function destroy_Visel() : Void
@@ -138,15 +139,11 @@ class Visel extends ViselBase
 //.............................................................................
 //.............................................................................
 //.............................................................................
-	private function on_Show() : Void
-	{
-
-	}
+	public dynamic function on_Show() : Void
+	{}
 //.............................................................................
-	private function on_Hide() : Void
-	{
-
-	}
+	public dynamic function on_Hide() : Void
+	{}
 //.............................................................................
 //.............................................................................
 //.............................................................................
@@ -177,12 +174,23 @@ class Visel extends ViselBase
 //.............................................................................
 	public function draw_Visel() : Void
 	{
-		draw_Base();
+		draw_Base_Background();
+		handle_Resize();
 	}
 //.............................................................................
+	private function handle_Resize() : Void
+	{
+		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_SIZE)) != 0)
+		{
+			on_Resize();
+		}
+	}
+//.............................................................................
+	public dynamic function on_Resize()
+	{}
 //.............................................................................
 //.............................................................................
-	private function get_dummy_color() : Int
+	inline private function get_dummy_color() : Int
 	{
 		return dummy_color_;
 	}
@@ -201,7 +209,7 @@ class Visel extends ViselBase
 		return value;
 	}
 //.............................................................................
-	private function get_dummy_alpha() : Float
+	inline private function get_dummy_alpha() : Float
 	{
 		return dummy_alpha_;
 	}

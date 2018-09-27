@@ -55,8 +55,10 @@ class Root extends RootBase
 		instance_ = this;
 	}
 //.............................................................................
-	private function init_Ex(res_x: Float, res_y: Float) : Void
+	private function init_Ex() : Void
 	{
+		var res_x: Float = stage_width;
+		var res_y: Float = stage_height;
 		var m : Float = Math.min(res_x, res_y);
 		if (m >= 1080)
 		{
