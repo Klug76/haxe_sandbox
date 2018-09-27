@@ -8,9 +8,9 @@ haxe_swc_lib/as3_gen/
 test3d/bat/SetupSDK.bat
 test3d/obj/
 heaps_test/obj/
+heaps_test/as3_gen/
 heaps_test/bin/heapstest.js
 heaps_test/bin/heapstest.js.map
 hx_air_test/obj/
 hx_air_test/bat/SetupSDK.bat
-!bak/
 kha_test/build/
