@@ -30,9 +30,15 @@ import gs.konsole.KonsoleConfig;
 import haxe.Json;
 import haxe.Timer;
 
+#if openfl
+import openfl.display.Bitmap;
+import openfl.utils.Assets;
+#end
+
 #if flash
 import flash.xml.XML;
 #end
+
 
 
 class KonsoleDemo extends Visel
@@ -138,8 +144,8 @@ class KonsoleDemo extends Visel
 	private function add_Bitmap_Asset(): Void
 	{
 		#if (openfl)
-		var bitmapData = openfl.Assets.getBitmapData("assets/steam1.jpg");
-        var bitmap = new Bitmap (bitmapData);
+		var bitmapData = Assets.getBitmapData("assets/steam1.jpg");
+        var bitmap = new Bitmap(bitmapData);
         place_Asset(bitmap);
 		#else
 		var uri: String = "https://fishgame.staticgs.com/thumb/collect/steam1.jpg";

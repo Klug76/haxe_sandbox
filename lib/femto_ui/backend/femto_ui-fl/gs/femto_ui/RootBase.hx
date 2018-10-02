@@ -64,6 +64,18 @@ class RootBase
 	}
 //.............................................................................
 //.............................................................................
+	public var stage_x(get, never): Float;
+	inline private function get_stage_x(): Float
+	{
+		return stage_.x;
+	}
+//.............................................................................
+	public var stage_y(get, never): Float;
+	inline private function get_stage_y(): Float
+	{
+		return stage_.y;
+	}
+//.............................................................................
 	public var stage_width(get, never): Float;
 	inline private function get_stage_width(): Float
 	{
@@ -76,7 +88,7 @@ class RootBase
 		return stage_.stageHeight;
 	}
 //.............................................................................
-	public function update(): Void
+	inline public function update(): Void
 	{
 		//:nop
 	}

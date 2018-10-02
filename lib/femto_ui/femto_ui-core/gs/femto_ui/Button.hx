@@ -9,6 +9,7 @@ class Button extends ButtonBase
 {
 	public var label(get, never) : Label;
 	public var auto_repeat(get, set) : Bool;
+	public var text(default, set) : String = null;
 
 	private var label_ : Label = null;
 	private var on_click_ : InfoClick->Void = null;
@@ -26,27 +27,48 @@ class Button extends ButtonBase
 	public function new(owner : NativeUIContainer, txt : String, on_Click : InfoClick->Void)
 	{
 		super(owner);
+#if debug
+		name = "button";
+#end
 		init_Ex(txt, on_Click);
 	}
 //.............................................................................
 	private function init_Ex(txt : String, on_Click : InfoClick->Void) : Void
 	{
-#if debug
-		name = "button";
-#end
 		hover_inflation_ = Root.instance.hover_inflation_;
 
-		label_ = new Label(this, txt);
-		label_.h_align =
-		label_.v_align = Align.CENTER;
-		//label_.dummy_color = 0xff00ff;
-		add_Child(label_);
+		text = txt;
+		if (txt != null)
+			alloc_Label();
 
 		on_click_ = on_Click;
 
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 	}
 //.............................................................................
+	private function alloc_Label() : Label
+	{
+		if (label_ != null)
+			return label_;
+		label_ = new Label(this, text);
+		label_.h_align =
+		label_.v_align = Align.CENTER;
+		//label_.dummy_color = 0xff00ff;
+		add_Child(label_);
+		return label_;
+	}
+//.............................................................................
+	private inline function set_text(value: String): String
+	{
+		if (text != value)
+		{
+			text = value;
+			if (value != null)
+				alloc_Label();
+			invalidate_Visel(Visel.INVALIDATION_FLAG_DATA);
+		}
+		return value;
+	}
 //.............................................................................
 //.............................................................................
 	private inline function get_label() : Label
@@ -55,6 +77,29 @@ class Button extends ButtonBase
 	}
 //.............................................................................
 //.............................................................................
+	override public function draw_Visel() : Void
+	{
+		super.draw_Visel();
+		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_SIZE | Visel.INVALIDATION_FLAG_STATE)) != 0)
+		{
+			var al: Label = label;
+			if (al != null)
+			{
+				var r: Root = Root.instance;
+				if ((state_ & Visel.STATE_DOWN) != 0)
+				{
+					al.movesize_(r.content_down_offset_x_, r.content_down_offset_y_,
+							width_ + r.content_down_offset_x_, height_ + r.content_down_offset_y_);
+				}
+				else
+				{
+					al.movesize_(0, 0, width_, height_);
+				}
+				al.draw_Visel();
+				al.validate_Visel();
+			}
+		}
+	}
 //.............................................................................
 //.............................................................................
 //.............................................................................
@@ -71,9 +116,11 @@ class Button extends ButtonBase
 	}
 //.............................................................................
 //.............................................................................
-	private function handle_Tap(mx: Float, my: Float): Void
+	private var tap_id(default, null): Int = 0;
+	private function handle_Tap(tapId: Int, mx: Float, my: Float): Void
 	{
-		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
+		//trace("button::tap " + tapId + ":" + mx + ":" + my);
+		tap_id = tapId;
 		if (auto_repeat_)
 		{
 			if (repeat_button_ != this)

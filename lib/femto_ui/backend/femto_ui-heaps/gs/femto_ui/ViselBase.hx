@@ -125,6 +125,20 @@ class ViselBase extends Object
 //.............................................................................
 //.............................................................................
 //.............................................................................
+	override function set_x(value)
+	{
+		super.x = value;
+		var v: Visel = cast this;
+		v.explicit_x_ = value;
+		return value;
+	}
+	override function set_y(value)
+	{
+		super.y = value;
+		var v: Visel = cast this;
+		v.explicit_y_ = value;
+		return value;
+	}
 //.............................................................................
 	public var width(get, set): Float;
 	inline private function get_width() : Float
@@ -141,6 +155,7 @@ class ViselBase extends Object
 		{
 			width_ = w;
 			var v: Visel = cast this;
+			v.explicit_width_ = w;
 			v.invalidate_Visel(Visel.INVALIDATION_FLAG_SIZE);
 		}
 		return value;
@@ -161,10 +176,31 @@ class ViselBase extends Object
 		{
 			height_ = h;
 			var v: Visel = cast this;
+			v.explicit_height_ = h;
 			v.invalidate_Visel(Visel.INVALIDATION_FLAG_SIZE);
 		}
 		return value;
 	}
+//.............................................................................
+	public function movesize_Base(nx : Float, ny : Float, w : Float, h : Float): Void
+	{//:keep explicit values
+		super.x = nx;
+		super.y = ny;
+		if (w < 0)
+			w = 0;
+		if (h < 0)
+			h = 0;
+		if ((width_ != w) || (height_ != h))
+		{
+			width_ = w;
+			height_ = h;
+			var v: Visel = cast this;
+			v.invalidate_Visel(Visel.INVALIDATION_FLAG_SIZE);
+		}
+	}
+//.............................................................................
+//.............................................................................
+//.............................................................................
 //.............................................................................
 	override function set_visible(value)
 	{
@@ -182,7 +218,7 @@ class ViselBase extends Object
 //.............................................................................
 //.............................................................................
 //.............................................................................
-	inline private function draw_Base() : Void
+	private function draw_Base() : Void
 	{
 		draw_Base_Background();
 		draw_Interactive();
@@ -237,6 +273,11 @@ class ViselBase extends Object
 		return ni;
 	}
 //.............................................................................
+	//public function create_Interactive() : Interactive
+	//{
+		//return alloc_Interactive(Cursor.Button);
+	//}
+//.............................................................................
 //.............................................................................
 	private function alloc_Background(): Graphics
 	{
@@ -271,9 +312,4 @@ class ViselBase extends Object
 			parent.addChild(this);
 	}
 //.............................................................................
-//TODO kill
-	public function debug_probe1() : Void
-	{
-		alloc_Interactive(Cursor.Button);
-	}
 }

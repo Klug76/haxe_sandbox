@@ -20,6 +20,9 @@ class Scrollbar extends Button
 	public function new(owner : DisplayObjectContainer, callback : Int->Void)
 	{
 		super(owner, null, on_Area_Click);
+#if debug
+		name = "scrollbar";
+#end
 		on_scroll_ = callback;
 		init_Ex_Ex();
 	}

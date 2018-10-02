@@ -1,6 +1,7 @@
 package gs.femto_ui;
 
 import h2d.Interactive;
+import h2d.col.Point;
 import hxd.Cursor;
 import hxd.Event;
 
@@ -8,6 +9,8 @@ using gs.femto_ui.RootBase.NativeUIContainer;
 //:________________________________________________________________________________________________
 class ButtonBase extends Visel
 {
+	private var aux_pt_: Point = null;
+
 	public function new(owner : NativeUIContainer)
 	{
 		super(owner);
@@ -16,9 +19,8 @@ class ButtonBase extends Visel
 	override private function init_Base() : Void
 	{
 		super.init_Base();
-		alloc_Interactive(Cursor.Button);
 
-		var ni: Interactive = interactive_;
+		var ni: Interactive = alloc_Interactive(Cursor.Button);
 		ni.onClick = on_Mouse_Click;
 		ni.onOver = on_Mouse_Over;
 		ni.onOut = on_Mouse_Out;
@@ -29,7 +31,7 @@ class ButtonBase extends Visel
 //.............................................................................
 //.............................................................................
 //.............................................................................
-	override public function draw_Visel() : Void
+	override public function draw_Base_Background() : Void
 	{
 		//if (1100101 == tag_)
 			//trace("***");
@@ -66,43 +68,29 @@ class ButtonBase extends Visel
 				clear_Background();
 			}
 		}
-		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_SIZE | Visel.INVALIDATION_FLAG_STATE)) != 0)
-		{
-			var al: Label = b.label;
-			if ((state_ & Visel.STATE_DOWN) != 0)
-			{
-				al.movesize_(r.content_down_offset_x_, r.content_down_offset_y_,
-						width_ + r.content_down_offset_x_, height_ + r.content_down_offset_y_);
-			}
-			else
-			{
-				al.movesize_(0, 0, width_, height_);
-			}
-			al.draw_Visel();
-			al.validate();
-		}
-		draw_Interactive();
+		//:super.draw_Base_Background();
 	}
 //.............................................................................
 //.............................................................................
 //.............................................................................
 	private function on_Mouse_Down(ev : Event) : Void
 	{
+		trace("Button::" + ev.kind + ": " + ev.button + ": " + ev.touchId + ": " + ev.propagate);
 		if ((state_ & Visel.STATE_DOWN) != 0)
 			return;
 		state_ |= Visel.STATE_DOWN;
+		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 
 		ev.propagate = false;
 
+		to_Global(ev.relX, ev.relY);
 		var b: Button = cast this;
-		b.handle_Tap(ev.relX, ev.relY);
+		//TODO fix me: ev.button vs ev.touchId
+		b.handle_Tap(ev.button, aux_pt_.x, aux_pt_.y);
 	}
 //.............................................................................
 	private function on_Mouse_Up(ev : Event) : Void
 	{
-		if (disposed)
-			return;
-
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
 			ev.propagate = false;
@@ -130,15 +118,23 @@ class ButtonBase extends Visel
 //.............................................................................
 	private function on_Mouse_Click(ev : Event) : Void
 	{
-		//trace("button::click '" + label_.text + "', target=" + e.target);
-		//trace("_______");
 		if (!enable_interactive_)
 			return;
 
 		ev.propagate = false;
 
+		to_Global(ev.relX, ev.relY);
 		var b: Button = cast this;
-		b.handle_Click(ev.relX, ev.relY);
+		b.handle_Click(aux_pt_.x, aux_pt_.y);
+	}
+//.............................................................................
+	function to_Global(relX:Float, relY:Float) : Void
+	{
+		if (null == aux_pt_)
+			aux_pt_ = new Point();
+		aux_pt_.x = relX;
+		aux_pt_.y = relY;
+		localToGlobal(aux_pt_);
 	}
 //.............................................................................
 }

@@ -40,11 +40,11 @@ class KonsoleView extends Viewport
 	{
 		k_ = k;
 		super();
-		//:super.visible = false;
-		create_Children_Ex();
 #if debug
 		name = "console::view";
 #end
+		//:super.visible = false;
+		create_Children_Ex();
 	}
 //.............................................................................
 	private function create_Children_Ex() : Void
@@ -460,5 +460,11 @@ class KonsoleView extends Viewport
 			v = max;
 		text_field_.scrollV = v;
 	}
+//.............................................................................
+	override public function bring_To_Top() : Void
+	{
+		//:nop - do not cover fps meter etc
+	}
+//.............................................................................
 }
 

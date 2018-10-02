@@ -15,14 +15,14 @@ class Edit extends Visel
 	public function new(owner : DisplayObjectContainer, txt : String = "")
 	{
 		super(owner);
+#if debug
+		name = "edit";
+#end
 		init_Ex(txt);
 	}
 //.............................................................................
 	private function init_Ex(txt : String) : Void
 	{
-#if debug
-		name = "edit";
-#end
 		tf_ = new TextField();
 		tf_.type = TextFieldType.INPUT;
 		tf_.defaultTextFormat = get_Default_Text_Format();

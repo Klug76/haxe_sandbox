@@ -25,7 +25,7 @@ class ViselBase extends Sprite
 	private function init_Base() : Void
 	{}
 //.............................................................................
-	inline private function destroy_Base() : Void
+	private function destroy_Base() : Void
 	{
 		remove_Children();
 		if (parent != null)
@@ -93,6 +93,27 @@ class ViselBase extends Sprite
 		return Lib.as(v, c);
 	}
 //.............................................................................
+    #if flash @:keep @:setter(x) #else override #end
+    public function set_x(value : Float) : #if flash Void #else Float #end
+    {
+        super.x = value;
+		var v: Visel = cast this;
+		v.explicit_x_ = value;
+        #if (!flash)
+        return value;
+        #end
+	}
+//.............................................................................
+    #if flash @:keep @:setter(y) #else override #end
+    private function set_y(value : Float) : #if flash Void #else Float #end
+    {
+        super.y = value;
+		var v: Visel = cast this;
+		v.explicit_y_ = value;
+        #if (!flash)
+        return value;
+        #end
+    }
 //.............................................................................
 	#if flash @:keep @:getter(width) #else override #end
 	private function get_width() : Float
@@ -109,6 +130,7 @@ class ViselBase extends Sprite
 		{
 			width_ = w;
 			var v: Visel = cast this;
+			v.explicit_width_ = w;
 			v.invalidate_Visel(Visel.INVALIDATION_FLAG_SIZE);
 		}
 		#if (!flash) return value; #end
@@ -129,6 +151,7 @@ class ViselBase extends Sprite
 		{
 			height_ = h;
 			var v: Visel = cast this;
+			v.explicit_height_ = h;
 			v.invalidate_Visel(Visel.INVALIDATION_FLAG_SIZE);
 		}
 		#if (!flash) return value; #end
@@ -150,13 +173,33 @@ class ViselBase extends Sprite
 		#if (!flash) return value; #end
 	}
 //.............................................................................
+	public function movesize_Base(nx : Float, ny : Float, w : Float, h : Float): Void
+	{//:keep explicit values
+		super.x = nx;
+		super.y = ny;
+		if (w < 0)
+			w = 0;
+		if (h < 0)
+			h = 0;
+		if ((width_ != w) || (height_ != h))
+		{
+			width_ = w;
+			height_ = h;
+			var v: Visel = cast this;
+			v.invalidate_Visel(Visel.INVALIDATION_FLAG_SIZE);
+		}
+	}
 //.............................................................................
 //.............................................................................
 //.............................................................................
 //.............................................................................
 //.............................................................................
+	private function draw_Base() : Void
+	{
+		draw_Base_Background();
+	}
 //.............................................................................
-	inline private function draw_Base_Background() : Void
+	private function draw_Base_Background() : Void
 	{
 		var v: Visel = cast this;
 		if ((v.invalid_flags_ & (Visel.INVALIDATION_FLAG_SKIN | Visel.INVALIDATION_FLAG_SIZE | Visel.INVALIDATION_FLAG_STATE)) != 0)

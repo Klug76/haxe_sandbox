@@ -1,6 +1,7 @@
 package gs.femto_ui;
 
 import gs.femto_ui.util.Signal;
+import h2d.Scene;
 
 import h2d.Object;
 import hxd.System;
@@ -15,11 +16,13 @@ class RootBase
 	public var is_touch_supported_ : Bool = false;
 	public var platform_: String = null;
 
-	public var owner_: NativeUIContainer = null;
+	public var owner_: NativeUIContainer;
+	public var scene_: Scene;
 
 	public function new(owner: NativeUIContainer)
 	{
 		owner_ = owner;
+		scene_ = @:privateAccess owner.getScene();
 		init();
 	}
 //.............................................................................
@@ -43,16 +46,28 @@ class RootBase
 		r.init_Ex();
 	}
 //.............................................................................
+	public var stage_x(get, never): Float;
+	inline private function get_stage_x(): Float
+	{
+		return scene_.x;
+	}
+//.............................................................................
+	public var stage_y(get, never): Float;
+	inline private function get_stage_y(): Float
+	{
+		return scene_.y;
+	}
+//.............................................................................
 	public var stage_width(get, never): Float;
 	inline private function get_stage_width(): Float
 	{
-		return System.width;
+		return scene_.width;
 	}
 //.............................................................................
 	public var stage_height(get, never): Float;
 	inline private function get_stage_height(): Float
 	{
-		return System.height;
+		return scene_.height;
 	}
 //.............................................................................
 //.............................................................................

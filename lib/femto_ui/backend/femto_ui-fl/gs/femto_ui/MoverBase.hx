@@ -35,7 +35,7 @@ class MoverBase extends Visel
 		stage.addEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move_Stage, false, 1);
 
 		var m: Mover = cast this;
-		m.handle_Tap(ev.stageX, ev.stageY);
+		m.handle_Tap(0, ev.stageX, ev.stageY);
 	}
 //.............................................................................
 	private function on_Mouse_Up_Stage(ev : MouseEvent) : Void
@@ -58,7 +58,7 @@ class MoverBase extends Visel
 		{
 			ev.stopImmediatePropagation();
 			var m: Mover = cast this;
-			m.handle_Move(ev.stageX, ev.stageY);
+			m.handle_Move(0, ev.stageX, ev.stageY);
 		}
 	}
 //.............................................................................

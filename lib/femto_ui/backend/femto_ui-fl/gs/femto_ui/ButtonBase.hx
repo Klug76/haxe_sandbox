@@ -22,7 +22,9 @@ class ButtonBase extends Visel
 		//:tabEnabled = true;//:For a Sprite object or MovieClip object with buttonMode = true, the value is true.
 		addEventListener(MouseEvent.CLICK, on_Mouse_Click);
 		addEventListener(MouseEvent.ROLL_OVER, on_Mouse_Over);
+		addEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out);
 		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
+		//addEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up);//:TODO review: cause problems with Scrollbar::Thumb
 	}
 //.............................................................................
 //.............................................................................
@@ -31,12 +33,14 @@ class ButtonBase extends Visel
 		super.destroy_Base();
 		removeEventListener(MouseEvent.CLICK, on_Mouse_Click);
 		removeEventListener(MouseEvent.ROLL_OVER, on_Mouse_Over);
+		removeEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out);
 		removeEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
+		//removeEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up);
 	}
 //.............................................................................
 //.............................................................................
 //.............................................................................
-	override public function draw_Visel() : Void
+	override public function draw_Base_Background() : Void
 	{
 		//if (1100101 == tag_)
 			//trace("***");
@@ -65,21 +69,7 @@ class ButtonBase extends Visel
 				graphics.endFill();
 			}
 		}
-		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_SIZE | Visel.INVALIDATION_FLAG_STATE)) != 0)
-		{
-			var al: Label = b.label;
-			if ((state_ & Visel.STATE_DOWN) != 0)
-			{
-				al.movesize_(r.content_down_offset_x_, r.content_down_offset_y_,
-						width_ + r.content_down_offset_x_, height_ + r.content_down_offset_y_);
-			}
-			else
-			{
-				al.movesize_(0, 0, width_, height_);
-			}
-			al.draw_Visel();
-			al.validate();
-		}
+		//:super.draw_Base_Background();
 	}
 //.............................................................................
 //.............................................................................
@@ -88,27 +78,32 @@ class ButtonBase extends Visel
 		if ((state_ & Visel.STATE_DOWN) != 0)
 			return;
 		state_ |= Visel.STATE_DOWN;
+		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 
 		ev.stopPropagation();
 		stage.addEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage, false, 1);//TODO review: how to handle out-of window event!?
 
 		var b: Button = cast this;
-		b.handle_Tap(ev.localX, ev.localY);
+		b.handle_Tap(0, ev.stageX, ev.stageY);
+		//trace("button::" + ev.type + " '" + b.text + "', target=" + ev.target);
+	}
+//.............................................................................
+	private function on_Mouse_Up(ev : MouseEvent) : Void
+	{
+		ev.stopImmediatePropagation();
+		if ((state_ & Visel.STATE_DOWN) != 0)
+		{
+			state_ &= ~Visel.STATE_DOWN;
+			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
+		}
 	}
 //.............................................................................
 	private function on_Mouse_Up_Stage(ev : MouseEvent) : Void
 	{
 		stage.removeEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage, false);
-
 		if (disposed)
 			return;
-		if ((state_ & Visel.STATE_DOWN) != 0)
-		{
-			ev.stopImmediatePropagation();
-
-			state_ &= ~Visel.STATE_DOWN;
-			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
-		}
+		on_Mouse_Up(ev);
 	}
 //.............................................................................
 	private function on_Mouse_Over(e : MouseEvent) : Void
@@ -117,26 +112,24 @@ class ButtonBase extends Visel
 			return;
 		state_ |= Visel.STATE_HOVER;
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
-
-		addEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out);
 	}
 //.............................................................................
 	private function on_Mouse_Out(e : MouseEvent) : Void
 	{
-		state_ &= ~Visel.STATE_HOVER;
-		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
-
-		removeEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out);
+		if ((state_ & Visel.STATE_HOVER) != 0)
+		{
+			state_ &= ~Visel.STATE_HOVER;
+			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
+		}
 	}
 //.............................................................................
 	private function on_Mouse_Click(ev : MouseEvent) : Void
 	{
-		//trace("button::click '" + label_.text + "', target=" + e.target);
-		//trace("_______");
 		ev.stopPropagation();
 
 		var b: Button = cast this;
 		b.handle_Click(ev.localX, ev.localY);
+		//trace("button::" + ev.type + " '" + b.text + "', target=" + ev.target);
 	}
 //.............................................................................
 }

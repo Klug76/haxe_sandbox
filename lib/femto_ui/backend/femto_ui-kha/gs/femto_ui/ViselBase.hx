@@ -1,22 +1,29 @@
 package gs.femto_ui;
 
+import gs.femto_ui.kha.Event;
 import gs.femto_ui.Visel;
 import kha.Color;
 import kha.graphics2.Graphics;
+
+@:enum
 
 class ViselBase
 {
 	private var parent_: Visel = null;
 	private var child_: Array<Visel> = new Array<Visel>();
-	private var last_x_: Float = 0;
-	private var last_y_: Float = 0;
+	private var x_: Float = 0;
+	private var y_: Float = 0;
 	private var width_: Float = 0;
 	private var height_: Float = 0;
-
-	public var x(default, default): Float = 0;
-	public var y(default, default): Float = 0;
+	private var listeners_: Array<Event->Void> = null;
 
 	public var name(default, default): String = null;
+	public var hit_test_bits(default, default): Int = HIT_TEST_AUTO;//:RECT & CHILDREN
+
+	public static inline var HIT_TEST_AUTO: Int		= 0;
+	public static inline var HIT_TEST_NONE: Int		= 1;
+	public static inline var HIT_TEST_RECT: Int		= 2;
+	public static inline var HIT_TEST_CHILDREN: Int	= 4;
 
 	public function new(?owner: Visel)
 	{
@@ -26,6 +33,21 @@ class ViselBase
 //.............................................................................
 	private function init_Base() : Void
 	{}
+//.............................................................................
+	private function destroy_Base() : Void
+	{
+		remove_Children();
+		if (parent_ != null)
+		{
+			parent_.remove_Child(cast this);
+			parent_ = null;
+		}
+		if (listeners_ != null)
+		{
+			listeners_.resize(0);
+			listeners_ = null;
+		}
+	}
 //.............................................................................
 	inline public function add_Child(v: Visel): Visel
 	{
@@ -105,16 +127,33 @@ class ViselBase
 			remove_Child(get_Child_At(0));
 	}
 //.............................................................................
-	private function destroy_Base() : Void
+//.............................................................................
+//.............................................................................
+	public var x(get, set): Float;
+	inline private function get_x() : Float
 	{
-		remove_Children();
-		if (parent_ != null)
-			parent_.remove_Child(cast this);
-		parent_ = null;
+		return x_;
+	}
+	private function set_x(value : Float) : Float
+	{
+		x_ = value;
+		var v: Visel = cast this;
+		v.explicit_x_ = value;
+		return value;
 	}
 //.............................................................................
-//.............................................................................
-//.............................................................................
+	public var y(get, set): Float;
+	inline private function get_y() : Float
+	{
+		return y_;
+	}
+	private function set_y(value : Float) : Float
+	{
+		y_ = value;
+		var v: Visel = cast this;
+		v.explicit_y_ = value;
+		return value;
+	}
 //.............................................................................
 	public var width(get, set): Float;
 	inline private function get_width() : Float
@@ -173,8 +212,25 @@ class ViselBase
 //.............................................................................
 //.............................................................................
 //.............................................................................
+	public function movesize_Base(nx : Float, ny : Float, w : Float, h : Float): Void
+	{//:keep explicit values
+		x_ = nx;
+		y_ = ny;
+		if (w < 0)
+			w = 0;
+		if (h < 0)
+			h = 0;
+		if ((width_ != w) || (height_ != h))
+		{
+			width_ = w;
+			height_ = h;
+			var v: Visel = cast this;
+			v.invalidate_Visel(Visel.INVALIDATION_FLAG_SIZE);
+		}
+	}
 //.............................................................................
-	inline private function draw_Base_Background(): Void
+//.............................................................................
+	inline private function draw_Base(): Void
 	{
 		//:nop
 	}
@@ -185,7 +241,6 @@ class ViselBase
 			return;
 		nx += x;
 		ny += y;
-		update_Last_Coords(nx, ny);
 		render_Base_Background(gr, nx, ny);
 		render_Children(gr, nx, ny);
 	}
@@ -212,17 +267,49 @@ class ViselBase
 	}
 //.............................................................................
 //.............................................................................
-	private function update_Last_Coords(nx: Float, ny: Float) : Void
+//.............................................................................
+	private function hit_Test(mX: Float, mY: Float, nx: Float, ny: Float): Bool
 	{
-		last_x_ = nx;
-		last_y_ = ny;
+		return  (mX >= nx) && (mX < (nx + width_)) &&
+				(mY >= ny) && (mY < (ny + height_));
 	}
 //.............................................................................
-	private function hit_Test(nx: Float, ny: Float): Bool
+	private function find_Event_Target(mX: Float, mY: Float, nx: Float, ny: Float): Visel
 	{
-		return visible &&
-			(nx >= last_x_) && (nx < (last_x_ + width_)) &&
-			(ny >= last_y_) && (ny < (last_y_ + height_));
+		var v: Visel = cast this;
+		if (!v.visible || !v.enabled)
+			return null;
+		var h: Int = hit_test_bits;
+		switch (h)
+		{
+		case HIT_TEST_AUTO:
+			h = HIT_TEST_RECT | HIT_TEST_CHILDREN;
+		case HIT_TEST_NONE:
+			return null;
+		}
+		nx += x;
+		ny += y;
+		if ((h & HIT_TEST_RECT) != 0)
+		{
+			if (!hit_Test(mX, mY, nx, ny))
+				return null;
+		}
+		if ((h & HIT_TEST_CHILDREN) != 0)
+		{
+			var len: Int = child_.length;
+			for (i in 0...len)
+			{
+				var idx: Int = len - i - 1;
+				var c: Visel = child_[idx];
+				var cv: Visel = c.find_Event_Target(mX, mY, nx, ny);
+				if (cv != null)
+					return cv;
+			}
+			//?return null;
+		}
+		if ((h & HIT_TEST_RECT) != 0)
+			return v;//:test passed above
+		return null;
 	}
 //.............................................................................
 //.............................................................................
@@ -237,4 +324,55 @@ class ViselBase
 			parent_.add_Child(cast this);
 	}
 //.............................................................................
+//.............................................................................
+	public function add_Listener(f: Event->Void): Void
+	{
+		if (null == listeners_)
+			listeners_ = [];
+		//TODO check for dups?
+		listeners_.push(f);
+	}
+//.............................................................................
+	public function remove_Listener(f: Event->Void): Void
+	{
+		if (null == listeners_)
+			return;
+		for (il in listeners_)
+		{
+			if (Reflect.compareMethods(il, f))
+			{
+				listeners_.remove(il);
+				return;
+			}
+		}
+	}
+//.............................................................................
+	private function has_Listeners(): Bool
+	{
+		return (listeners_ != null) && (listeners_.length > 0);
+	}
+//.............................................................................
+	private function dispatch_Event(ev: Event): Void
+	{
+		//if (ev.type != Event.MOUSE_MOVE)
+			//trace("dispatch_Event " + ev.dump() + " at " + this.dump() + ", phase=" + ev.dump_Phase());
+		if (!has_Listeners())
+			return;
+		//TODO fix me: re-enter, add/remove inside for
+		for (il in listeners_)
+		{
+			il(ev);
+			if (ev.stop_propagation)
+				break;
+		}
+	}
+//.............................................................................
+	public function dump(): String
+	{
+		var s: String = Std.string(this);
+		s += ": " + name;
+		s += ": " + x + ": " + y;
+		s += ": visible=" + visible;
+		return s;
+	}
 }

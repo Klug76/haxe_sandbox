@@ -13,10 +13,10 @@ class Thumb extends Visel
 	public function new(owner : Scrollbar)
 	{
 		super(owner);
-		create_Listeners();
 #if debug
 		name = "thumb";
 #end
+		create_Listeners();
 	}
 //.............................................................................
 	private function create_Listeners() : Void

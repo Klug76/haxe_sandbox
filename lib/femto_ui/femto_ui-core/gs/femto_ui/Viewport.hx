@@ -1,39 +1,32 @@
 package gs.femto_ui;
 
-import flash.display.Sprite;
-import flash.display.Stage;
-import flash.events.Event;
-import flash.events.MouseEvent;
 
-class Viewport extends Visel
+class Viewport extends ViewportBase
 {
 	public var content(get, set) : Visel;
 
 	private var button_close_ : Button;
 	private var mover_ : Mover;
 	private var resizer_ : Resizer;
-	private var content_ : Visel;
-	private var min_content_width_ : Float;
-	private var min_content_height_ : Float;
-	static private var layer_: Sprite = null;
+	private var content_ : Visel = null;
+	private var min_content_width_ : Float = 0;
+	private var min_content_height_ : Float = 0;
 
 	public function new()
 	{
-		if (null == layer_)
-		{
-			layer_ = new Sprite();
-			Root.instance.stage_.addChild(layer_);
-		}
-		super(layer_);
-		create_Children();
+		super();
 #if debug
 		name = "viewport";
 #end
+		create_Children();
 	}
 //.............................................................................
 	private function create_Children() : Void
 	{
 		var r : Root = Root.instance;
+
+		min_content_width_ = r.tool_width_ + r.small_tool_width_;//:mover + close
+		min_content_height_ = r.small_tool_height_ * 2;//:close + resizer
 
 		mover_ = new Mover(this);
 
@@ -42,27 +35,23 @@ class Viewport extends Visel
 
 		resizer_ = new Resizer(this);
 		resizer_.dummy_color = r.color_movesize_;
+		resizer_.min_width_ = min_content_width_;
+		resizer_.min_height_ = min_content_height_;
 		resizer_.resize_Visel(r.small_tool_width_, r.small_tool_height_);
-
-		min_content_width_ = r.small_tool_width_;
-		min_content_height_ = r.small_tool_height_;
 
 		button_close_ = new Button(this, "x", on_Close_Click);
 		button_close_.dummy_color = r.color_close_;
 		button_close_.resize_Visel(r.small_tool_width_, r.small_tool_height_);
 
-		if (visible)
-			add_Listeners();
 		on_Show = resume;
 		on_Hide = suspend;
+		if (visible)
+		{
+			add_Listeners();
+			validate_Position();
+		}
 	}
 //.............................................................................
-	override public function destroy_Visel() : Void
-	{
-		if (stage != null)
-			remove_Listeners();
-		super.destroy_Visel();
-	}
 //.............................................................................
 	private function on_Close_Click(_) : Void
 	{
@@ -70,51 +59,25 @@ class Viewport extends Visel
 	}
 //.............................................................................
 //.............................................................................
-	private function add_Listeners() : Void
-	{
-		stage.addEventListener(Event.RESIZE, on_Stage_Resize);
-		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down_Phase0, true, 100);
-		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
-	}
-//.............................................................................
-	private function remove_Listeners() : Void
-	{
-		stage.removeEventListener(Event.RESIZE, on_Stage_Resize);
-		removeEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down_Phase0, true);
-		removeEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
-	}
-//.............................................................................
-	private function on_Mouse_Down_Phase0(ev: Event): Void
-	{
-		//trace("Viewport::on_Mouse_Down_Phase0, target=" + ev.target);
-		activate();
-	}
-//.............................................................................
-	private function on_Mouse_Down(ev: MouseEvent): Void
-	{
-		//trace("Viewport::on_Mouse_Down, target=" + ev.target);
-		ev.stopPropagation();
-	}
 //.............................................................................
 //.............................................................................
-	private function on_Stage_Resize(ev: Event): Void
-	{
-		//?if (StageScaleMode.NO_SCALE == stage.scaleMode)
-		invalidate_Visel(Visel.INVALIDATION_FLAG_STAGE_SIZE);
-	}
 //.............................................................................
-	private function safe_Position() : Void
+	private function validate_Position() : Void
 	{
-		var min_w: Float = min_content_width_ + Root.instance.small_tool_width_;
+		var nw: Float = explicit_width_;
+		var nh: Float = explicit_height_;
+		if ((nw <= 0) || (nh <= 0))
+			return;
+		var r: Root = Root.instance;
+		var nx: Float = explicit_x_;
+		var ny: Float = explicit_y_;
+		var min_w: Float = min_content_width_;
 		var min_h: Float = min_content_height_;
-		var stage_x: Float = stage.x;
-		var stage_y: Float = stage.y;
-		var stage_w: Float = stage.stageWidth;
-		var stage_h: Float = stage.stageHeight;
-		var nx: Float = x;
-		var ny: Float = y;
-		var nw: Float = width_;
-		var nh: Float = height_;
+		var stage_x: Float = r.stage_x;
+		var stage_y: Float = r.stage_y;
+		var stage_w: Float = r.stage_width;
+		var stage_h: Float = r.stage_height;
+
 		if (nw > stage_w)
 			nw = stage_w;
 		if (nh > stage_h)
@@ -127,27 +90,19 @@ class Viewport extends Visel
 			ny = stage_y;
 		else if (ny + min_h > stage_y + stage_h)
 			ny = stage_y + stage_h - min_h;
-		movesize(nx, ny, nw, nh);
+		movesize_Base(nx, ny, nw, nh);
 	}
 //.............................................................................
 //.............................................................................
 //.............................................................................
 //.............................................................................
-	public function activate() : Void
-	{
-		//:some sort of bring_To_Top()?
-		if (stage != null)
-		{
-			stage.addChild(layer_);
-		}
-	}
 //.............................................................................
 //.............................................................................
 //.............................................................................
 	private function resume() : Void
 	{
 		add_Listeners();
-		safe_Position();
+		validate_Position();
 		activate();
 		if (content_ != null)
 			content_.visible = true;
@@ -164,7 +119,7 @@ class Viewport extends Visel
 	{
 		if ((invalid_flags_ & Visel.INVALIDATION_FLAG_STAGE_SIZE) != 0)
 		{
-			safe_Position();
+			validate_Position();
 		}
 		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_SIZE | Visel.INVALIDATION_FLAG_DATA)) != 0)
 		{
@@ -175,16 +130,13 @@ class Viewport extends Visel
 			button_close_.x = width_ - button_close_.width;
 			if (content_ != null)
 			{
-				var nw : Float = width_ - button_close_.width;
+				var nw : Float = width_;
 				if (nw < min_content_width_)
-				{
 					nw = min_content_width_;
-				}
 				var nh : Float = height_;
 				if (nh < min_content_height_)
-				{
 					nh = min_content_height_;
-				}
+				nw -= button_close_.width;
 				content_.resize_Visel(nw, nh);
 				mover_.resize_Visel(nw, nh);
 			}
@@ -192,7 +144,7 @@ class Viewport extends Visel
 		super.draw_Visel();
 	}
 //.............................................................................
-	private function get_content() : Visel
+	inline private function get_content() : Visel
 	{
 		return content_;
 	}
@@ -206,12 +158,13 @@ class Viewport extends Visel
 			#end
 			return value;
 		}
+		var r: Root = Root.instance;
 		content_ = value;
-		content_.visible = true;
+		content_.visible = visible;
 		min_content_width_ = value.width;
 		min_content_height_ = value.height;
 		mover_.dummy_alpha = 0;
-		resizer_.min_width_ = min_content_width_ + Root.instance.small_tool_width_;
+		resizer_.min_width_ = min_content_width_ + r.small_tool_width_;
 		resizer_.min_height_ = min_content_height_;
 		invalidate_Visel(Visel.INVALIDATION_FLAG_DATA);
 		return value;

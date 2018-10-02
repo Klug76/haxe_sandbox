@@ -33,7 +33,7 @@ class ResizerBase extends Visel
 		stage.addEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move_Stage, false, 1);
 
 		var rz: Resizer = cast this;
-		rz.handle_Tap(ev.stageX, ev.stageY);
+		rz.handle_Tap(0, ev.stageX, ev.stageY);
 	}
 //.............................................................................
 	private function on_Mouse_Up_Stage(ev : MouseEvent) : Void
@@ -56,7 +56,7 @@ class ResizerBase extends Visel
 		{
 			ev.stopImmediatePropagation();
 			var rz: Resizer = cast this;
-			rz.handle_Move(ev.stageX, ev.stageY);
+			rz.handle_Move(0, ev.stageX, ev.stageY);
 		}
 	}
 //.............................................................................

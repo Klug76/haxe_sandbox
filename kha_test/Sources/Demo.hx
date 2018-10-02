@@ -8,6 +8,7 @@ import gs.femto_ui.Mover;
 import gs.femto_ui.Resizer;
 import gs.femto_ui.Root;
 import gs.femto_ui.Toolbar;
+import gs.femto_ui.Viewport;
 import gs.femto_ui.Visel;
 import kha.Framebuffer;
 import kha.Scheduler;
@@ -20,11 +21,12 @@ import kha.Assets;
 class Demo
 {
 	var color_bg_: Int = 0x223344;
-	var root_: Visel;
 	var v_: Visel;
 	var al_: Label;
 	var b_: Button;
 	var tb_: Toolbar;
+	var vp1_: Viewport;
+	var vp2_: Viewport;
 	var debug_counter_: Int = 0;
 
 	public function new()
@@ -56,34 +58,31 @@ class Demo
 	{
 		var r: Root = Root.instance;
 
-		root_ = new Visel(null);
-		root_.x = 0;
-		root_.y = 0;
-		root_.resize_Visel(System.windowWidth(), System.windowHeight());
-		r.root_ = root_;//TODO how to avoid this?
-
-		v_ = new Visel(root_);
+		v_ = new Visel(r.stage_);
+		v_.name = "v_";
 		v_.dummy_color_ = 0xff0000;
 		v_.dummy_alpha_ = 1;
-		v_.x = 220;
-		v_.y = 310;
+		v_.x = 620;
+		v_.y = 10;
 		v_.resize_Visel(150, 100);
 
-		var panel: Visel = new Visel(root_);
-		panel.move_Visel(220, 40);
-		panel.resize_Visel(root_.width - 230, root_.height - 60);
+		var panel: Visel = new Visel(r.stage_);
+		panel.name = "panel";
+		panel.move_Visel(100, 100);
+		panel.resize_Visel(r.stage_width - 230, r.stage_height - 160);
 		panel.dummy_color_ = 0x443322;
 		panel.dummy_alpha_ = 0.25;
 
 		al_ = new Label(panel, "Foo");
 		al_.dummy_color_ = 0x8f008f;
 		al_.dummy_alpha_ = 0.5;
-		al_.movesize(120, 20, 220, 60);
+		al_.movesize(110, 20, 200, 42);
 
 		b_ = new Button(panel, "Click me!", on_Click);
+		//b_.tag_ = 1100101;
 		b_.dummy_color_ = 0x00008f;
 		b_.dummy_alpha_ = 1;
-		b_.movesize(20, 20 + 100, 220, 60);
+		b_.movesize(-10, 100, 200, 50);
 		b_.auto_repeat = true;
 
 		tb_ = new Toolbar(panel);
@@ -94,29 +93,67 @@ class Demo
 		tb_.move_Visel(10, panel.height - 60);
 		tb_.resize_Visel(panel.width - 20, 60);
 
-		var btn = new Button(tb_, "1", on_Click);
+		var btn: Button;
+		btn = new Button(tb_, "1", on_Click1);
 		btn.dummy_color = 0xc02040;
 		btn.resize_Visel(120, 42);
-		btn = new Button(tb_, "2", on_Click);
+		btn = new Button(tb_, "2", on_Click2);
 		btn.dummy_color = 0x202040;
 		btn.resize_Visel(120, 42);
 
 		var m: Mover = new Mover(panel);
-		m.resize_Visel(64, 64);
+		m.resize_Visel(r.tool_width_, r.tool_height_);
 		m.dummy_color = r.color_movesize_;
 
 		var rz: Resizer = new Resizer(panel);
 		rz.dummy_color = r.color_movesize_;
+		rz.min_width_ = r.tool_width_;
+		rz.min_height_ = r.tool_height_;
 
 		panel.on_Resize = function()
 		{
-			rz.movesize(panel.width - 64, panel.height - 64, 64, 64);
+			rz.movesize(panel.width - r.small_tool_width_, panel.height - r.small_tool_height_, r.small_tool_width_, r.small_tool_height_);
 		};
+
 	}
 
 	function on_Click(ev: InfoClick)
 	{
 		trace("click #" + debug_counter_++ + ", " + ev.mx_ + ": " + ev.my_);
+	}
+
+	function on_Click1(ev: InfoClick)
+	{
+		var r: Root = Root.instance;
+		if (null == vp1_)
+		{
+			vp1_ = new Viewport();
+			vp1_.dummy_color_ = 0x804040;
+			vp1_.dummy_alpha_ = 1;// 0.75;
+			vp1_.movesize(10, 20, 320, 200);
+			//@:privateAccess vp1_.button_close_.tag_ = 101;
+		}
+		else
+		{
+			vp1_.visible = !vp1_.visible;
+		}
+	}
+
+	function on_Click2(ev: InfoClick)
+	{
+		var r: Root = Root.instance;
+		if (null == vp2_)
+		{
+			vp2_ = new Viewport();
+			vp2_.dummy_color_ = 0x608060;
+			vp2_.dummy_alpha_ = 1;// 0.75;
+			vp2_.movesize(15, 25, 320, 200);
+			//@:privateAccess vp2_.button_close_.tag_ = 102;
+		}
+		else
+		{
+			vp2_.visible = !vp2_.visible;
+		}
 	}
 
     private function on_Key_Down(code: KeyCode) : Void

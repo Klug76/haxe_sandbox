@@ -295,7 +295,7 @@ class Ruler extends Visel
 			//?ev.updateAfterEvent();
 			invalid_flags_ |= Visel.INVALIDATION_FLAG_DATA;
 			draw_Visel();
-			validate();
+			validate_Visel();
 			//?TODO if tap1 show realtime distance?
 		}
 	}
@@ -328,7 +328,7 @@ class Ruler extends Visel
 	{
 		invalid_flags_ |= Visel.INVALIDATION_FLAG_DATA2;
 		draw_Visel();
-		validate();
+		validate_Visel();
 		if (STATE_TAP2 == tap_state_)
 		{
 			dump_Info();

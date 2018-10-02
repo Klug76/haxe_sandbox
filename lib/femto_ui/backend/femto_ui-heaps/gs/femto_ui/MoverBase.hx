@@ -22,9 +22,8 @@ class MoverBase extends Visel
 	override private function init_Base() : Void
 	{
 		super.init_Base();
-		alloc_Interactive(Cursor.Button);
 
-		var ni: Interactive = interactive_;
+		var ni: Interactive = alloc_Interactive(Cursor.Move);
 		ni.onOver = on_Mouse_Over;
 		ni.onOut = on_Mouse_Out;
 		ni.onPush = on_Mouse_Down;
@@ -44,6 +43,7 @@ class MoverBase extends Visel
 //.............................................................................
 	private function on_Mouse_Down(ev : Event) : Void
 	{
+		trace("Mover::" + ev.kind + ": " + ev.button + ": " + ev.touchId + ": " + ev.propagate);
 		if ((state_ & Visel.STATE_DOWN) != 0)
 			return;
 		state_ |= Visel.STATE_DOWN;
@@ -53,7 +53,7 @@ class MoverBase extends Visel
 
 		drag_enter_ = false;
 
-		cur_scene_ = getScene();
+		cur_scene_ = Root.instance.scene_;
 		cur_scene_.startDrag(on_Mouse_Move, null, ev);
 	}
 //.............................................................................
@@ -80,11 +80,11 @@ class MoverBase extends Visel
 			if (!drag_enter_)
 			{
 				drag_enter_ = true;
-				m.handle_Tap(ev.relX, ev.relY);
+				m.handle_Tap(ev.button, ev.relX, ev.relY);
 			}
 			else
 			{
-				m.handle_Move(ev.relX, ev.relY);
+				m.handle_Move(ev.button, ev.relX, ev.relY);
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 package gs.femto_ui;
 
+import gs.femto_ui.kha.Event;
 import kha.graphics2.Graphics;
 import kha.Color;
 import kha.input.Mouse;
@@ -8,94 +9,105 @@ using gs.femto_ui.RootBase.NativeUIContainer;
 //:________________________________________________________________________________________________
 class ButtonBase extends Visel
 {
-
 	public function new(owner : NativeUIContainer)
 	{
 		super(owner);
+		hit_test_bits = ViselBase.HIT_TEST_RECT;
 	}
 //.............................................................................
 	override private function init_Base(): Void
 	{
 		super.init_Base();
-		Mouse.get().notify(on_Mouse_Down, on_Mouse_Up, on_Mouse_Move, null);
+		add_Listener(on_Event);
+		//TODO review: how to avoid this?
+		var r: Root = Root.instance;
+		r.stage_.add_Listener(on_Stage_Event);
 	}
 //.............................................................................
 	override private function destroy_Base(): Void
 	{
 		super.destroy_Base();
-		Mouse.get().remove(on_Mouse_Down, on_Mouse_Up, on_Mouse_Move, null);
+		remove_Listener(on_Event);
+		var r: Root = Root.instance;
+		r.stage_.remove_Listener(on_Stage_Event);
+	}
+//.............................................................................
+	private function on_Event(ev: Event): Void
+	{
+		switch(ev.type)
+		{
+		case Event.MOUSE_DOWN:
+			on_Mouse_Down(ev);
+		case Event.MOUSE_UP:
+			on_Mouse_Up(ev);
+		case Event.MOUSE_IN:
+			on_Mouse_In(ev);
+		case Event.MOUSE_OUT:
+			on_Mouse_Out(ev);
+		}
+	}
+//.............................................................................
+	private function on_Stage_Event(ev: Event): Void
+	{
+		switch(ev.type)
+		{
+		case Event.MOUSE_UP:
+			on_Mouse_Up(ev);
+		}
 	}
 //.............................................................................
 //.............................................................................
 //.............................................................................
 //.............................................................................
-//.............................................................................
-	private function on_Mouse_Down(button: Int, mouseX: Int, mouseY: Int): Void
+	private function on_Mouse_Down(ev: Event): Void
 	{
-		if (!hit_Test(mouseX, mouseY))
-			return;
 		if ((state_ & Visel.STATE_DOWN) != 0)
 			return;
 		state_ |= Visel.STATE_DOWN;
+		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
+
+		ev.stop_propagation = true;
 
 		var b: Button = cast this;
-		b.handle_Tap(mouseX - last_x_, mouseY - last_y_);//TODO fix me: button | tap id
+		b.handle_Tap(ev.inputId, ev.globalX, ev.globalY);
 	}
 //.............................................................................
-	private function on_Mouse_Up(button: Int, mouseX: Int, mouseY: Int): Void
+	private function on_Mouse_Up(ev: Event): Void
 	{
-		if (disposed)
+		var b: Button = cast this;
+		if (b.tap_id != ev.inputId)
 			return;
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
 			state_ &= ~Visel.STATE_DOWN;
 			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
-			if (hit_Test(mouseX, mouseY))
+
+			if (ev.target == this)
 			{
-				var b: Button = cast this;
-				b.handle_Click(mouseX - last_x_, mouseY - last_y_);
+				ev.stop_propagation = true;
+				b.handle_Click(ev.globalX, ev.globalY);
 			}
 		}
 	}
 //.............................................................................
-	private function on_Mouse_Move(mouseX: Int, mouseY: Int, mx: Int, my: Int): Void
+	private function on_Mouse_In(_): Void
 	{
-		if (hit_Test(mouseX, mouseY))
-		{
-			if ((state_ & Visel.STATE_HOVER) != 0)
-				return;
-			state_ |= Visel.STATE_HOVER;
-			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
-		}
-		else
-		{
-			if ((state_ & Visel.STATE_HOVER) == 0)
-				return;
-			state_ &= ~Visel.STATE_HOVER;
-			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
-		}
+		if ((state_ & Visel.STATE_HOVER) != 0)
+			return;
+		state_ |= Visel.STATE_HOVER;
+		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 	}
 //.............................................................................
-//.............................................................................
-//.............................................................................
-	override public function draw_Visel(): Void
+	private function on_Mouse_Out(_): Void
 	{
-		var r: Root = Root.instance;
-		var b: Button = cast this;
-		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_SIZE | Visel.INVALIDATION_FLAG_STATE)) != 0)
-		{
-			var al: Label = b.label;
-			if ((state_ & Visel.STATE_DOWN) != 0)
-			{
-				al.movesize(r.content_down_offset_x_, r.content_down_offset_y_,
-						width_ + r.content_down_offset_x_, height_ + r.content_down_offset_y_);
-			}
-			else
-			{
-				al.movesize(0, 0, width_, height_);
-			}
-		}
+		if ((state_ & Visel.STATE_HOVER) == 0)
+			return;
+		state_ &= ~Visel.STATE_HOVER;
+		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 	}
+//.............................................................................
+//.............................................................................
+//.............................................................................
 //.............................................................................
 	override public function render_To(gr: Graphics, nx: Float, ny: Float): Void
 	{
@@ -103,7 +115,6 @@ class ButtonBase extends Visel
 			return;
 		nx += x;
 		ny += y;
-		update_Last_Coords(nx, ny);
 		render_Button_Background(gr, nx, ny);
 		render_Children(gr, nx, ny);
 	}

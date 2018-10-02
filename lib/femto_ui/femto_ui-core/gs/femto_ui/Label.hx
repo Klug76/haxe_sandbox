@@ -17,6 +17,9 @@ class Label extends LabelBase
 	public function new(owner : NativeUIContainer, txt : String)
 	{
 		super(owner);
+#if debug
+		name = "label";
+#end
 		text = txt;//:call setter
 	}
 //.............................................................................

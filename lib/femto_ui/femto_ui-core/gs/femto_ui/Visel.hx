@@ -10,6 +10,11 @@ class Visel extends ViselBase
 	public var dummy_color(get, set) : Int;
 	public var dummy_alpha(get, set) : Float;
 
+	private var explicit_x_: Float = 0;
+	private var explicit_y_: Float = 0;
+	private var explicit_width_: Float = 0;
+	private var explicit_height_: Float = 0;
+
 	private var state_ : Int = 0;
 	private var invalid_flags_ : Int = 0;
 
@@ -80,10 +85,10 @@ class Visel extends ViselBase
 		if (disposed)
 			return;
 		draw_Visel();
-		validate();
+		validate_Visel();
 	}
 //.............................................................................
-	public function validate() : Void
+	public function validate_Visel() : Void
 	{
 		invalid_flags_ = 0;
 	}
@@ -104,7 +109,9 @@ class Visel extends ViselBase
 		if ((width_ != w) || (height_ != h))
 		{
 			width_ = w;
+			explicit_width_ = w;
 			height_ = h;
+			explicit_height_ = h;
 			invalidate_Visel(INVALIDATION_FLAG_SIZE);
 		}
 	}
@@ -118,7 +125,9 @@ class Visel extends ViselBase
 		if ((width_ != w) || (height_ != h))
 		{
 			width_ = w;
+			explicit_width_ = w;
 			height_ = h;
+			explicit_height_ = h;
 			invalid_flags_ |= INVALIDATION_FLAG_SIZE;
 		}
 	}
@@ -174,7 +183,7 @@ class Visel extends ViselBase
 //.............................................................................
 	public function draw_Visel() : Void
 	{
-		draw_Base_Background();
+		draw_Base();
 		handle_Resize();
 	}
 //.............................................................................

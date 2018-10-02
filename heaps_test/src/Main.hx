@@ -8,7 +8,7 @@ import gs.femto_ui.Mover;
 import gs.femto_ui.Resizer;
 import gs.femto_ui.Root;
 import gs.femto_ui.Toolbar;
-//import gs.femto_ui.Viewport;
+import gs.femto_ui.Viewport;
 import gs.femto_ui.Visel;
 import hxd.Event;
 import hxd.Key;
@@ -29,7 +29,8 @@ class Main extends App
 	var al_: Label;
 	var b_: Button;
 	var tb_: Toolbar;
-	//var vp_: Viewport;
+	var vp1_: Viewport;
+	var vp2_: Viewport;
 	var debug_counter_: Int = 0;
 
 	static function main()
@@ -55,6 +56,7 @@ class Main extends App
 		b = new h2d.Bitmap(h2d.Tile.fromColor(0xff0000, 160, 160), s2d);
 		b.x = 250;
 		b.y = 280;
+		b.alpha = 0.4;
 
 		b.tile = b.tile.center();
 		b.rotation = Math.PI / 4;
@@ -67,18 +69,18 @@ class Main extends App
 		ni.y = -0.5 * b.tile.height;
 
 		// Обработчики событий
-		ni.onOver = function(_) b.alpha = 0.5;
-		ni.onOut = function(_) b.alpha = 1.0;
+		ni.onOver = function(_) b.alpha = 1;
+		ni.onOut = function(_) b.alpha = 0.4;
 
 		add_Root();
 
-		//add_UI();
+		add_UI();
 
-		test_Visel();
+		//test_Visel();
 
 		add_Text();
 
-		hxd.Stage.getInstance().addEventTarget(onEvent);
+		hxd.Window.getInstance().addEventTarget(onEvent);
 
 		trace("LEAVE init");
 	}
@@ -96,29 +98,32 @@ class Main extends App
 	function add_UI()
 	{
 		var r: Root = Root.instance;
+
 		v_ = new Visel(r.owner_);
+		v_.name = "v_";
 		v_.dummy_color_ = 0xff00ff;
 		v_.dummy_alpha_ = .75;
-		v_.x = 400;
-		v_.y = 20;
+		v_.x = 620;
+		v_.y = 10;
 		v_.resize_Visel(150, 100);
 
 		var panel: Visel = new Visel(r.owner_);
-		panel.move_Visel(50, 100);
-		panel.resize_Visel(800, 600);
-		panel.dummy_color = 0x443322;
-		panel.dummy_alpha = 0.5;
+		panel.name = "panel";
+		panel.move_Visel(100, 100);
+		panel.resize_Visel(r.stage_width - 230, r.stage_height - 160);
+		panel.dummy_color_ = 0x443322;
+		panel.dummy_alpha_ = 0.25;
 
 		al_ = new Label(panel, "Foo");
 		al_.dummy_color_ = 0x8f008f;
 		al_.dummy_alpha_ = 0.5;
-		al_.movesize(120, 20, 220, 60);
+		al_.movesize(110, 20, 200, 42);
 
 		b_ = new Button(panel, "Click me!", on_Click);
-		b_.tag_ = 1100101;
+		//b_.tag_ = 1100101;
 		b_.dummy_color_ = 0x00008f;
 		b_.dummy_alpha_ = 1;
-		b_.movesize(20, 20 + 100, 220, 60);
+		b_.movesize(-10, 100, 200, 50);
 		b_.auto_repeat = true;
 
 		tb_ = new Toolbar(panel);
@@ -129,23 +134,26 @@ class Main extends App
 		tb_.move_Visel(10, panel.height - 60);
 		tb_.resize_Visel(panel.width - 20, 60);
 
-		var btn = new Button(tb_, "1", on_Click1);
+		var btn: Button;
+		btn = new Button(tb_, "1", on_Click1);
 		btn.dummy_color = 0xc02040;
 		btn.resize_Visel(120, 42);
-		btn = new Button(tb_, "2", on_Click);
+		btn = new Button(tb_, "2", on_Click2);
 		btn.dummy_color = 0x202040;
 		btn.resize_Visel(120, 42);
 
 		var m: Mover = new Mover(panel);
-		m.resize_Visel(64, 64);
+		m.resize_Visel(r.tool_width_, r.tool_height_);
 		m.dummy_color = r.color_movesize_;
 
 		var rz: Resizer = new Resizer(panel);
 		rz.dummy_color = r.color_movesize_;
+		rz.min_width_ = r.tool_width_;
+		rz.min_height_ = r.tool_height_;
 
 		panel.on_Resize = function()
 		{
-			rz.movesize(panel.width - 64, panel.height - 64, 64, 64);
+			rz.movesize(panel.width - r.small_tool_width_, panel.height - r.small_tool_height_, r.small_tool_width_, r.small_tool_height_);
 		};
 	}
 
@@ -156,20 +164,36 @@ class Main extends App
 
 	function on_Click1(ev: InfoClick)
 	{
-		/*
-		if (null == vp_)
+		var r: Root = Root.instance;
+		if (null == vp1_)
 		{
-			vp_ = new Viewport();
-			vp_.dummy_color_ = 0x408040;
-			vp_.dummy_alpha_ = 0.5;
-			vp_.movesize(10, 20, 320, 200);
+			vp1_ = new Viewport();
+			vp1_.dummy_color_ = 0x408040;
+			vp1_.dummy_alpha_ = 0.75;
+			vp1_.movesize(10, 20, 320, 200);
 		}
 		else
 		{
-			vp_.visible = !vp_.visible;
+			vp1_.visible = !vp1_.visible;
 		}
-		*/
 	}
+
+	function on_Click2(ev: InfoClick)
+	{
+		var r: Root = Root.instance;
+		if (null == vp2_)
+		{
+			vp2_ = new Viewport();
+			vp2_.dummy_color_ = 0x208060;
+			vp2_.dummy_alpha_ = 0.75;
+			vp2_.movesize(15, 25, 320, 200);
+		}
+		else
+		{
+			vp2_.visible = !vp2_.visible;
+		}
+	}
+
 	/*
 			p.find("#fps").text(Std.string(engine.fps));
 			p.find("#calls").text(numberFormat(engine.drawCalls));

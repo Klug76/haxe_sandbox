@@ -25,9 +25,8 @@ class Test1 extends BuddySuite
 
             beforeAll(function(done)
 			{
-				v = new Visel(null);
-				v.debug_probe1();
-				//v = new Button(null, "", null);
+				//v = new Visel(null);
+				v = new Button(null, null, null);
 				v.dummy_color = 0xc0c0c0;
 				v.resize_Visel(32, 32);
                 haxe.Timer.delay(function()

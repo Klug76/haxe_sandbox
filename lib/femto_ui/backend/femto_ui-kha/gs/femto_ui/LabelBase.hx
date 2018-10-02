@@ -11,6 +11,7 @@ class LabelBase extends Visel
 	public function new(owner : NativeUIContainer)
 	{
 		super(owner);
+		hit_test_bits = ViselBase.HIT_TEST_NONE;
 	}
 //.............................................................................
 //.............................................................................
@@ -21,7 +22,6 @@ class LabelBase extends Visel
 			return;
 		nx += x;
 		ny += y;
-		update_Last_Coords(nx, ny);
 		render_Base_Background(gr, nx, ny);
 		render_Text(gr, nx, ny);
 		render_Children(gr, nx, ny);
@@ -68,7 +68,7 @@ class LabelBase extends Visel
 		gr.font = font;
 		gr.fontSize = font_size;
 		gr.color = Color.fromValue(r.color_ui_text_ | 0xFF000000);
-		gr.drawString(text, nx + text_x, ny + text_y);
+		gr.drawString(text, Math.round(nx + text_x), Math.round(ny + text_y));
 
 	}
 }
