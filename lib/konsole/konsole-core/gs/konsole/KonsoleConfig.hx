@@ -14,8 +14,10 @@ class KonsoleConfig
 {
 	//public var max_lines_: Int = 8;//:must be 2^N
 	//public var max_lines_: Int = 128;//:must be 2^N
-	public var max_lines_ : Int = 2048;  //:must be 2^N
-	//public var max_lines_ : Int = 1000;
+	public var max_lines_: Int = 2048;  //:must be 2^N
+	//public var max_lines_: Int = 1000;
+
+	public var cmd_history_size_: Int = 64;
 
 	public var redirect_trace_		: Bool = true;
 
@@ -27,6 +29,7 @@ class KonsoleConfig
 	public var con_text_color_		: Int = 0xFFff80;//TODO fix me: how to set selection color!?
 	public var con_hint_color_		: Int = 0xFFffCA;
 	public var cmd_text_color_		: Int = 0xFFff80;
+	public var cmd_bg_color_		: Int = 0x0070A6;
 	public var btn_copy_color_		: Int = 0x009688;
 	public var btn_tool_color_		: Int = 0x3F51B5;
 	public var btn_clear_color_		: Int = 0xc00020;

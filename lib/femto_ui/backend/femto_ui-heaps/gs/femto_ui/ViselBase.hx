@@ -229,14 +229,13 @@ class ViselBase extends Object
 		var v: Visel = cast this;
 		if ((v.invalid_flags_ & (Visel.INVALIDATION_FLAG_SKIN | Visel.INVALIDATION_FLAG_SIZE | Visel.INVALIDATION_FLAG_STATE)) != 0)
 		{
-			var cl = v.dummy_color_ & 0xFFffFF;
 			var al = v.dummy_alpha_;
 			if ((al > 0) && (v.width_ > 0) && (v.height_ > 0))
 			{
-				alloc_Background();
-				var bg = background_;
+				var cl = v.dummy_color_ & 0xFFffFF;
+				var bg = alloc_Background();
 				bg.clear();
-				bg.beginFill(v.dummy_color_ & 0xffffff, v.dummy_alpha_);
+				bg.beginFill(cl, al);
 				bg.drawRect(0, 0, v.width_, v.height_);
 				bg.endFill();
 			}
@@ -260,7 +259,7 @@ class ViselBase extends Object
 		}
 	}
 //.............................................................................
-	private function alloc_Interactive(cursor: Cursor/* = Cursor.Button*/, propagateEvents = true): Interactive
+	private function alloc_Interactive(cursor: Cursor/* = Cursor.Button*/, propagateEvents = false): Interactive
 	{
 		if (interactive_ != null)
 			return interactive_;

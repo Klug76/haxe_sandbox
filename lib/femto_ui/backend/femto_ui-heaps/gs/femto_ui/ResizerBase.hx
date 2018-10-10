@@ -23,17 +23,22 @@ class ResizerBase extends Visel
 	{
 		super.init_Base();
 
-		var ni: Interactive = alloc_Interactive(Cursor.Move);
-		ni.onOver = on_Mouse_Over;
-		ni.onOut = on_Mouse_Out;
+		var ni: Interactive = alloc_Interactive(Cursor.Button);
 		ni.onPush = on_Mouse_Down;
 		ni.onRelease = on_Mouse_Up;
+		ni.onOver = set_Hover_State;
+		ni.onOut = remove_Hover_State;
 		//:ni.onMove = on_Mouse_Move;
 	}
 //.............................................................................
 	override private function destroy_Base() : Void
 	{
 		super.destroy_Base();
+		stop_Drag();
+	}
+//.............................................................................
+	private function stop_Drag() : Void
+	{
 		if (cur_scene_ != null)
 		{
 			cur_scene_.stopDrag();
@@ -46,12 +51,11 @@ class ResizerBase extends Visel
 		if ((state_ & Visel.STATE_DOWN) != 0)
 			return;
 		state_ |= Visel.STATE_DOWN;
-		ev.propagate = false;
-
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 
-		drag_enter_ = false;
+		ev.propagate = false;
 
+		drag_enter_ = false;
 		cur_scene_ = Root.instance.scene_;
 		cur_scene_.startDrag(on_Mouse_Move, null, ev);
 	}
@@ -61,11 +65,10 @@ class ResizerBase extends Visel
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
 			state_ &= ~Visel.STATE_DOWN;
-			ev.propagate = false;
 			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 
-			cur_scene_.stopDrag();
-			cur_scene_ = null;
+			ev.propagate = false;
+			stop_Drag();
 		}
 	}
 //.............................................................................
@@ -88,21 +91,6 @@ class ResizerBase extends Visel
 		}
 	}
 //.............................................................................
-	private function on_Mouse_Over(ev : Event) : Void
-	{
-		if ((state_ & Visel.STATE_HOVER) != 0)
-			return;
-		state_ |= Visel.STATE_HOVER;
-		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
-	}
-//.............................................................................
-	private function on_Mouse_Out(ev : Event) : Void
-	{
-		if ((state_ & Visel.STATE_HOVER) == 0)
-			return;
-		state_ &= ~Visel.STATE_HOVER;
-		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
-	}
 //.............................................................................
 //.............................................................................
 	override public function draw_Visel() : Void
@@ -123,12 +111,11 @@ class ResizerBase extends Visel
 				{
 					cl = r.color_pressed_;
 				}
-				if ((state_ & (Visel.STATE_HOVER | Visel.STATE_DOWN)) != 0)
+				if ((state_ & Visel.STATE_HOVER) == 0)
 				{
-					offset = r.hover_inflation_;
+					offset = -r.hover_inflation_;
 				}
 				var bg = alloc_Background();
-				bg.beginFill(dummy_color_, al);
 				bg.beginFill(cl & 0xffffff, al);
 				bg.moveTo(-offset, nh + offset);
 				bg.lineTo(nw + offset, -offset);

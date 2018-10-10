@@ -14,10 +14,9 @@ class BubbleChain
 //.............................................................................
 	public static function alloc(): BubbleChain
 	{
-        return (if (pool_.length > 0)
-			pool_.pop();
-				else
-			new BubbleChain());
+        if (pool_.length > 0)
+			return pool_.pop();
+		return new BubbleChain();
 	}
 //.............................................................................
 	public static function dispose(bc: BubbleChain): Void

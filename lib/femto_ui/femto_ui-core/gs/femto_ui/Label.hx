@@ -1,6 +1,5 @@
 package gs.femto_ui;
 
-
 using gs.femto_ui.RootBase.NativeUIContainer;
 
 @:allow(gs.femto_ui.LabelBase)
@@ -38,7 +37,7 @@ class Label extends LabelBase
 		if (text_ != value)
 		{
 			if (safe_text != if (value != null) value else "")
-				invalidate_Visel(Visel.INVALIDATION_FLAG_DATA);
+				invalidate_Visel(Visel.INVALIDATION_FLAG_TEXT);
 			text_ = value;
 		}
 		return value;

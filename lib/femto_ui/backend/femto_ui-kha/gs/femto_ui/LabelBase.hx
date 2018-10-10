@@ -2,7 +2,6 @@ package gs.femto_ui;
 
 import kha.graphics2.Graphics;
 import kha.Font;
-import kha.Color;
 
 using gs.femto_ui.RootBase.NativeUIContainer;
 
@@ -29,19 +28,19 @@ class LabelBase extends Visel
 //.............................................................................
 	private function render_Text(gr: Graphics, nx: Float, ny: Float) : Void
 	{
-		var r : Root = Root.instance;
 		var al: Label = cast this;
 		if ((null == al.text_) || (al.text_.length <= 0))
 			return;
+		var r: Root = Root.instance;
 		var font: Font = r.font_;
 		var font_size: Int = Std.int(r.def_text_size_);
-		var text_x : Float = 0;
-		var text_y : Float = 0;
+		var text_x: Float = 0;
+		var text_y: Float = 0;
 		var text: String = al.safe_text;
 		if (al.align_ != 0)
 		{
-			var text_w : Float = font.width(font_size, text);
-			var text_h : Float = font.height(font_size);
+			var text_w: Float = font.width(font_size, text);
+			var text_h: Float = font.height(font_size);
 			if (text_w > width_)
 				text_w = width_;
 			if (text_h > height_)
@@ -67,9 +66,8 @@ class LabelBase extends Visel
 		}
 		gr.font = font;
 		gr.fontSize = font_size;
-		gr.color = Color.fromValue(r.color_ui_text_ | 0xFF000000);
+		gr.color = r.color_ui_text_ | 0xFF000000;
 		gr.drawString(text, Math.round(nx + text_x), Math.round(ny + text_y));
-
 	}
 }
 

@@ -87,6 +87,7 @@ class KonsoleView extends Viewport
 		btn_scroll_up_.y = r.small_tool_height_ + r.spacing_;
 		btn_scroll_up_.width = r.small_tool_width_;
 		btn_scroll_up_.height = r.small_tool_height_;
+		btn_scroll_up_.enabled = false;
 
 		scrollbar_ = new Scrollbar(this, on_Scrollbar_Scroll);
 		scrollbar_.y = r.small_tool_height_ * 2 + r.spacing_ * 2;
@@ -98,6 +99,7 @@ class KonsoleView extends Viewport
 		btn_scroll_down_.dummy_color = r.color_updown_;
 		btn_scroll_down_.width = r.small_tool_width_;
 		btn_scroll_down_.height = r.small_tool_height_;
+		btn_scroll_down_.enabled = false;
 
 		toolbar_ = new Toolbar(this);
 		toolbar_.spacing_ = r.tool_spacing_;
@@ -138,7 +140,6 @@ class KonsoleView extends Viewport
 		cmdline_.width = width_ - r.small_tool_width_ - r.spacing_;//:html5 crash without this line:
 		//:HTML5GLRenderContext.hx:2545 WebGL: INVALID_VALUE: texImage2D: no canvas
 		cmdline_.height = k_.cfg_.cmd_height_;
-		cmdline_.dummy_color = r.color_edit_;
 
 		mover_.resize_Visel(r.tool_width_, r.tool_height_);
 		mover_.dummy_color = r.color_movesize_;
@@ -419,11 +420,6 @@ class KonsoleView extends Viewport
 		var max : Int = text_field_.maxScrollV;
 		//trace("log::update_Controls " + max);
 		var flag : Bool = max > 1;
-		if (!scrollbar_.thumb_.is_drag_mode)
-		{
-			scrollbar_.enabled = flag;
-			scrollbar_.thumb_.enabled = flag;
-		}
 		scrollbar_.value = cur;
 		scrollbar_.max = max;
 		btn_scroll_up_.enabled = flag && (cur > 1);
@@ -446,8 +442,9 @@ class KonsoleView extends Viewport
 //.............................................................................
 	private function on_Scrollbar_Scroll(v : Int) : Void
 	{
-		if (-1 == v)
+		if (0 == v)
 		{//:drag finish
+			//flash.Lib.trace("drag finish");
 			invalidate_Visel(Visel.INVALIDATION_FLAG_SCROLL);
 			return;
 		}

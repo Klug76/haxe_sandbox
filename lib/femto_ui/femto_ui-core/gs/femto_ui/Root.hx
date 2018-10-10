@@ -17,8 +17,7 @@ class Root extends RootBase
     public var color_graph_		: Int = 0x408080;
     public var color_bg_graph_	: Int = 0x202080;
 	public var color_close_		: Int = 0xFF9800;
-	public var color_edit_		: Int = 0x0070A6;
-	public var color_scroller_	: Int = 0x414c74;
+	public var color_scrollbar_	: Int = 0x414c74;
 	public var color_thumb_		: Int = 0x8080FF;
 	public var color_updown_	: Int = 0x5581D2;
 	public var color_bg_ruler_	: Int = 0x40000040;

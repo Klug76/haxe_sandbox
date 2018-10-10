@@ -1,9 +1,5 @@
 package gs.femto_ui.util;
 
-#if (flash || openfl)
-import flash.Vector;
-#end
-
 class Util
 {
 	//TODO IntUtil, FloatUtil, StringUtil!?
@@ -124,26 +120,10 @@ class Util
 		return imax(min, imin(max, val));
 	}
 //.............................................................................
-//.............................................................................
-#if (flash || openfl)
-	public static function inflate_Vector(ppt : Vector<Float>, value : Float) : Void
+	public static inline function RGB_A(rgb: Int, a: Float): Int
 	{
-		//:stupid but work, lets threat bug as effect
-		var len : Int = ppt.length;
-		for (i in 0...len)
-		{
-			var d : Float = ppt[i];
-			if (d > 0)
-			{
-				d = value;
-			}
-			else
-			{
-				d = -value;
-			}
-			ppt[i] += d;
-		}
+		return (rgb & 0xFFffFF) | ((Std.int(a * 255) << 24));
 	}
-#end
+//.............................................................................
 //.............................................................................
 }

@@ -2,21 +2,25 @@ package;
 
 import gs.femto_ui.Align;
 import gs.femto_ui.Button;
+import gs.femto_ui.Edit;
 import gs.femto_ui.InfoClick;
 import gs.femto_ui.Label;
 import gs.femto_ui.Mover;
 import gs.femto_ui.Resizer;
 import gs.femto_ui.Root;
+import gs.femto_ui.Scrollbar;
 import gs.femto_ui.Toolbar;
 import gs.femto_ui.Viewport;
 import gs.femto_ui.Visel;
+import gs.femto_ui.kha.Event;
 import kha.Framebuffer;
 import kha.Scheduler;
 import kha.System;
-import kha.Color;
 import kha.input.Keyboard;
 import kha.input.KeyCode;
 import kha.Assets;
+
+//import kha.Color;
 
 class Demo
 {
@@ -51,7 +55,8 @@ class Demo
 
 		add_UI();
 
-		Keyboard.get().notify(on_Key_Down, on_Key_Up);
+		//Keyboard.get().notify(on_Key_Down, on_Key_Up);
+		Root.instance.stage_.add_Listener(on_Stage_Event);
 	}
 
 	function add_UI()
@@ -101,6 +106,13 @@ class Demo
 		btn.dummy_color = 0x202040;
 		btn.resize_Visel(120, 42);
 
+		var sc: Scrollbar = new Scrollbar(panel, function(v: Int): Void
+		{
+			trace("Scrollbar::scroll " + v);
+		});
+		sc.movesize(panel.width - r.small_tool_width_, 10, r.small_tool_width_, panel.height - 100);
+		sc.reset(1, 15, 1);
+
 		var m: Mover = new Mover(panel);
 		m.resize_Visel(r.tool_width_, r.tool_height_);
 		m.dummy_color = r.color_movesize_;
@@ -119,12 +131,13 @@ class Demo
 
 	function on_Click(ev: InfoClick)
 	{
-		trace("click #" + debug_counter_++ + ", " + ev.mx_ + ": " + ev.my_);
+		trace("click #" + debug_counter_++ + ", " + ev.global_x_ + ": " + ev.global_y_);
+		trace(ev.local_x_ + ": " + ev.local_y_);
 	}
 
 	function on_Click1(ev: InfoClick)
 	{
-		var r: Root = Root.instance;
+		//var r: Root = Root.instance;
 		if (null == vp1_)
 		{
 			vp1_ = new Viewport();
@@ -141,14 +154,17 @@ class Demo
 
 	function on_Click2(ev: InfoClick)
 	{
-		var r: Root = Root.instance;
+		//var r: Root = Root.instance;
 		if (null == vp2_)
 		{
 			vp2_ = new Viewport();
 			vp2_.dummy_color_ = 0x608060;
 			vp2_.dummy_alpha_ = 1;// 0.75;
 			vp2_.movesize(15, 25, 320, 200);
-			//@:privateAccess vp2_.button_close_.tag_ = 102;
+
+			var edit = new Edit(vp2_, on_Edit_Changed, "123");
+			edit.dummy_color = 0x445566;
+			edit.movesize(50, 100, 180, 60);
 		}
 		else
 		{
@@ -156,10 +172,33 @@ class Demo
 		}
 	}
 
-    private function on_Key_Down(code: KeyCode) : Void
+	function on_Edit_Changed(s: String)
 	{
+		trace("***** edit::text = '" + s + "'");
+	}
+
+	function on_Stage_Event(ev: Event): Void
+	{
+		//trace(ev.dump());
+		switch(ev.type)
+		{
+		case Event.KEY_DOWN:
+			on_Key_Down(ev);
+		case Event.KEY_UP:
+			on_Key_Up(ev);
+		}
+	}
+
+    private function on_Key_Down(ev: Event) : Void
+	{
+		trace("stage::on_Key_Down " + ev.code);
+		var code: KeyCode = cast ev.code;
 		switch(code)
 		{
+		case KeyCode.F1:
+			on_Click1(null);
+		case KeyCode.F2:
+			on_Click2(null);
 		case KeyCode.V:
 			v_.visible = !v_.visible;
 		case KeyCode.A:
@@ -196,10 +235,8 @@ class Demo
 		}
 	}
 
-    private function on_Key_Up(code: KeyCode) : Void
-	{
-
-	}
+    private function on_Key_Up(ev: Event) : Void
+	{}
 
 	function test_Visel()
 	{

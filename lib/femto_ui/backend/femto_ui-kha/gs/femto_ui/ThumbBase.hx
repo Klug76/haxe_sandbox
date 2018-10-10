@@ -1,22 +1,24 @@
 package gs.femto_ui;
 
 import gs.femto_ui.kha.Event;
-import kha.graphics2.Graphics;
 import gs.femto_ui.util.Util;
+import kha.graphics2.Graphics;
 
-using gs.femto_ui.RootBase.NativeUIContainer;
-//:________________________________________________________________________________________________
-class ButtonBase extends Visel
+class ThumbBase extends Visel
 {
-	public function new(owner : NativeUIContainer)
+	//private var start_x_ : Float;
+	private var start_y_ : Float;
+	private var tap_id_: Int;
+
+	public function new(owner : Scrollbar)
 	{
 		super(owner);
 	}
 //.............................................................................
-	override private function init_Base(): Void
+	override private function init_Base() : Void
 	{
 		super.init_Base();
-		//:hit_test_bits = ViselBase.HIT_TEST_FUNC;//:conflict with scrollbar etc
+		hit_test_bits = ViselBase.HIT_TEST_FUNC;
 		add_Listener(on_Event);
 	}
 //.............................................................................
@@ -32,8 +34,6 @@ class ButtonBase extends Visel
 		{
 		case Event.MOUSE_DOWN:
 			on_Mouse_Down(ev);
-		//case Event.MOUSE_UP:
-			//on_Mouse_Up(ev);
 		case Event.MOUSE_IN:
 			set_Hover_State(ev);
 		case Event.MOUSE_OUT:
@@ -47,47 +47,77 @@ class ButtonBase extends Visel
 		{
 		case Event.MOUSE_UP:
 			on_Mouse_Up_Stage(ev);
+		case Event.MOUSE_MOVE:
+			on_Mouse_Move_Stage(ev);
 		}
 	}
 //.............................................................................
-//.............................................................................
-//.............................................................................
-//.............................................................................
-	private function on_Mouse_Down(ev: Event): Void
+	private function on_Mouse_Down(ev : Event) : Void
 	{
-		//flash.Lib.trace("button::on_Mouse_Down " + ev.globalX + ":" + ev.globalY);
+		//flash.Lib.trace("thumb::on_Mouse_Down " + ev.globalX + ":" + ev.globalY);
 		ev.stop_propagation = true;
 
-		if ((state_ & Visel.STATE_DOWN) != 0)
+		if ((state_ & Visel.STATE_DRAG) != 0)
 			return;
-		state_ |= Visel.STATE_DOWN;
-		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
+		var p : Scrollbar = cast parent;
+		var nh : Float = Math.floor(p.height - height_);
+		if (nh <= 0)
+		{//:unable to drag
+			return;
+		}
 
-		var b: Button = cast this;
-		b.handle_Tap(ev.input_id, ev.globalX, ev.globalY, ev.targetX, ev.targetY);
+		state_ |= Visel.STATE_DRAG;
+		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 
 		var r: Root = Root.instance;
 		r.stage_.add_Listener(on_Stage_Event);
+
+		tap_id_ = ev.input_id;
+		//start_x_ = x - ev.globalX;
+		start_y_ = y - ev.globalY;
+
+		//flash.Lib.trace("thumb::start drag on " + tap_id_);
 	}
 //.............................................................................
-	private function on_Mouse_Up_Stage(ev: Event): Void
+	private function on_Mouse_Up_Stage(ev : Event) : Void
 	{
-		var b: Button = cast this;
-		if ((state_ & Visel.STATE_DOWN) != 0)
+		if ((state_ & Visel.STATE_DRAG) != 0)
 		{
-			if (b.tap_id != ev.input_id)
+			if (tap_id_ != ev.input_id)
 				return;
-			state_ &= ~Visel.STATE_DOWN;
+			state_ &= ~Visel.STATE_DRAG;
 			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 
 			var r: Root = Root.instance;
 			r.stage_.remove_Listener(on_Stage_Event);
 
 			if (ev.target == this)
-			{
 				ev.stop_propagation = true;
-				//flash.Lib.trace("button::on_Mouse_Up " + ev.globalX + ":" + ev.globalY);
-				b.handle_Click(ev.globalX, ev.globalY, ev.targetX, ev.targetY);
+
+			if (parent != null)
+			{
+				var p : Scrollbar = cast parent;
+				p.on_Thumb_Finish_Drag();
+			}
+			//flash.Lib.trace("thumb::stop drag on " + ev.inputId);
+		}
+	}
+//.............................................................................
+	private function on_Mouse_Move_Stage(ev : Event) : Void
+	{
+		if ((state_ & Visel.STATE_DRAG) != 0)
+		{
+			if (tap_id_ != ev.input_id)
+				return;
+			if (parent != null)
+			{
+				var p: Scrollbar = cast parent;
+
+				var ny: Float = Util.fclamp(start_y_ + ev.globalY, 0, p.height - height_);
+				y = ny;
+
+				//flash.Lib.trace("thumb::do drag on " + ev.inputId);
+				p.on_Thumb_Do_Drag();
 			}
 		}
 	}
@@ -95,25 +125,15 @@ class ButtonBase extends Visel
 //.............................................................................
 //.............................................................................
 //.............................................................................
-	override public function render_To(gr: Graphics, nx: Float, ny: Float): Void
-	{
-		if (!visible)
-			return;
-		nx += x;
-		ny += y;
-		render_Button_Background(gr, nx, ny);
-		render_Children(gr, nx, ny);
-	}
 //.............................................................................
-	private function render_Button_Background(gr: Graphics, nx: Float, ny: Float): Void
+//.............................................................................
+//.............................................................................
+	override private function render_Base_Background(gr: Graphics, nx: Float, ny: Float): Void
 	{
-		var nw : Float = width_;
-		var nh : Float = height_;
 		var al = dummy_alpha_;
-		if ((al > 0) && (nw > 0) && (nh > 0))
+		if (al >= 0)
 		{
 			var r : Root = Root.instance;
-			var b: Button = cast this;
 			var cl : Int = dummy_color_;
 			var frame : Float = 0;
 			if ((state_ & Visel.STATE_DISABLED) != 0)
@@ -122,10 +142,10 @@ class ButtonBase extends Visel
 			}
 			else
 			{
-				if ((state_ & Visel.STATE_DOWN) != 0)
+				if ((state_ & Visel.STATE_DRAG) != 0)
 					cl = r.color_pressed_;
 				if ((state_ & Visel.STATE_HOVER) != 0)
-					frame = b.hover_inflation_;//:may be custom
+					frame = r.hover_inflation_;
 			}
 			gr.color = Util.RGB_A(cl, al);
 			gr.fillRect(nx - frame, ny - frame, width_ + 2 * frame, height_ + 2 * frame);
@@ -134,4 +154,3 @@ class ButtonBase extends Visel
 //.............................................................................
 //.............................................................................
 }
-

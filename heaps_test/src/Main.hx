@@ -1,12 +1,14 @@
 //import com.gs.console.KonsoleConfig;
 
 import gs.femto_ui.Align;
+import gs.femto_ui.Edit;
 import gs.femto_ui.InfoClick;
 import gs.femto_ui.Label;
 import gs.femto_ui.Button;
 import gs.femto_ui.Mover;
 import gs.femto_ui.Resizer;
 import gs.femto_ui.Root;
+import gs.femto_ui.Scrollbar;
 import gs.femto_ui.Toolbar;
 import gs.femto_ui.Viewport;
 import gs.femto_ui.Visel;
@@ -142,6 +144,13 @@ class Main extends App
 		btn.dummy_color = 0x202040;
 		btn.resize_Visel(120, 42);
 
+		var sc: Scrollbar = new Scrollbar(panel, function(v: Int): Void
+		{
+			trace("Scrollbar::scroll " + v);
+		});
+		sc.movesize(panel.width - r.small_tool_width_, 10, r.small_tool_width_, panel.height - 100);
+		sc.reset(1, 15, 1);
+
 		var m: Mover = new Mover(panel);
 		m.resize_Visel(r.tool_width_, r.tool_height_);
 		m.dummy_color = r.color_movesize_;
@@ -159,7 +168,7 @@ class Main extends App
 
 	function on_Click(ev: InfoClick)
 	{
-		trace("click #" + debug_counter_++ + ", " + ev.mx_ + ": " + ev.my_);
+		trace("click #" + debug_counter_++ + ", " + ev.global_x_ + ": " + ev.global_y_);
 	}
 
 	function on_Click1(ev: InfoClick)
@@ -187,11 +196,20 @@ class Main extends App
 			vp2_.dummy_color_ = 0x208060;
 			vp2_.dummy_alpha_ = 0.75;
 			vp2_.movesize(15, 25, 320, 200);
+
+			var edit = new Edit(vp2_, on_Edit_Changed, "123");
+			edit.dummy_color = 0x445566;
+			edit.movesize(50, 100, 180, 60);
 		}
 		else
 		{
 			vp2_.visible = !vp2_.visible;
 		}
+	}
+
+	function on_Edit_Changed(s: String)
+	{
+		trace("***** edit::text = '" + s + "'");
 	}
 
 	/*
@@ -205,9 +223,9 @@ class Main extends App
 		switch (event.kind)
 		{
 			case EKeyDown:
-				trace('DOWN keyCode: 0x${StringTools.hex(event.keyCode, 2)}');
+				//trace('DOWN keyCode: 0x${StringTools.hex(event.keyCode, 2)}');
 			case EKeyUp:
-				trace('UP keyCode: 0x${StringTools.hex(event.keyCode, 2)}');
+				//trace('UP keyCode: 0x${StringTools.hex(event.keyCode, 2)}');
 				on_Key_Down(event);
 			case _:
 		}

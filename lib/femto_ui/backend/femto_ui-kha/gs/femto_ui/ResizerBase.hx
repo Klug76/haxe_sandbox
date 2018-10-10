@@ -1,9 +1,8 @@
 package gs.femto_ui;
 
 import gs.femto_ui.kha.Event;
-import kha.Color;
 import kha.graphics2.Graphics;
-import kha.input.Mouse;
+import gs.femto_ui.util.Util;
 
 using gs.femto_ui.RootBase.NativeUIContainer;
 
@@ -17,6 +16,7 @@ class ResizerBase extends Visel
 	override private function init_Base(): Void
 	{
 		super.init_Base();
+		hit_test_bits = ViselBase.HIT_TEST_FUNC;
 		add_Listener(on_Event);
 	}
 //.............................................................................
@@ -33,12 +33,12 @@ class ResizerBase extends Visel
 		{
 		case Event.MOUSE_DOWN:
 			on_Mouse_Down(ev);
-		case Event.MOUSE_UP:
-			on_Mouse_Up(ev);
+		//case Event.MOUSE_UP:
+			//on_Mouse_Up(ev);
 		case Event.MOUSE_IN:
-			on_Mouse_In(ev);
+			set_Hover_State(ev);
 		case Event.MOUSE_OUT:
-			on_Mouse_Out(ev);
+			remove_Hover_State(ev);
 		}
 	}
 //.............................................................................
@@ -47,64 +47,55 @@ class ResizerBase extends Visel
 		switch(ev.type)
 		{
 		case Event.MOUSE_UP:
-			on_Mouse_Up(ev);
+			on_Mouse_Up_Stage(ev);
 		case Event.MOUSE_MOVE:
-			on_Mouse_Move(ev);
+			on_Mouse_Move_Stage(ev);
 		}
 	}
 //.............................................................................
 	private function on_Mouse_Down(ev: Event): Void
 	{
+		ev.stop_propagation = true;
+
 		if ((state_ & Visel.STATE_DOWN) != 0)
 			return;
 		state_ |= Visel.STATE_DOWN;
+		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 
 		var rz: Resizer = cast this;
-		rz.handle_Tap(ev.inputId, ev.globalX, ev.globalY);
+		rz.handle_Tap(ev.input_id, ev.globalX, ev.globalY);
 
 		var r: Root = Root.instance;
 		r.stage_.add_Listener(on_Stage_Event);
 	}
 //.............................................................................
-	private function on_Mouse_Up(ev: Event): Void
+	private function on_Mouse_Up_Stage(ev: Event): Void
 	{
 		var rz: Resizer = cast this;
-		if (rz.tap_id != ev.inputId)
-			return;
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
+			if (rz.tap_id != ev.input_id)
+				return;
 			state_ &= ~Visel.STATE_DOWN;
 			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 
 			var r: Root = Root.instance;
 			r.stage_.remove_Listener(on_Stage_Event);
+
+			if (ev.target == this)
+				ev.stop_propagation = true;
 		}
 	}
 //.............................................................................
-	private function on_Mouse_Move(ev: Event): Void
+	private function on_Mouse_Move_Stage(ev: Event): Void
 	{
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
 			var rz: Resizer = cast this;
-			rz.handle_Move(ev.inputId, ev.globalX, ev.globalY);
+			rz.handle_Move(ev.input_id, ev.globalX, ev.globalY);
 		}
 	}
 //.............................................................................
-	private function on_Mouse_In(_): Void
-	{
-		if ((state_ & Visel.STATE_HOVER) != 0)
-			return;
-		state_ |= Visel.STATE_HOVER;
-		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
-	}
-//.............................................................................
-	private function on_Mouse_Out(_): Void
-	{
-		if ((state_ & Visel.STATE_HOVER) == 0)
-			return;
-		state_ &= ~Visel.STATE_HOVER;
-		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
-	}
 //.............................................................................
 //.............................................................................
 	override private function render_Base_Background(gr: Graphics, nx: Float, ny: Float): Void
@@ -116,19 +107,17 @@ class ResizerBase extends Visel
 		if ((al > 0) && (nw > 0) && (nh > 0))
 		{
 			var r: Root = Root.instance;
-			var u : Int = r.color_gripper_;
+			var cl: Int = r.color_gripper_;
 			var offset: Float = 0;
 			if ((state_ & Visel.STATE_DOWN) != 0)
 			{
-				u = r.color_pressed_;
+				cl = r.color_pressed_;
 			}
-			if ((state_ & Visel.STATE_HOVER) != 0)
+			if ((state_ & Visel.STATE_HOVER) == 0)
 			{
-				offset = r.hover_inflation_;
+				offset = -r.hover_inflation_;
 			}
-			var cl: Color = u;
-			cl.A = al;
-			gr.color = cl;
+			gr.color = Util.RGB_A(cl, al);
 			gr.fillTriangle(nx - offset, ny + nh + offset, nx + nw + offset, ny - offset, nx + nw + offset, ny + nh + offset);
 		}
 	}

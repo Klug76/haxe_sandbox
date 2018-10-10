@@ -9,12 +9,15 @@ import hxd.Event;
 
 using gs.femto_ui.RootBase.NativeUIContainer;
 
-class MoverBase extends Visel
+class ThumbBase extends Visel
 {
 	private var cur_scene_: Scene = null;
 	private var drag_enter_: Bool = false;
 
-	public function new(owner : NativeUIContainer)
+	//private var start_x_ : Float;
+	private var start_y_ : Float;
+
+	public function new(owner : Scrollbar)
 	{
 		super(owner);
 	}
@@ -48,9 +51,10 @@ class MoverBase extends Visel
 //.............................................................................
 	private function on_Mouse_Down(ev : Event) : Void
 	{
-		if ((state_ & Visel.STATE_DOWN) != 0)
+		//trace("thumb::" + ev.kind + ": " + ev.button + ": " + ev.touchId + ": " + ev.propagate);
+		if ((state_ & Visel.STATE_DRAG) != 0)
 			return;
-		state_ |= Visel.STATE_DOWN;
+		state_ |= Visel.STATE_DRAG;
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 
 		ev.propagate = false;
@@ -62,41 +66,53 @@ class MoverBase extends Visel
 //.............................................................................
 	private function on_Mouse_Up(ev : Event) : Void
 	{
-		if ((state_ & Visel.STATE_DOWN) != 0)
+		if ((state_ & Visel.STATE_DRAG) != 0)
 		{
-			state_ &= ~Visel.STATE_DOWN;
+			state_ &= ~Visel.STATE_DRAG;
 			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 
 			ev.propagate = false;
 			stop_Drag();
+
+			if (parent != null)
+			{
+				var p : Scrollbar = cast parent;
+				p.on_Thumb_Finish_Drag();
+			}
 		}
 	}
 //.............................................................................
 	private function on_Mouse_Move(ev : Event) : Void
 	{
-		if ((state_ & Visel.STATE_DOWN) != 0)
+		if ((state_ & Visel.STATE_DRAG) != 0)
 		{
 			ev.propagate = false;
 
-			var m: Mover = cast this;
-			if (!drag_enter_)
+			if (parent != null)
 			{
-				drag_enter_ = true;
-				m.handle_Tap(ev.button, ev.relX, ev.relY);
-			}
-			else
-			{
-				m.handle_Move(ev.button, ev.relX, ev.relY);
+				var p : Scrollbar = cast parent;
+
+				if (!drag_enter_)
+				{
+					drag_enter_ = true;
+					//start_x_ = x - ev.globalX;
+					start_y_ = y - ev.relY;
+				}
+				else
+				{
+					var ny: Float = Util.fclamp(start_y_ + ev.relY, 0, p.height - height_);
+					y = ny;
+
+					p.on_Thumb_Do_Drag();
+				}
 			}
 		}
 	}
 //.............................................................................
 //.............................................................................
 //.............................................................................
-	override public function draw_Visel() : Void
+	override private function draw_Base_Background() : Void
 	{
-		draw_Base_Background();
-		draw_Interactive();
 		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_SKIN | Visel.INVALIDATION_FLAG_SIZE | Visel.INVALIDATION_FLAG_STATE)) != 0)
 		{
 			var nw : Float = width_;
@@ -105,27 +121,32 @@ class MoverBase extends Visel
 			if ((al >= 0) && (nw > 0) && (nh > 0))
 			{
 				var r : Root = Root.instance;
-				var cl : Int = r.color_gripper_;
-				var offset: Float = 0;
-				if ((state_ & Visel.STATE_DOWN) != 0)
+				var cl : Int = dummy_color_;
+				var frame: Float = 0;
+				if ((state_ & Visel.STATE_DISABLED) != 0)
 				{
-					cl = r.color_pressed_;
+					cl = r.color_disabled_;
 				}
-				if ((state_ & Visel.STATE_HOVER) == 0)
+				else
 				{
-					offset = -r.hover_inflation_;
+					if ((state_ & Visel.STATE_DRAG) != 0)
+						cl = r.color_pressed_;
+					if ((state_ & Visel.STATE_HOVER) != 0)
+						frame = r.hover_inflation_;
 				}
 				var bg = alloc_Background();
-				bg.beginFill(cl & 0xffffff, al);
-				bg.moveTo(-offset, nh * .5);
-				bg.lineTo(nw * .5, -offset);
-				bg.lineTo(nw + offset, nh * .5);
-				bg.lineTo(nw * .5, nh + offset);
-				bg.lineTo(-offset, nh * .5);
+				bg.clear();
+				bg.beginFill(cl & 0xFFffFF, al);
+				//TODO bg.drawRoundRect
+				bg.drawRect(-frame, -frame, nw + 2 * frame, nh + 2 * frame);
 				bg.endFill();
 			}
+			else
+			{
+				clear_Background();
+			}
 		}
-		//:super.draw_Visel();
+		//:super.draw_Base_Background();
 	}
 }
 

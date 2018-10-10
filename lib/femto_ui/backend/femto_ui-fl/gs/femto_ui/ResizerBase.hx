@@ -16,19 +16,32 @@ class ResizerBase extends Visel
 //.............................................................................
 	override private function init_Base() : Void
 	{
+		super.init_Base();
 		buttonMode = true;
+		addEventListener(MouseEvent.CLICK, on_Mouse_Click);
 		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
-		addEventListener(MouseEvent.ROLL_OVER, on_Mouse_Over);
+		addEventListener(MouseEvent.ROLL_OVER, set_Hover_State);
+		addEventListener(MouseEvent.ROLL_OUT, remove_Hover_State);
+	}
+//.............................................................................
+	override private function destroy_Base(): Void
+	{
+		super.destroy_Base();
+		removeEventListener(MouseEvent.CLICK, on_Mouse_Click);
+		removeEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
+		removeEventListener(MouseEvent.ROLL_OVER, set_Hover_State);
+		removeEventListener(MouseEvent.ROLL_OUT, remove_Hover_State);
 	}
 //.............................................................................
 	private function on_Mouse_Down(ev : MouseEvent) : Void
 	{
+		ev.stopPropagation();
+
 		if ((state_ & Visel.STATE_DOWN) != 0)
 			return;
 		state_ |= Visel.STATE_DOWN;
-		ev.stopPropagation();
-
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
+
 		stage.addEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage, false, 1);
 		stage.addEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move_Stage, false, 1);
 
@@ -38,45 +51,35 @@ class ResizerBase extends Visel
 //.............................................................................
 	private function on_Mouse_Up_Stage(ev : MouseEvent) : Void
 	{
-		stage.removeEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage);
-		stage.removeEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move_Stage);
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
 			state_ &= ~Visel.STATE_DOWN;
-			ev.stopImmediatePropagation();
 			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
+
+			ev.stopImmediatePropagation();
 		}
+		stage.removeEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage);
 	}
 //.............................................................................
 	private function on_Mouse_Move_Stage(ev : MouseEvent) : Void
 	{
-		if (disposed)
-			return;
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
 			ev.stopImmediatePropagation();
-			var rz: Resizer = cast this;
-			rz.handle_Move(0, ev.stageX, ev.stageY);
+
+			if (!disposed)
+			{
+				var rz: Resizer = cast this;
+				rz.handle_Move(0, ev.stageX, ev.stageY);
+				return;
+			}
 		}
+		stage.removeEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move_Stage);
 	}
 //.............................................................................
-	private function on_Mouse_Over(ev : MouseEvent) : Void
+	private function on_Mouse_Click(ev : MouseEvent) : Void
 	{
-		if ((state_ & Visel.STATE_HOVER) != 0)
-			return;
-		state_ |= Visel.STATE_HOVER;
-		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
-		addEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out);
-	}
-//.............................................................................
-	private function on_Mouse_Out(ev : MouseEvent) : Void
-	{
-		if ((state_ & Visel.STATE_HOVER) != 0)
-		{
-			state_ &= ~Visel.STATE_HOVER;
-			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
-		}
-		removeEventListener(MouseEvent.ROLL_OUT, on_Mouse_Out);
+		ev.stopPropagation();//:just eat it
 	}
 //.............................................................................
 //.............................................................................
@@ -114,12 +117,27 @@ class ResizerBase extends Visel
 				}
 				if ((state_ & Visel.STATE_HOVER) == 0)
 				{
-					Util.inflate_Vector(ppt, -r.hover_inflation_);
+					inflate_Vector(ppt, -r.hover_inflation_);
 				}
 				graphics.beginFill(cl & 0xffffff, al);
 				graphics.drawPath(cmd, ppt);
 				graphics.endFill();
 			}
+		}
+		//:super.draw_Visel()
+	}
+//.............................................................................
+	inline private function inflate_Vector(ppt : Vector<Float>, value : Float) : Void
+	{
+		var len: Int = ppt.length;
+		for (i in 0...len)
+		{
+			var d: Float = ppt[i];
+			if (d > 0)
+				d = value;
+			else
+				d = -value;
+			ppt[i] += d;
 		}
 	}
 }

@@ -1,9 +1,6 @@
 package gs.femto_ui;
 
 import gs.femto_ui.kha.Event;
-import kha.Color;
-import kha.graphics2.Graphics;
-import kha.input.Mouse;
 
 class ViewportBase extends Visel
 {

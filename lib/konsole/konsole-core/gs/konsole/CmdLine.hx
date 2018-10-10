@@ -3,7 +3,6 @@ package gs.konsole;
 import gs.femto_ui.Edit;
 import gs.femto_ui.Root;
 import gs.femto_ui.util.RingBuf;
-import gs.femto_ui.util.Util;
 import flash.display.DisplayObjectContainer;
 import flash.events.KeyboardEvent;
 import flash.text.TextFormat;
@@ -15,20 +14,25 @@ class CmdLine extends Edit
 	private var history_ : RingBuf<String>;
 	private var cur_idx_ : Int = -1;
 	private var stash_ : String = null;
-	private static inline var history_size_: Int = 64;
-	//private static inline var history_size_ : Int = 4;
 
 	public function new(owner : DisplayObjectContainer, k : Konsole)
 	{
 		k_ = k;
-		super(owner, "");
+		super(owner, null);
 		init_Ex_Ex();
 	}
 //.............................................................................
 	private function init_Ex_Ex() : Void
 	{
-		history_ = new RingBuf<String>(history_size_);
+		history_ = new RingBuf<String>(k_.cfg_.cmd_history_size_);
 		history_.push("/commands");
+
+		dummy_color = k_.cfg_.cmd_bg_color_;
+	}
+//.............................................................................
+	override private function alloc_TextField(): Void
+	{
+		super.alloc_TextField();
 		tf_.addEventListener(KeyboardEvent.KEY_DOWN, on_Key_Down_Edit, false, 1);
 		tf_.addEventListener(KeyboardEvent.KEY_UP, on_Key_Up_Edit, false, 1);
 		if (null == k_.cfg_.password_)
@@ -43,7 +47,7 @@ class CmdLine extends Edit
 //.............................................................................
 	private function stop_Event(ev: KeyboardEvent): Void
 	{
-		trace("cmd::key " + ev.type + ": 0x" + Util.toHex(ev.keyCode));
+		//trace("cmd::key " + ev.type + ": 0x" + Util.toHex(ev.keyCode));
 		ev.preventDefault();
 		ev.stopImmediatePropagation();
 	}
@@ -79,14 +83,13 @@ class CmdLine extends Edit
 		}
 	}
 //.............................................................................
-	private function complete() : Void
-	{
-		tf_.text = "foo";
-	}
+	//private function complete() : Void
+	//{
+	//}
 //.............................................................................
 	private function exec() : Void
 	{
-		var s : String = tf_.text;
+		var s : String = get_Base_Text();
 		if (s.length <= 0)
 		{
 			return;
@@ -126,7 +129,7 @@ class CmdLine extends Edit
 		{
 			return;
 		}
-		var t : String = tf_.text;
+		var t : String = get_Base_Text();
 		if ((null == stash_) || !history_.have(t))
 		{
 			stash_ = t;
@@ -141,11 +144,11 @@ class CmdLine extends Edit
 		}
 		if (cur_idx_ < len)
 		{
-			tf_.text = history_.item(history_.head + len - cur_idx_ - 1);
+			set_Base_Text(history_.item(history_.head + len - cur_idx_ - 1));
 			set_Caret_To_End();
 			return;
 		}
-		tf_.text = "";
+		set_Base_Text("");
 	}
 //.............................................................................
 	private function get_History_Down() : Void
@@ -166,19 +169,19 @@ class CmdLine extends Edit
 			{
 				cur_idx_ = len - 1;
 			}
-			tf_.text = history_.item(history_.head + len - cur_idx_ - 1);
+			set_Base_Text(history_.item(history_.head + len - cur_idx_ - 1));
 			set_Caret_To_End();
 			return;
 		}
 		if (stash_ != null)
 		{
-			tf_.text = stash_;
+			set_Base_Text(stash_);
 			stash_ = null;
 			set_Caret_To_End();
 		}
 		else
 		{
-			tf_.text = "";
+			set_Base_Text("");
 		}
 	}
 //.............................................................................

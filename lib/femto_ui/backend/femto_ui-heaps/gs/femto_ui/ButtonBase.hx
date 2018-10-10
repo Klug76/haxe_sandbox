@@ -22,26 +22,28 @@ class ButtonBase extends Visel
 
 		var ni: Interactive = alloc_Interactive(Cursor.Button);
 		ni.onClick = on_Mouse_Click;
-		ni.onOver = on_Mouse_Over;
-		ni.onOut = on_Mouse_Out;
 		ni.onPush = on_Mouse_Down;
 		ni.onRelease = on_Mouse_Up;
+		ni.onOver = set_Hover_State;
+		ni.onOut = remove_Hover_State;
 	}
 //.............................................................................
 //.............................................................................
 //.............................................................................
 //.............................................................................
-	override public function draw_Base_Background() : Void
+	override private function draw_Base_Background() : Void
 	{
 		//if (1100101 == tag_)
 			//trace("***");
-		var r : Root = Root.instance;
-		var b: Button = cast this;
 		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_SKIN | Visel.INVALIDATION_FLAG_SIZE | Visel.INVALIDATION_FLAG_STATE)) != 0)
 		{
-			var al = b.dummy_alpha_;
-			if (al >= 0)
+			var nw : Float = width_;
+			var nh : Float = height_;
+			var al = dummy_alpha_;
+			if ((al >= 0) && (nw > 0) && (nh > 0))
 			{
+				var r : Root = Root.instance;
+				var b: Button = cast this;
 				var cl : Int = dummy_color_;
 				var frame : Float = 0;
 				if ((state_ & Visel.STATE_DISABLED) != 0)
@@ -53,14 +55,13 @@ class ButtonBase extends Visel
 					if ((state_ & Visel.STATE_DOWN) != 0)
 						cl = r.color_pressed_;
 					if ((state_ & Visel.STATE_HOVER) != 0)
-						frame = b.hover_inflation_;
+						frame = b.hover_inflation_;//:may be custom
 				}
-				cl &= 0xFFffFF;
 				var bg = alloc_Background();
 				bg.clear();
-				bg.beginFill(cl, al);
-				//bg.drawRoundRect(-frame, -frame, width_ + 2 * frame, height_ + 2 * frame, r.round_frame_, r.round_frame_);
-				bg.drawRect(-frame, -frame, width_ + 2 * frame, height_ + 2 * frame);
+				bg.beginFill(cl & 0xFFffFF, al);
+				//bg.drawRoundRect(-frame, -frame, nw + 2 * frame, nh + 2 * frame, r.round_frame_, r.round_frame_);
+				bg.drawRect(-frame, -frame, nw + 2 * frame, nh + 2 * frame);
 				bg.endFill();
 			}
 			else
@@ -75,7 +76,7 @@ class ButtonBase extends Visel
 //.............................................................................
 	private function on_Mouse_Down(ev : Event) : Void
 	{
-		trace("Button::" + ev.kind + ": " + ev.button + ": " + ev.touchId + ": " + ev.propagate);
+		//trace("Button::" + ev.kind + ": " + ev.button + ": " + ev.touchId + ": " + ev.propagate);
 		if ((state_ & Visel.STATE_DOWN) != 0)
 			return;
 		state_ |= Visel.STATE_DOWN;
@@ -86,7 +87,7 @@ class ButtonBase extends Visel
 		to_Global(ev.relX, ev.relY);
 		var b: Button = cast this;
 		//TODO fix me: ev.button vs ev.touchId
-		b.handle_Tap(ev.button, aux_pt_.x, aux_pt_.y);
+		b.handle_Tap(ev.button, aux_pt_.x, aux_pt_.y, ev.relX, ev.relY);
 	}
 //.............................................................................
 	private function on_Mouse_Up(ev : Event) : Void
@@ -100,21 +101,6 @@ class ButtonBase extends Visel
 		}
 	}
 //.............................................................................
-	private function on_Mouse_Over(ev : Event) : Void
-	{
-		if ((state_ & Visel.STATE_HOVER) != 0)
-			return;
-		state_ |= Visel.STATE_HOVER;
-		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
-	}
-//.............................................................................
-	private function on_Mouse_Out(ev : Event) : Void
-	{
-		if ((state_ & Visel.STATE_HOVER) == 0)
-			return;
-		state_ &= ~Visel.STATE_HOVER;
-		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
-	}
 //.............................................................................
 	private function on_Mouse_Click(ev : Event) : Void
 	{
@@ -125,10 +111,10 @@ class ButtonBase extends Visel
 
 		to_Global(ev.relX, ev.relY);
 		var b: Button = cast this;
-		b.handle_Click(aux_pt_.x, aux_pt_.y);
+		b.handle_Click(aux_pt_.x, aux_pt_.y, ev.relX, ev.relY);
 	}
 //.............................................................................
-	function to_Global(relX:Float, relY:Float) : Void
+	private function to_Global(relX: Float, relY: Float) : Void
 	{
 		if (null == aux_pt_)
 			aux_pt_ = new Point();

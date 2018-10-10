@@ -3,7 +3,7 @@ package gs.femto_ui;
 import haxe.Timer;
 
 using gs.femto_ui.RootBase.NativeUIContainer;
-//:________________________________________________________________________________________________
+
 @:allow(gs.femto_ui.ButtonBase)
 class Button extends ButtonBase
 {
@@ -23,6 +23,7 @@ class Button extends ButtonBase
 	private static var repeat_button_ : Button = null;
 
 	public var repeat_delay_ : Float = 400 / 1000;//:s
+	public var min_repeat_delay_ : Float = 50 / 1000;//:s
 
 	public function new(owner : NativeUIContainer, txt : String, on_Click : InfoClick->Void)
 	{
@@ -65,7 +66,7 @@ class Button extends ButtonBase
 			text = value;
 			if (value != null)
 				alloc_Label();
-			invalidate_Visel(Visel.INVALIDATION_FLAG_DATA);
+			invalidate_Visel(Visel.INVALIDATION_FLAG_TEXT);
 		}
 		return value;
 	}
@@ -117,7 +118,7 @@ class Button extends ButtonBase
 //.............................................................................
 //.............................................................................
 	private var tap_id(default, null): Int = 0;
-	private function handle_Tap(tapId: Int, mx: Float, my: Float): Void
+	private function handle_Tap(tapId: Int, globalX: Float, globalY: Float, localX: Float, localY: Float): Void
 	{
 		//trace("button::tap " + tapId + ":" + mx + ":" + my);
 		tap_id = tapId;
@@ -129,8 +130,10 @@ class Button extends ButtonBase
 				repeat_time_ = Timer.stamp() + repeat_delay_;
 				if (null == repeat_event_)
 					repeat_event_ = new InfoClick();
-				repeat_event_.mx_ = mx;
-				repeat_event_.my_ = my;
+				repeat_event_.global_x_ = globalX;
+				repeat_event_.global_y_ = globalY;
+				repeat_event_.local_x_ = localX;
+				repeat_event_.local_y_ = localY;
 				repeat_button_ = this;
 				Root.instance.frame_signal_.add(on_Enter_Frame);
 			}
@@ -141,12 +144,14 @@ class Button extends ButtonBase
 		}
 	}
 //.............................................................................
-	private function handle_Click(mx: Float, my: Float): Void
+	private function handle_Click(globalX: Float, globalY: Float, localX: Float, localY: Float): Void
 	{
 		if (null == click_event_)
 			click_event_ = new InfoClick();
-		click_event_.mx_ = mx;
-		click_event_.my_ = my;
+		click_event_.global_x_ = globalX;
+		click_event_.global_y_ = globalY;
+		click_event_.local_x_ = localX;
+		click_event_.local_y_ = localY;
 		if (on_click_ != null)
 			on_click_(click_event_);
 	}
@@ -163,10 +168,8 @@ class Button extends ButtonBase
 				++repeat_count_;
 				var delay : Float = repeat_delay_;
 				delay = delay / repeat_count_;
-				if (delay < 50 / 1000)
-				{
-					delay = 50 / 1000;//:s
-				}
+				if (delay < min_repeat_delay_)
+					delay = min_repeat_delay_;
 				repeat_time_ = time + delay;
 				if (on_click_ != null)
 					on_click_(repeat_event_);

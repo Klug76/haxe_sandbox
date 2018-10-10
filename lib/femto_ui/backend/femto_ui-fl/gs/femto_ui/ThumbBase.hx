@@ -1,17 +1,14 @@
 package gs.femto_ui;
 
-
-import flash.display.GraphicsPathCommand;
+import flash.Lib;
 import flash.events.MouseEvent;
-import flash.Vector;
-import gs.femto_ui.util.Util;
+import flash.geom.Rectangle;
 
-using gs.femto_ui.RootBase.NativeUIContainer;
-
-class MoverBase extends Visel
+class ThumbBase extends Visel
 {
+	private var drag_rect_ : Rectangle;
 
-	public function new(owner : NativeUIContainer)
+	public function new(owner : Scrollbar)
 	{
 		super(owner);
 	}
@@ -19,7 +16,6 @@ class MoverBase extends Visel
 	override private function init_Base() : Void
 	{
 		super.init_Base();
-		buttonMode = true;
 		addEventListener(MouseEvent.CLICK, on_Mouse_Click);
 		addEventListener(MouseEvent.MOUSE_DOWN, on_Mouse_Down);
 		addEventListener(MouseEvent.ROLL_OVER, set_Hover_State);
@@ -37,42 +33,62 @@ class MoverBase extends Visel
 //.............................................................................
 	private function on_Mouse_Down(ev : MouseEvent) : Void
 	{
+		//flash.Lib.trace("thumb::on_Mouse_Down " + ev.stageX + ":" + ev.stageY);
 		ev.stopPropagation();
 
-		if ((state_ & Visel.STATE_DOWN) != 0)
+		if ((state_ & Visel.STATE_DRAG) != 0)
 			return;
-		state_ |= Visel.STATE_DOWN;
+
+		var p : Scrollbar = Lib.as(parent, Scrollbar);
+		var nh : Float = Math.floor(p.height - height_);
+		if (nh <= 0)
+		{//:unable to drag
+			return;
+		}
+		state_ |= Visel.STATE_DRAG;
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 
 		stage.addEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage, false, 1);
 		stage.addEventListener(MouseEvent.MOUSE_MOVE, on_Mouse_Move_Stage, false, 1);
 
-		var m: Mover = cast this;
-		m.handle_Tap(0, ev.stageX, ev.stageY);
+		if (null == drag_rect_)
+			drag_rect_ = new Rectangle(0, 0, 0, nh);
+		else
+			drag_rect_.height = nh;
+
+		startDrag(false, drag_rect_);
 	}
 //.............................................................................
 	private function on_Mouse_Up_Stage(ev : MouseEvent) : Void
 	{
-		if ((state_ & Visel.STATE_DOWN) != 0)
+		if ((state_ & Visel.STATE_DRAG) != 0)
 		{
-			state_ &= ~Visel.STATE_DOWN;
+			ev.stopImmediatePropagation();
+			stopDrag();
+
+			state_ &= ~Visel.STATE_DRAG;
 			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 
-			ev.stopImmediatePropagation();
+			var p : Scrollbar = Lib.as(parent, Scrollbar);
+			if (p != null)
+			{
+				p.on_Thumb_Finish_Drag();
+			}
 		}
 		stage.removeEventListener(MouseEvent.MOUSE_UP, on_Mouse_Up_Stage);
 	}
 //.............................................................................
 	private function on_Mouse_Move_Stage(ev : MouseEvent) : Void
 	{
-		if ((state_ & Visel.STATE_DOWN) != 0)
+		if ((state_ & Visel.STATE_DRAG) != 0)
 		{
-			ev.stopImmediatePropagation();
-
-			if (!disposed)
+			var p: Scrollbar = Lib.as(parent, Scrollbar);
+			if (p != null)
 			{
-				var m: Mover = cast this;
-				m.handle_Move(0, ev.stageX, ev.stageY);
+				ev.stopImmediatePropagation();
+				ev.updateAfterEvent();
+				//trace("thumb::do drag");
+				p.on_Thumb_Do_Drag();
 				return;
 			}
 		}
@@ -86,68 +102,36 @@ class MoverBase extends Visel
 //.............................................................................
 //.............................................................................
 //.............................................................................
-	override public function draw_Visel() : Void
+//.............................................................................
+//.............................................................................
+//.............................................................................
+	override private function draw_Base_Background() : Void
 	{
-		draw_Base_Background();
 		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_SKIN | Visel.INVALIDATION_FLAG_SIZE | Visel.INVALIDATION_FLAG_STATE)) != 0)
 		{
-			var nw : Float = width_;
-			var nh : Float = height_;
-			var al : Float = dummy_alpha_;
-			if ((al >= 0) && (nw > 0) && (nh > 0))
+			graphics.clear();
+			if (dummy_alpha_ >= 0)
 			{
 				var r : Root = Root.instance;
-				var cmd : Vector<Int> = new Vector<Int>(5);
-				cmd[0] = GraphicsPathCommand.MOVE_TO;
-				cmd[1] = GraphicsPathCommand.LINE_TO;
-				cmd[2] = GraphicsPathCommand.LINE_TO;
-				cmd[3] = GraphicsPathCommand.LINE_TO;
-				cmd[4] = GraphicsPathCommand.LINE_TO;
-				var ppt : Vector<Float> = new Vector<Float>(10);
-				ppt[0] = 0;
-				ppt[1] = nh * .5;
-				ppt[2] = nw * .5;
-				ppt[3] = 0;
-				ppt[4] = nw;
-				ppt[5] = nh * .5;
-				ppt[6] = nw * .5;
-				ppt[7] = nh;
-				ppt[8] = 0;
-				ppt[9] = nh * .5;
-				var cl : Int = r.color_gripper_;
-				if ((state_ & Visel.STATE_DOWN) != 0)
+				var cl : Int = dummy_color_;
+				var frame : Float = 0;
+				if ((state_ & Visel.STATE_DISABLED) != 0)
 				{
-					cl = r.color_pressed_;
+					cl = r.color_disabled_;
 				}
-				if ((state_ & Visel.STATE_HOVER) == 0)
+				else
 				{
-					inflate_Vector(ppt, -r.hover_inflation_);
+					if ((state_ & Visel.STATE_DRAG) != 0)
+						cl = r.color_pressed_;
+					if ((state_ & Visel.STATE_HOVER) != 0)
+						frame = r.hover_inflation_;
 				}
-				graphics.beginFill(cl & 0xffffff, al);
-				graphics.drawPath(cmd, ppt);
+				graphics.beginFill(cl, dummy_alpha_);
+				graphics.drawRoundRect(-frame, -frame, width_ + 2 * frame, height_ + 2 * frame, r.round_frame_, r.round_frame_);
 				graphics.endFill();
 			}
 		}
-		//:super.draw_Visel()
 	}
 //.............................................................................
-	inline private function inflate_Vector(ppt : Vector<Float>, value : Float) : Void
-	{
-		var len: Int = ppt.length;
-		for (i in 0...len)
-		{
-			var d: Float = ppt[i];
-			switch(i)
-			{
-			case 4, 7:
-				d = value;
-			case 0, 3, 8:
-				d = -value;
-			default:
-				d = 0;
-			}
-			ppt[i] += d;
-		}
-	}
+//.............................................................................
 }
-

@@ -26,7 +26,7 @@ class LabelBase extends Visel
 	{
 		super.draw_Visel();
 		var al: Label = cast this;
-		if ((invalid_flags_ & Visel.INVALIDATION_FLAG_DATA) != 0)
+		if ((invalid_flags_ & Visel.INVALIDATION_FLAG_TEXT) != 0)
 		{
 			invalid_flags_ |= Visel.INVALIDATION_FLAG_ALIGN;
 			if ((null == text_field_) && (al.text_ != null) && (al.text_.length > 0))

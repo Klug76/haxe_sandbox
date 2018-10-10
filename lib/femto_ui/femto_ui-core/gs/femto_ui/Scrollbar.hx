@@ -1,8 +1,10 @@
 package gs.femto_ui;
 
 import gs.femto_ui.util.Util;
-import flash.display.DisplayObjectContainer;
-import flash.events.MouseEvent;
+
+using gs.femto_ui.RootBase.NativeUIContainer;
+
+//TODO direction: horz, vert
 
 class Scrollbar extends Button
 {
@@ -17,17 +19,17 @@ class Scrollbar extends Button
 
 	public var thumb_ : Thumb;
 
-	public function new(owner : DisplayObjectContainer, callback : Int->Void)
+	public function new(owner : NativeUIContainer, callback : Int->Void)
 	{
 		super(owner, null, on_Area_Click);
 #if debug
 		name = "scrollbar";
 #end
 		on_scroll_ = callback;
-		init_Ex_Ex();
+		init_Scrollbar();
 	}
-	//.............................................................................
-	private function init_Ex_Ex() : Void
+//.............................................................................
+	private function init_Scrollbar() : Void
 	{
 		var r : Root = Root.instance;
 
@@ -39,60 +41,67 @@ class Scrollbar extends Button
 		thumb_.height = r.tool_height_;
 		thumb_.dummy_color = r.color_thumb_;
 
-		dummy_color = r.color_scroller_;
+		dummy_color = r.color_scrollbar_;
 	}
-	//.............................................................................
+//.............................................................................
 	public function reset(mn : Int, mx : Int, cur : Int) : Void
 	{
 		min_ = mn;
 		max_ = mx;
 		value_ = cur;
+		update_State();
 	}
-	//.............................................................................
-	//.............................................................................
-	private function on_Area_Click(e : InfoClick) : Void
+//.............................................................................
+	private function update_State(): Void
 	{
 		if (thumb_.is_drag_mode)
-		{
 			return;
-		}
-		var ny : Float = thumb_.mouseY;
+		enabled =
+		thumb_.enabled = max_ > min_;
+	}
+//.............................................................................
+	private function on_Area_Click(ev: InfoClick) : Void
+	{
+		//flash.Lib.trace("scrollbar::on_Area_Click " + ev.global_x_ + ":" + ev.global_y_);
+		if (thumb_.is_drag_mode)
+			return;
+		var ny : Float = ev.local_y_;
 		var v : Int = value_;
-		if (ny < 0)
+		if (ny < thumb_.y)
 			--v;
-		else if (ny > thumb_.height)
+		else if (ny >= thumb_.y + thumb_.height)
 			++v;
 		else
 			return;
 		set_Value(v);
 		invalidate_Visel(Visel.INVALIDATION_FLAG_DATA);
 	}
-	//.............................................................................
+//.............................................................................
 	private function set_Value(v : Int) : Void
 	{
 		v = clamp_Value(v);
 		if (value_ != v)
 		{
 			value_ = v;
+			//flash.Lib.trace("scrollbar::set_Value(" + v + ")");
 			on_scroll_(v);
 		}
 	}
-	//.............................................................................
-	//.............................................................................
-	//.............................................................................
-	//.............................................................................
+//.............................................................................
+//.............................................................................
 	public function on_Thumb_Do_Drag() : Void
 	{
+		//flash.Lib.trace("thumb::do drag, y=" + thumb_.y);
 		set_Value(calc_Value(thumb_.y));
 	}
-	//.............................................................................
+//.............................................................................
 	public function on_Thumb_Finish_Drag() : Void
-	//trace("thumb::finish drag");
 	{
-
-		on_scroll_(-1);
+		//flash.Lib.trace("thumb::finish drag");
+		update_State();
+		on_scroll_(min_ - 1);
 	}
-	//.............................................................................
+//.............................................................................
 	private function calc_Value(ny : Float) : Int
 	{
 		var df : Int = max_ - min_;
@@ -103,20 +112,18 @@ class Scrollbar extends Button
 		}
 		return Math.round(ny * df / dh + min_);
 	}
-	//.............................................................................
+//.............................................................................
 	private inline function clamp_Value(v : Int) : Int
 	{
 		return Util.iclamp(v, min_, max_);
 	}
-	//.............................................................................
-	//.............................................................................
-	//.............................................................................
-	//.............................................................................
-	private function get_min() : Int
+//.............................................................................
+//.............................................................................
+	inline private function get_min() : Int
 	{
 		return min_;
 	}
-	//.............................................................................
+//.............................................................................
 	private function set_min(value : Int) : Int
 	{
 		if (min_ != value)
@@ -126,38 +133,40 @@ class Scrollbar extends Button
 		}
 		return value;
 	}
-	//.............................................................................
-	private function get_max() : Int
+//.............................................................................
+	inline private function get_max() : Int
 	{
 		return max_;
 	}
-	//.............................................................................
+//.............................................................................
 	private function set_max(value : Int) : Int
 	{
 		if (max_ != value)
 		{
 			max_ = value;
+			update_State();
 			invalidate_Visel(Visel.INVALIDATION_FLAG_DATA);
 		}
 		return value;
 	}
-	//.............................................................................
-	private function get_value() : Int
+//.............................................................................
+	inline private function get_value() : Int
 	{
 		return value_;
 	}
-	//.............................................................................
+//.............................................................................
 	private function set_value(value : Int) : Int
 	{
 		if (value_ != value)
 		{
 			value_ = value;
+			//flash.Lib.trace("scrollbar::set value = " + value + ", INVALIDATION_FLAG_DATA");
 			invalidate_Visel(Visel.INVALIDATION_FLAG_DATA);
 		}
 		return value;
 	}
-	//.............................................................................
-	//.............................................................................
+//.............................................................................
+//.............................................................................
 	override public function draw_Visel() : Void
 	{
 		super.draw_Visel();
@@ -166,14 +175,12 @@ class Scrollbar extends Button
 			update_Thumb_Position();
 		}
 	}
-	//.............................................................................
+//.............................................................................
 	private function update_Thumb_Position() : Void
 	{
 		if (thumb_.is_drag_mode)
-		{
 			return;
-		}
-		//trace("thumb::update pos, val = " + value_);
+		//flash.Lib.trace("thumb::update pos, val = " + value_);
 		var df : Int = max_ - min_;
 		var dh : Float = Math.floor(height_ - thumb_.height);
 		if ((df <= 0) || (dh <= 0) || (value_ == min_))
@@ -195,6 +202,7 @@ class Scrollbar extends Button
 		{
 			return;
 		}
+		//flash.Lib.trace("thumb::update y " + thumb_.y + " => " + ny);
 		thumb_.y = ny;
 	}
 }

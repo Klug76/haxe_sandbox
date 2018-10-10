@@ -5,10 +5,10 @@ using gs.femto_ui.RootBase.NativeUIContainer;
 @:allow(gs.femto_ui.ViselBase)
 class Visel extends ViselBase
 {
-	public var enabled(get, set) : Bool;
-	public var disposed(get, never) : Bool;
-	public var dummy_color(get, set) : Int;
-	public var dummy_alpha(get, set) : Float;
+	public var enabled(get, set): Bool;
+	public var disposed(get, never): Bool;
+	public var dummy_color(get, set): Int;
+	public var dummy_alpha(get, set): Float;
 
 	private var explicit_x_: Float = 0;
 	private var explicit_y_: Float = 0;
@@ -39,9 +39,10 @@ class Visel extends ViselBase
 	public static inline var INVALIDATION_FLAG_ALIGN : Int		= 8;
 	public static inline var INVALIDATION_FLAG_SCROLL : Int		= 0x10;
 	public static inline var INVALIDATION_FLAG_HISTORY : Int	= 0x20;
-	public static inline var INVALIDATION_FLAG_DATA : Int		= 0x40;
-	public static inline var INVALIDATION_FLAG_DATA2 : Int		= 0x80;
-	public static inline var INVALIDATION_FLAG_STAGE_SIZE : Int	= 0x100;
+	public static inline var INVALIDATION_FLAG_TEXT : Int		= 0x40;
+	public static inline var INVALIDATION_FLAG_STAGE_SIZE : Int	= 0x80;
+	public static inline var INVALIDATION_FLAG_DATA : Int		= 0x10000;
+	public static inline var INVALIDATION_FLAG_DATA2 : Int		= 0x20000;
 	public static inline var INVALIDATION_FLAG_ALL : Int		= ~0;
 
 	public function new(owner : NativeUIContainer)
@@ -54,7 +55,7 @@ class Visel extends ViselBase
 		init_Base();
 	}
 //.............................................................................
-	public function destroy_Visel() : Void
+	public function destroy_Visel(): Void
 	{
 		if (disposed)
 			return;
@@ -67,7 +68,7 @@ class Visel extends ViselBase
 	}
 //.............................................................................
 //openfl::DisplayObject have public function invalidate ():Void
-	public function invalidate_Visel(flags : Int) : Void
+	public function invalidate_Visel(flags : Int): Void
 	{
 		if (disposed)
 			return;
@@ -78,7 +79,7 @@ class Visel extends ViselBase
 		invalid_flags_ |= flags;
 	}
 //.............................................................................
-	private function on_Invalidate() : Void
+	private function on_Invalidate(): Void
 	{
 		//trace("Visel::on_Invalidate");
 		Root.instance.frame_signal_.remove(on_Invalidate);
@@ -88,19 +89,19 @@ class Visel extends ViselBase
 		validate_Visel();
 	}
 //.............................................................................
-	public function validate_Visel() : Void
+	public function validate_Visel(): Void
 	{
 		invalid_flags_ = 0;
 	}
 //.............................................................................
 //.............................................................................
-	public function move_Visel(nx : Float, ny : Float) : Void
+	public function move_Visel(nx : Float, ny : Float): Void
 	{
 		x = nx;
 		y = ny;
 	}
 //.............................................................................
-	public function resize_Visel(w : Float, h : Float) : Void
+	public function resize_Visel(w : Float, h : Float): Void
 	{
 		if (w < 0)
 			w = 0;
@@ -116,7 +117,7 @@ class Visel extends ViselBase
 		}
 	}
 //.............................................................................
-	public function resize_(w : Float, h : Float) : Void
+	public function resize_(w : Float, h : Float): Void
 	{
 		if (w < 0)
 			w = 0;
@@ -132,14 +133,14 @@ class Visel extends ViselBase
 		}
 	}
 //.............................................................................
-	public function movesize(nx : Float, ny : Float, w : Float, h : Float) : Void
+	public function movesize(nx : Float, ny : Float, w : Float, h : Float): Void
 	{
 		x = nx;
 		y = ny;
 		resize_Visel(w, h);
 	}
 //.............................................................................
-	public function movesize_(nx : Float, ny : Float, w : Float, h : Float) : Void
+	public function movesize_(nx : Float, ny : Float, w : Float, h : Float): Void
 	{
 		x = nx;
 		y = ny;
@@ -148,25 +149,40 @@ class Visel extends ViselBase
 //.............................................................................
 //.............................................................................
 //.............................................................................
-	public dynamic function on_Show() : Void
+	public dynamic function on_Show(): Void
 	{}
 //.............................................................................
-	public dynamic function on_Hide() : Void
+	public dynamic function on_Hide(): Void
 	{}
 //.............................................................................
+	private function set_Hover_State(_): Void
+	{
+		if ((state_ & Visel.STATE_HOVER) != 0)
+			return;
+		state_ |= Visel.STATE_HOVER;
+		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
+	}
+//.............................................................................
+	private function remove_Hover_State(_): Void
+	{
+		if ((state_ & Visel.STATE_HOVER) == 0)
+			return;
+		state_ &= ~Visel.STATE_HOVER;
+		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
+	}
 //.............................................................................
 //.............................................................................
 //.............................................................................
-	private inline function get_disposed() : Bool
+	private inline function get_disposed(): Bool
 	{
 		return (state_ & STATE_DISPOSED) != 0;
 	}
 //.............................................................................
-	private inline function get_enabled() : Bool
+	private inline function get_enabled(): Bool
 	{
 		return (state_ & STATE_DISABLED) == 0;
 	}
-	private function set_enabled(value : Bool) : Bool
+	private function set_enabled(value : Bool): Bool
 	{
 		if (enabled != value)
 		{
@@ -181,13 +197,13 @@ class Visel extends ViselBase
 	}
 //.............................................................................
 //.............................................................................
-	public function draw_Visel() : Void
+	public function draw_Visel(): Void
 	{
 		draw_Base();
 		handle_Resize();
 	}
 //.............................................................................
-	private function handle_Resize() : Void
+	private function handle_Resize(): Void
 	{
 		if ((invalid_flags_ & (Visel.INVALIDATION_FLAG_SIZE)) != 0)
 		{
@@ -199,11 +215,11 @@ class Visel extends ViselBase
 	{}
 //.............................................................................
 //.............................................................................
-	inline private function get_dummy_color() : Int
+	inline private function get_dummy_color(): Int
 	{
 		return dummy_color_;
 	}
-	private function set_dummy_color(value : Int) : Int
+	private function set_dummy_color(value : Int): Int
 	{
 		if (dummy_color_ != value)
 		{
@@ -218,11 +234,11 @@ class Visel extends ViselBase
 		return value;
 	}
 //.............................................................................
-	inline private function get_dummy_alpha() : Float
+	inline private function get_dummy_alpha(): Float
 	{
 		return dummy_alpha_;
 	}
-	private function set_dummy_alpha(value : Float) : Float
+	private function set_dummy_alpha(value : Float): Float
 	{
 		if (dummy_alpha_ != value)
 		{

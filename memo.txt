@@ -1,3 +1,4 @@
+.BUG: heaps: TextInput: interactive.onKeyUp = function(e) onKeyUp(e);
 . refactoring
 	. remove hard-coded tool buttons (setup array in cfg?)
 	. remove hard-coded fps, mem (setup in cfg?)
@@ -8,12 +9,12 @@
 	+. relax stage != null
 	. compile-time assert?
 	. replace haxe.unit (gone in haxe 4 ) with utest | munit | buddy
-		.https://github.com/ciscoheat/buddy - best
+		.https://github.com/ciscoheat/buddy
 	.BUG: \Pictures\heaps_difference.png
 	.BUG: in heaps: interactive & background conflict
 	.BUG: event listeners leaks in visels
-	.viewport: restore size after win32::window min/max resizing
-	.test button overlap & event propagation (kha)
+	+.viewport: restore size after win32::window min/max resizing
+	+.test button overlap & event propagation (kha)
 . review mconsole (js printer)
 
 . how to detect v:Dynamic is ByteArray? (ByteArray is abstract in openfl)

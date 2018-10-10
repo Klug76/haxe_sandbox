@@ -53,7 +53,7 @@ class ViewportBase extends Visel
 //.............................................................................
 	private function on_Mouse_Down(ev : Event): Void
 	{
-		trace("Viewport::" + ev.kind + ": " + ev.button + ": " + ev.touchId + ": " + ev.propagate);
+		//trace("Viewport::" + ev.kind + ": " + ev.button + ": " + ev.touchId + ": " + ev.propagate);
 		ev.propagate = false;
 		activate();
 	}

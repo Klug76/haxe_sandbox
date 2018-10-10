@@ -2,9 +2,10 @@ package gs.femto_ui;
 
 class InfoClick
 {
-	//TODO fix me: global or relative?
-	public var mx_: Float;
-	public var my_: Float;
+	public var global_x_: Float;
+	public var global_y_: Float;
+	public var local_x_: Float;
+	public var local_y_: Float;
 
 	public function new()
 	{}

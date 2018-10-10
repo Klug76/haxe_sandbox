@@ -2,10 +2,8 @@ package gs.femto_ui;
 
 import gs.femto_ui.kha.Event;
 import gs.femto_ui.Visel;
-import kha.Color;
+import gs.femto_ui.util.Util;
 import kha.graphics2.Graphics;
-
-@:enum
 
 class ViselBase
 {
@@ -22,7 +20,7 @@ class ViselBase
 
 	public static inline var HIT_TEST_AUTO: Int		= 0;
 	public static inline var HIT_TEST_NONE: Int		= 1;
-	public static inline var HIT_TEST_RECT: Int		= 2;
+	public static inline var HIT_TEST_FUNC: Int		= 2;
 	public static inline var HIT_TEST_CHILDREN: Int	= 4;
 
 	public function new(?owner: Visel)
@@ -36,10 +34,11 @@ class ViselBase
 //.............................................................................
 	private function destroy_Base() : Void
 	{
+		var v: Visel = cast this;
 		remove_Children();
 		if (parent_ != null)
 		{
-			parent_.remove_Child(cast this);
+			parent_.remove_Child(v);
 			parent_ = null;
 		}
 		if (listeners_ != null)
@@ -248,15 +247,16 @@ class ViselBase
 	private function render_Base_Background(gr: Graphics, nx: Float, ny: Float) : Void
 	{
 		var v: Visel = cast this;
+		var nw : Float = width_;
+		var nh : Float = height_;
 		var al = v.dummy_alpha_;
-		if ((al > 0) && (width_ > 0) && (height_ > 0))
+		if ((al > 0) && (nw > 0) && (nh > 0))
 		{
-			var cl: Color = v.dummy_color_;
-			cl.A = al;
-			gr.color = cl;
-			gr.fillRect(nx, ny, width_, height_);
+			gr.color = Util.RGB_A(v.dummy_color_, al);
+			gr.fillRect(nx, ny, nw, nh);
 		}
 	}
+//.............................................................................
 //.............................................................................
 	private function render_Children(gr: Graphics, nx: Float, ny: Float) : Void
 	{
@@ -268,13 +268,13 @@ class ViselBase
 //.............................................................................
 //.............................................................................
 //.............................................................................
-	private function hit_Test(mX: Float, mY: Float, nx: Float, ny: Float): Bool
+	private function hit_Test(globalX: Float, globalY: Float, nx: Float, ny: Float): Bool
 	{
-		return  (mX >= nx) && (mX < (nx + width_)) &&
-				(mY >= ny) && (mY < (ny + height_));
+		return  (globalX >= nx) && (globalX < (nx + width_)) &&
+				(globalY >= ny) && (globalY < (ny + height_));
 	}
 //.............................................................................
-	private function find_Event_Target(mX: Float, mY: Float, nx: Float, ny: Float): Visel
+	private function find_Event_Target(ev: Event, nx: Float, ny: Float): Visel
 	{
 		var v: Visel = cast this;
 		if (!v.visible || !v.enabled)
@@ -283,15 +283,15 @@ class ViselBase
 		switch (h)
 		{
 		case HIT_TEST_AUTO:
-			h = HIT_TEST_RECT | HIT_TEST_CHILDREN;
+			h = HIT_TEST_FUNC | HIT_TEST_CHILDREN;
 		case HIT_TEST_NONE:
 			return null;
 		}
 		nx += x;
 		ny += y;
-		if ((h & HIT_TEST_RECT) != 0)
+		if ((h & HIT_TEST_FUNC) != 0)
 		{
-			if (!hit_Test(mX, mY, nx, ny))
+			if (!hit_Test(ev.globalX, ev.globalY, nx, ny))
 				return null;
 		}
 		if ((h & HIT_TEST_CHILDREN) != 0)
@@ -301,14 +301,18 @@ class ViselBase
 			{
 				var idx: Int = len - i - 1;
 				var c: Visel = child_[idx];
-				var cv: Visel = c.find_Event_Target(mX, mY, nx, ny);
+				var cv: Visel = c.find_Event_Target(ev, nx, ny);
 				if (cv != null)
 					return cv;
 			}
 			//?return null;
 		}
-		if ((h & HIT_TEST_RECT) != 0)
+		if ((h & HIT_TEST_FUNC) != 0)
+		{
+			ev.targetX = ev.globalX - nx;
+			ev.targetY = ev.globalY - ny;
 			return v;//:test passed above
+		}
 		return null;
 	}
 //.............................................................................
