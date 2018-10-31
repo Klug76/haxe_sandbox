@@ -45,6 +45,16 @@ class CmdLine extends Edit
 		return new TextFormat(k_.cfg_.cmd_font_, Std.int(r.input_text_size_), k_.cfg_.cmd_text_color_);
 	}
 //.............................................................................
+	//override private function get_Edit_Option(opt: Int): Bool
+	//{
+		//switch(opt)
+		//{
+		//case Edit.TAB_ENABLED:
+			//return false;
+		//}
+		//return true;
+	//}
+//.............................................................................
 	private function stop_Event(ev: KeyboardEvent): Void
 	{
 		//trace("cmd::key " + ev.type + ": 0x" + Util.toHex(ev.keyCode));
@@ -57,10 +67,23 @@ class CmdLine extends Edit
 		//trace("cmd::key down: 0x" + ev.keyCode.toString(16));
 		switch (ev.keyCode)
 		{
-			case Keyboard.ENTER,
-				 Keyboard.DOWN,
-				 Keyboard.UP:
-				stop_Event(ev);
+		case Keyboard.ENTER,
+			 Keyboard.DOWN,
+			 Keyboard.UP,
+			 Keyboard.F1:
+			stop_Event(ev);
+		default:
+			if (9 == ev.charCode)
+			{
+				if (!ev.ctrlKey && !ev.shiftKey && !ev.altKey)
+				{
+					//trace("*** TAB down");
+					stop_Event(ev);
+#if flash			//:!openfl
+					tf_.tabIndex = 0;//:ugly hack hack hack hack hack!
+#end
+				}
+			}
 		}
 	}
 //.............................................................................
@@ -69,23 +92,46 @@ class CmdLine extends Edit
 		//trace("cmd::key up: 0x" + ev.keyCode.toString(16));
 		switch (ev.keyCode)
 		{
-			case Keyboard.ENTER:
-				stop_Event(ev);
-				exec();
-			case Keyboard.UP:
-				stop_Event(ev);
-				get_History_Up();
-			case Keyboard.DOWN:
-				stop_Event(ev);
-				get_History_Down();
-			//case Keyboard.TAB: conflict with tab focus!??
-			//	complete();
+		case Keyboard.ENTER:
+			stop_Event(ev);
+			exec();
+		case Keyboard.UP:
+			stop_Event(ev);
+			get_History_Up();
+		case Keyboard.DOWN:
+			stop_Event(ev);
+			get_History_Down();
+		//case Keyboard.TAB://:review: conflict with tab focus!??
+		case Keyboard.F1:
+			stop_Event(ev);
+			complete();
+		default:
+			if (9 == ev.charCode)
+			{
+				if (!ev.ctrlKey && !ev.shiftKey && !ev.altKey)
+				{
+					//trace("*** TAB up");
+					stop_Event(ev);
+					complete();
+				}
+			}
 		}
 	}
 //.............................................................................
-	//private function complete() : Void
-	//{
-	//}
+	private function complete() : Void
+	{
+		var s : String = get_Base_Text();
+		if (s.length < 2)
+		{
+			return;
+		}
+		var t = k_.try_Complete_Command(s);
+		if (t != s)
+		{
+			set_Base_Text(t);
+			set_Caret_To_End();
+		}
+	}
 //.............................................................................
 	private function exec() : Void
 	{

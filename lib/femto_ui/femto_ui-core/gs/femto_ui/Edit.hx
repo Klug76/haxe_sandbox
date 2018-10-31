@@ -10,6 +10,9 @@ class Edit extends EditBase
 	//textField.restrict
 	//textField.displayAsPassword
 
+	public static inline var SELECTABLE : Int	= 1;
+	public static inline var TAB_ENABLED : Int	= 2;
+
 	public function new(owner: NativeUIContainer, on_Changed: String->Void, txt: String = null)
 	{
 		super(owner, on_Changed, txt);

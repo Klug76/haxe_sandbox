@@ -34,7 +34,8 @@ class Main extends Sprite
 		KonController.start(m, null);//:no stage yet
 		Lib.current.addChild(m);
 		KonController.get_Config().zoom_root_ = m;
-		trace("Hello!");
+		KonController.Log("Hello,");
+		trace("World!");
 	}
 
 }

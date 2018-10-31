@@ -1,5 +1,6 @@
 package gs.konsole;
 
+import gs.femto_ui.util.Util;
 import gs.konsole.KonsoleConfig;
 import gs.femto_ui.util.RingBuf;
 import gs.femto_ui.util.Signal;
@@ -114,23 +115,28 @@ class Konsole extends RingBuf<LogLine>
 		it.text_ = s;
 	}
 //.............................................................................
-	public function log(v: Dynamic) : Void
+	private function native_trace(s: String): Void
 	{
-		var s: String = StrUtil.nice_Dump(v);
-		if (null == s)
-			s = "";
+#if (flash || openfl)
+			Lib.trace(s);
+#else
 		if (prev_trace_ != null)
 		{
 			prev_trace_(s);
 		}
 		else
 		{
-#if (flash || openfl)
-			Lib.trace(s);
-#else
-			Log.trace(v);//TODO fix me: omit line #
-#end
+			Log.trace(s);//TODO fix me: how to omit line #?
 		}
+#end
+	}
+//.............................................................................
+	public function log(v: Dynamic) : Void
+	{
+		var s: String = StrUtil.nice_Dump(v);
+		if (null == s)
+			s = "";
+		native_trace(s);
 		var it: LogLine = add_Line();
 		it.html_ = null;
 		it.text_ = s;
@@ -148,18 +154,7 @@ class Konsole extends RingBuf<LogLine>
 		}
 		var s : String = StrUtil.strip_Tags(html);
 		s = StrUtil.remove_Last_Lf(s);  //:remove last </p>=>\n
-		if (prev_trace_ != null)
-		{
-			prev_trace_(s);
-		}
-		else
-		{
-#if (flash || openfl)
-			Lib.trace(s);//:will add \n
-#else
-			Log.trace(s);//TODO fix me: omit line #
-#end
-		}
+		native_trace(s);
 		var it : LogLine = add_Line();
 		it.text_ = null;
 		it.html_ = html;
@@ -377,6 +372,39 @@ class Konsole extends RingBuf<LogLine>
 		//Clipboard.generalClipboard.setData(ClipboardFormats.HTML_FORMAT, html);
 //#end
 		log_Html("<p><font color='#0080C0' size='-2'>Copied log to clipboard.</font></p>");
+	}
+//.............................................................................
+	public function try_Complete_Command(s: String) : String
+	{
+		if (s.charCodeAt(0) == '/'.code)
+		{
+			var part: String = s.substr(1);
+			var v : Array<String> = [];
+			for (key in map_cmd_.keys())
+			{
+				if (key.indexOf(part) == 0)
+					v.push(key);
+			}
+			var len = v.length;
+			if (len > 0)
+			{
+				if (1 == len)
+					return '/' + v[0];
+				v.sort(sort_Ascending);
+				var s0 = v[0];
+				var s1 = v[len - 1];
+				var i: Int = 0;
+				var s_len = Util.imin(s0.length, s1.length);
+				while (i < s_len)
+				{
+					if (s0.charCodeAt(i) != s1.charCodeAt(i))
+						break;
+					++i;
+				}
+				return '/' + s0.substr(0, i);
+			}
+		}
+		return s;
 	}
 //.............................................................................
 //.............................................................................

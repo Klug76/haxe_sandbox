@@ -54,6 +54,7 @@
   <!-- SWC Libraries -->
   <libraryPaths>
     <element path="lib\hxcon\hxcon-debug.swc" />
+    <element path="lib\hxcon-debug.swc" />
   </libraryPaths>
   <!-- External Libraries -->
   <externalLibraryPaths>

@@ -11,7 +11,6 @@ import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.MouseEvent;
 import flash.events.SecurityErrorEvent;
-import flash.net.URLRequest;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
@@ -36,6 +35,7 @@ import openfl.utils.Assets;
 #end
 
 #if flash
+import flash.net.URLRequest;
 import flash.xml.XML;
 #end
 
@@ -111,7 +111,7 @@ class KonsoleDemo extends Visel
 		add_Tool_Button(0xc00020, "clear", clear);
 
 		KonController.register_Command("foo", cmd_Foo, "test command");
-		KonController.register_Command("zoo", cmd_Zoo, "test command #2");
+		KonController.register_Command("foz", cmd_Zoo, "test command #2");
 
 		stage.addEventListener(Event.RESIZE, on_Stage_Resize);
 		stage.addEventListener(Event.ACTIVATE, on_Stage_Activate);

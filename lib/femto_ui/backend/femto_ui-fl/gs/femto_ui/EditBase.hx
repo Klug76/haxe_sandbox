@@ -45,9 +45,8 @@ class EditBase extends Visel
 		tf_ = new TextField();
 		tf_.type = TextFieldType.INPUT;
 		tf_.defaultTextFormat = get_Default_Text_Format();
-		tf_.selectable = true;
-		tf_.mouseEnabled = true;
-		tf_.tabEnabled = false;//?
+		tf_.selectable = get_Edit_Option(Edit.SELECTABLE);
+		tf_.tabEnabled = get_Edit_Option(Edit.TAB_ENABLED);//?
 #if flash
 		tf_.condenseWhite = false;
 #end
@@ -69,6 +68,11 @@ class EditBase extends Visel
 	private function get_Default_Text_Format(): TextFormat
 	{
 		return new TextFormat(null, Std.int(Root.instance.input_text_size_));
+	}
+//.............................................................................
+	private function get_Edit_Option(opt: Int): Bool
+	{
+		return true;
 	}
 //.............................................................................
 //.............................................................................

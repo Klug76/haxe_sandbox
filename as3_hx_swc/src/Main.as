@@ -43,7 +43,8 @@ package
 
 			add_Box();
 
-			Log("Hello!");
+			Log("Hello,");
+			trace("World!");
 		}
 
 		private function add_Box(): void
