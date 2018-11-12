@@ -1,122 +1,33 @@
 package gs.konsole;
 
-import gs.femto_ui.Edit;
-import gs.femto_ui.Root;
 import gs.femto_ui.util.RingBuf;
-import flash.display.DisplayObjectContainer;
-import flash.events.KeyboardEvent;
-import flash.text.TextFormat;
-import flash.ui.Keyboard;
 
-class CmdLine extends Edit
+using gs.femto_ui.RootBase.NativeUIContainer;
+
+@:allow(gs.konsole.CmdLineBase)
+class CmdLine extends CmdLineBase
 {
 	private var k_ : Konsole;
 	private var history_ : RingBuf<String>;
 	private var cur_idx_ : Int = -1;
 	private var stash_ : String = null;
 
-	public function new(owner : DisplayObjectContainer, k : Konsole)
+	public function new(owner : NativeUIContainer, k : Konsole)
 	{
 		k_ = k;
-		super(owner, null);
-		init_Ex_Ex();
+		super(owner);
 	}
 //.............................................................................
-	private function init_Ex_Ex() : Void
+//.............................................................................
+	override private function init_Base() : Void
 	{
+		super.init_Base();
 		history_ = new RingBuf<String>(k_.cfg_.cmd_history_size_);
 		history_.push("/commands");
 
 		dummy_color = k_.cfg_.cmd_bg_color_;
 	}
 //.............................................................................
-	override private function alloc_TextField(): Void
-	{
-		super.alloc_TextField();
-		tf_.addEventListener(KeyboardEvent.KEY_DOWN, on_Key_Down_Edit, false, 1);
-		tf_.addEventListener(KeyboardEvent.KEY_UP, on_Key_Up_Edit, false, 1);
-		if (null == k_.cfg_.password_)
-			tf_.restrict = "^`";
-	}
-//.............................................................................
-	override public function get_Default_Text_Format() : TextFormat
-	{
-		var r: Root = Root.instance;
-		return new TextFormat(k_.cfg_.cmd_font_, Std.int(r.input_text_size_), k_.cfg_.cmd_text_color_);
-	}
-//.............................................................................
-	//override private function get_Edit_Option(opt: Int): Bool
-	//{
-		//switch(opt)
-		//{
-		//case Edit.TAB_ENABLED:
-			//return false;
-		//}
-		//return true;
-	//}
-//.............................................................................
-	private function stop_Event(ev: KeyboardEvent): Void
-	{
-		//trace("cmd::key " + ev.type + ": 0x" + Util.toHex(ev.keyCode));
-		ev.preventDefault();
-		ev.stopImmediatePropagation();
-	}
-//.............................................................................
-	private function on_Key_Down_Edit(ev : KeyboardEvent) : Void
-	{
-		//trace("cmd::key down: 0x" + ev.keyCode.toString(16));
-		switch (ev.keyCode)
-		{
-		case Keyboard.ENTER,
-			 Keyboard.DOWN,
-			 Keyboard.UP,
-			 Keyboard.F1:
-			stop_Event(ev);
-		default:
-			if (9 == ev.charCode)
-			{
-				if (!ev.ctrlKey && !ev.shiftKey && !ev.altKey)
-				{
-					//trace("*** TAB down");
-					stop_Event(ev);
-#if flash			//:!openfl
-					tf_.tabIndex = 0;//:ugly hack hack hack hack hack!
-#end
-				}
-			}
-		}
-	}
-//.............................................................................
-	private function on_Key_Up_Edit(ev : KeyboardEvent) : Void
-	{
-		//trace("cmd::key up: 0x" + ev.keyCode.toString(16));
-		switch (ev.keyCode)
-		{
-		case Keyboard.ENTER:
-			stop_Event(ev);
-			exec();
-		case Keyboard.UP:
-			stop_Event(ev);
-			get_History_Up();
-		case Keyboard.DOWN:
-			stop_Event(ev);
-			get_History_Down();
-		//case Keyboard.TAB://:review: conflict with tab focus!??
-		case Keyboard.F1:
-			stop_Event(ev);
-			complete();
-		default:
-			if (9 == ev.charCode)
-			{
-				if (!ev.ctrlKey && !ev.shiftKey && !ev.altKey)
-				{
-					//trace("*** TAB up");
-					stop_Event(ev);
-					complete();
-				}
-			}
-		}
-	}
 //.............................................................................
 	private function complete() : Void
 	{
@@ -144,7 +55,7 @@ class CmdLine extends Edit
 		add_To_History(s);
 		cur_idx_ = -1;
 		stash_ = null;
-		tf_.text = "";
+		set_Base_Text("");
 		k_.eval(s);
 	}
 //.............................................................................
@@ -162,8 +73,8 @@ class CmdLine extends Edit
 		//trace("history.push: " + s);
 		history_.push(s);
 	}
-	//.............................................................................
-	//.............................................................................
+//.............................................................................
+//.............................................................................
 	private function get_History_Up() : Void
 	{
 		var len : Int = history_.length;
@@ -231,9 +142,4 @@ class CmdLine extends Edit
 		}
 	}
 //.............................................................................
-	private function set_Caret_To_End() : Void
-	{
-		var len : Int = tf_.length;
-		tf_.setSelection(len, len);
-	}
 }

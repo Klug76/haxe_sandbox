@@ -9,13 +9,11 @@ class EditBase extends Visel
 {
 	private var tf_ : TextInput = null;
 	private var text_: String;
-	private var on_changed_: String->Void;
 
-	public function new(owner: NativeUIContainer, on_Changed: String->Void, txt: String = null)
+	public function new(owner: NativeUIContainer, txt: String = null)
 	{
 		super(owner);
 		text_ = txt;
-		on_changed_ = on_Changed;
 		invalidate_Visel(Visel.INVALIDATION_FLAG_TEXT);
 	}
 //.............................................................................
@@ -45,13 +43,13 @@ class EditBase extends Visel
 		//?tf_.height = height_;
 		invalid_flags_ &= ~Visel.INVALIDATION_FLAG_SIZE;
 
-		if (on_changed_ != null)
-			tf_.onChange = on_Text_Changed;
+		tf_.onChange = on_Text_Changed;
 	}
 //.............................................................................
 	private function on_Text_Changed(): Void
 	{
-		on_changed_(tf_.text);
+		var ed: Edit = cast this;
+		ed.on_Changed(tf_.text);
 	}
 //.............................................................................
 	private function get_Default_Font(): Font

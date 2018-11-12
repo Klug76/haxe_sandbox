@@ -27,6 +27,7 @@ class Event
 	public static inline var MOUSE_MOVE: Int					= 20;
 	public static inline var MOUSE_IN: Int						= 21;
 	public static inline var MOUSE_OUT: Int						= 22;
+	public static inline var MOUSE_WHEEL: Int					= 23;
 
 	public static inline var KEY_DOWN: Int						= 100;
 	public static inline var KEY_UP: Int						= 101;

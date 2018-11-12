@@ -24,6 +24,7 @@ quick & dirty:
 class TextInputLine extends Visel
 {
 	public var text(get, set): String;
+	public var restrict(default, default): String = null;
 
 	private var text_: String = "";
 	private var tap_id_: Int;
@@ -56,7 +57,7 @@ class TextInputLine extends Visel
 		return value;
 	}
 //.............................................................................
-	public dynamic function on_Change()
+	public dynamic function on_Changed()
 	{}
 //.............................................................................
 //.............................................................................
@@ -198,6 +199,9 @@ class TextInputLine extends Visel
 		case 127://:del
 			return;
 		}
+		if (is_Restricted_Char(ev.char_code))
+			return;
+
 		ev.stop_propagation = true;
 		var s: String = String.fromCharCode(ev.char_code);
 		if (caret_index_ < text_.length)
@@ -212,6 +216,7 @@ class TextInputLine extends Visel
 		}
 		++caret_index_;
 		invalidate_Visel(Visel.INVALIDATION_FLAG_TEXT | Visel.INVALIDATION_FLAG_DATA);
+		on_Changed();
 	}
 //.............................................................................
 //.............................................................................
@@ -222,12 +227,25 @@ class TextInputLine extends Visel
 			return false;
 		switch(code)
 		{
-		case KeyCode.Escape, KeyCode.Tab, KeyCode.Alt, KeyCode.AltGr, KeyCode.Control, KeyCode.Shift, KeyCode.Win:
+		case KeyCode.Escape, KeyCode.Tab, KeyCode.Return, KeyCode.Up, KeyCode.Down, KeyCode.Alt, KeyCode.AltGr, KeyCode.Control, KeyCode.Shift, KeyCode.Win:
 			{
 				return false;
 			}
 		}
 		return true;
+	}
+//.............................................................................
+	private function is_Restricted_Char(char_code: Int): Bool
+	{
+		if (null == restrict)
+			return false;
+		for (i in 0...restrict.length)
+		{
+			var ch: Int = restrict.charCodeAt(i);
+			if (ch == char_code)
+				return true;
+		}
+		return false;
 	}
 //.............................................................................
 //.............................................................................
@@ -236,7 +254,7 @@ class TextInputLine extends Visel
 		move_Caret_To(caret_index_ + dx);
 	}
 //.............................................................................
-	private function move_Caret_To(nx: Int): Void
+	public function move_Caret_To(nx: Int): Void
 	{
 		if (nx < 0)
 			nx = 0;
@@ -259,6 +277,7 @@ class TextInputLine extends Visel
 			text_ = left_text + right_text;
 			--caret_index_;
 			invalidate_Visel(Visel.INVALIDATION_FLAG_TEXT | Visel.INVALIDATION_FLAG_DATA);
+			on_Changed();
 		}
 	}
 //.............................................................................
@@ -270,6 +289,7 @@ class TextInputLine extends Visel
 			var right_text: String = text.substr(caret_index_ + 1);
 			text_ = left_text + right_text;
 			invalidate_Visel(Visel.INVALIDATION_FLAG_TEXT);
+			on_Changed();
 		}
 	}
 //.............................................................................
@@ -288,7 +308,7 @@ class TextInputLine extends Visel
 			{
 				var r: Root = Root.instance;
 				var font: Font = r.font_;
-				var font_size: Int = Std.int(r.input_text_size_);
+				var font_size: Int = Std.int(r.input_font_size_);
 
 				var left_text: String = text_;
 				if (caret_index_ < text_.length)
@@ -316,7 +336,7 @@ class TextInputLine extends Visel
 	{
 		var r: Root = Root.instance;
 		var font: Font = r.font_;
-		var font_size: Int = Std.int(r.input_text_size_);
+		var font_size: Int = Std.int(r.input_font_size_);//TODO fix me
 		var text_x: Float = r.spacing_;
 		var text_y: Float = r.spacing_;
 		text_x += nx;

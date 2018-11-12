@@ -9,14 +9,18 @@ import gs.femto_ui.Mover;
 import gs.femto_ui.Resizer;
 import gs.femto_ui.Root;
 import gs.femto_ui.Scrollbar;
+import gs.femto_ui.ScrollText;
 import gs.femto_ui.Toolbar;
 import gs.femto_ui.Viewport;
 import gs.femto_ui.Visel;
 import gs.femto_ui.kha.Event;
+import gs.femto_ui.util.Util;
+import gs.konsole.Konsole;
+import gs.konsole.KonsoleConfig;
+import gs.konsole.KonsoleView;
 import kha.Framebuffer;
 import kha.Scheduler;
 import kha.System;
-import kha.input.Keyboard;
 import kha.input.KeyCode;
 import kha.Assets;
 
@@ -32,6 +36,7 @@ class Demo
 	var vp1_: Viewport;
 	var vp2_: Viewport;
 	var debug_counter_: Int = 0;
+	var instance_: Konsole = null;
 
 	public function new()
 	{
@@ -49,10 +54,15 @@ class Demo
 		var fnt = Assets.fonts.get("SourceSansPro_Semibold");
 		//trace("font=" + fnt);
 		Root.instance.font_ = fnt;
-		Root.instance.def_text_size_ *= 1.5;
+
+#if flash
+		//TODO review: why font is so small?
+		Root.instance.def_font_size_ *= 1.5;
+#end
 
 		//test_Visel();
 
+		add_Konsole();
 		add_UI();
 
 		//Keyboard.get().notify(on_Key_Down, on_Key_Up);
@@ -106,12 +116,64 @@ class Demo
 		btn.dummy_color = 0x202040;
 		btn.resize_Visel(120, 42);
 
-		var sc: Scrollbar = new Scrollbar(panel, function(v: Int): Void
+		//for (i in 0...3)
+		for (i in 0...1)
 		{
-			trace("Scrollbar::scroll " + v);
-		});
-		sc.movesize(panel.width - r.small_tool_width_, 10, r.small_tool_width_, panel.height - 100);
-		sc.reset(1, 15, 1);
+			var st: ScrollText = new ScrollText(panel);
+			st.set_Text_Format("", 18, 0xf0ff00);
+			st.word_wrap = true;
+			st.movesize(350 + i * 200, 10, 150, panel.height - 100);
+			st.dummy_color = 0x000097;
+			//st.text = "foo<br>bar";
+			var txt = gen_Text(i);
+			//trace(txt);
+			st.replace_Text(txt);
+
+			var sc: Scrollbar = new Scrollbar(panel, function(v: Int): Void
+			{
+				//trace("Scrollbar::scroll " + v);
+				if (v > 0)
+					st.set_ScrollV(v);
+			});
+			sc.movesize(350 + i * 200 + 150, 10, r.small_tool_width_, panel.height - 100);
+			sc.reset(1, st.get_Max_ScrollV(), 1);
+
+			st.on_text_scroll =
+			st.on_text_change = function()
+			{
+				sc.max = st.get_Max_ScrollV();
+				sc.value = st.get_ScrollV();
+			};
+
+			var m: Mover = new Mover(st);
+			m.resize_Visel(r.tool_width_, r.tool_height_);
+			m.dummy_color = 0x40000000 | r.color_movesize_;
+
+			var rz: Resizer = new Resizer(st);
+			rz.dummy_color = 0x40000000 | r.color_movesize_;
+			rz.min_width_ = r.tool_width_;
+			rz.min_height_ = r.tool_height_;
+			st.on_Resize = function()
+			{
+				//trace("scrolltext::size=" + st.width + "x" + st.height);
+				rz.movesize(st.width - r.small_tool_width_, st.height - r.small_tool_height_, r.small_tool_width_, r.small_tool_height_);
+			};
+
+			btn = new Button(tb_, "1_" + i, function(_)
+			{
+				st.append_Text("#" + debug_counter_++ + "\n");
+			});
+			btn.on_Click(null);
+			btn.dummy_color = 0x202040;
+			btn.resize_Visel(60, 42);
+			btn = new Button(tb_, "2_" + i, function(_)
+			{
+				st.append_Text("#" + debug_counter_++ + "______________ __________\n");
+			});
+			btn.dummy_color = 0x202040;
+			btn.resize_Visel(60, 42);
+
+		}
 
 		var m: Mover = new Mover(panel);
 		m.resize_Visel(r.tool_width_, r.tool_height_);
@@ -127,6 +189,54 @@ class Demo
 			rz.movesize(panel.width - r.small_tool_width_, panel.height - r.small_tool_height_, r.small_tool_width_, r.small_tool_height_);
 		};
 
+	}
+
+	function gen_Text1(idx: Int) : String
+	{
+		var s: StringBuf = new StringBuf();
+		var k = 10;
+		if (idx > 0)
+			k = 30;
+		if (idx > 1)
+			k = 1024;
+		for (i in 0...k)
+		{
+			s.add("#" + (i + 1));
+			s.add(" 1bla 2bla 3bla 4bla 5bla 6bla!");
+			s.add("\n");
+		}
+		if (idx >= 2)
+			s.add("end.");
+		return s.toString();
+	}
+
+	function gen_Text2(idx: Int) : String
+	{
+		var s: StringBuf = new StringBuf();
+		var k = 40;
+		for (i in 0...k)
+		{
+			s.add("0x" + Util.toHex(i, 2) + "________________");
+		}
+		s.add("\n");
+		s.add("\n");
+		for (i in 0...k)
+		{
+			s.add("0x" + Util.toHex(i, 2) + "================");
+		}
+		s.add(".");
+		return s.toString();
+	}
+
+	function gen_Text(idx: Int) : String
+	{
+		var s: StringBuf = new StringBuf();
+		var k = 10;
+		for (i in 0...k)
+		{
+			s.add("0x" + Util.toHex(i, 2) + "________________");
+		}
+		return s.toString();
 	}
 
 	function on_Click(ev: InfoClick)
@@ -191,7 +301,7 @@ class Demo
 
     private function on_Key_Down(ev: Event) : Void
 	{
-		trace("stage::on_Key_Down " + ev.code);
+		//trace("stage::on_Key_Down " + ev.code);
 		var code: KeyCode = cast ev.code;
 		switch(code)
 		{
@@ -233,6 +343,14 @@ class Demo
 			}
 		default:
 		}
+		if (instance_ != null)
+		{
+			if (code == instance_.cfg_.toggle_key_)
+			{
+				ev.stop_propagation = true;
+				toggle_Konsole();
+			}
+		}
 	}
 
     private function on_Key_Up(ev: Event) : Void
@@ -242,6 +360,60 @@ class Demo
 	{
 		Test1.run_All();
 	}
+
+	function add_Konsole()
+	{
+		var cfg: KonsoleConfig = new KonsoleConfig();
+		cfg.allow_command_line_ = false;
+		var k: Konsole = new Konsole(cfg);
+		instance_ = k;
+		k.log("Hello,");
+		trace("World!");
+	}
+
+	private var view_: KonsoleView = null;
+
+	function get_Visible(): Bool
+	{
+		if (view_ != null)
+			return view_.visible;
+		return false;
+	}
+	function set_Visible(value: Bool): Bool
+	{
+		if (instance_ != null)
+		{
+			if (value)
+			{
+				if (null == view_)
+				{
+					//trace("******* ENTER new KonsoleView");
+					var r: Root = Root.instance;
+					instance_.cfg_.init_View(r.platform_, r.ui_factor_);
+					trace("*******");
+					view_ = new KonsoleView(instance_, false);
+					//trace("******* LEAVE new KonsoleView");
+				}
+				else
+				{
+					view_.visible = true;
+				}
+				instance_.signal_show_.fire();
+				//trace("******* Konsole::signal_show_.fire()");
+			}
+			else
+			{
+				if (view_ != null)
+					view_.visible = false;
+			}
+		}
+		return value;
+	}
+	function toggle_Konsole()
+	{
+		set_Visible(!get_Visible());
+	}
+
 
 	function update(): Void
 	{

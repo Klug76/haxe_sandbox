@@ -8,13 +8,11 @@ class EditBase extends Visel
 {
 	private var tf_ : TextInputLine = null;
 	private var text_: String;
-	private var on_changed_: String->Void;
 
-	public function new(owner: NativeUIContainer, on_Changed: String->Void, txt: String = null)
+	public function new(owner: NativeUIContainer, txt: String = null)
 	{
 		super(owner);
 		text_ = txt;
-		on_changed_ = on_Changed;
 		invalidate_Visel(Visel.INVALIDATION_FLAG_TEXT);
 	}
 //.............................................................................
@@ -40,17 +38,16 @@ class EditBase extends Visel
 	private function alloc_TextField(): Void
 	{
 		tf_ = new TextInputLine(this);
+		tf_.on_Changed = on_Text_Changed;
 		tf_.width = width_;
 		tf_.height = height_;
 		invalid_flags_ &= ~Visel.INVALIDATION_FLAG_SIZE;
-
-		if (on_changed_ != null)
-			tf_.on_Change = on_Text_Changed;
 	}
 //.............................................................................
 	private function on_Text_Changed(): Void
 	{
-		on_changed_(tf_.text);
+		var ed: Edit = cast this;
+		ed.on_Changed(tf_.text);
 	}
 //.............................................................................
 	//private function get_Default_Text_Format(): TextFormat
@@ -81,7 +78,12 @@ class EditBase extends Visel
 	}
 //.............................................................................
 //.............................................................................
+//.............................................................................
+	private function set_Caret_To_End() : Void
+	{
+		tf_.move_Caret_To(tf_.text.length);
+	}
+//.............................................................................
+//.............................................................................
 }
-//.............................................................................
-//.............................................................................
 

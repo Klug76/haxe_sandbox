@@ -90,7 +90,7 @@ class KonsoleDemo extends Visel
 
 		aux_ = new TextField();
 		aux_.autoSize = TextFieldAutoSize.LEFT;
-		aux_.defaultTextFormat = new TextFormat(null, Std.int(r.def_text_size_));
+		aux_.defaultTextFormat = new TextFormat(null, Std.int(r.def_font_size_));
 
 		add_Bitmap_Asset();
 		add_Box();

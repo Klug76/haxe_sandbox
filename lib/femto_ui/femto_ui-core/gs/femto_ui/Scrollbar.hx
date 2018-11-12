@@ -15,7 +15,6 @@ class Scrollbar extends Button
 	private var min_ : Int = 0;
 	private var max_ : Int = 10;
 	private var value_ : Int = 0;
-	private var on_scroll_ : Int->Void;
 
 	public var thumb_ : Thumb;
 
@@ -25,11 +24,10 @@ class Scrollbar extends Button
 #if debug
 		name = "scrollbar";
 #end
-		on_scroll_ = callback;
-		init_Scrollbar();
+		init_Scrollbar(callback);
 	}
 //.............................................................................
-	private function init_Scrollbar() : Void
+	private function init_Scrollbar(callback : Int->Void) : Void
 	{
 		var r : Root = Root.instance;
 
@@ -42,6 +40,9 @@ class Scrollbar extends Button
 		thumb_.dummy_color = r.color_thumb_;
 
 		dummy_color = r.color_scrollbar_;
+
+		if (callback != null)
+			on_Scroll = callback;
 	}
 //.............................................................................
 	public function reset(mn : Int, mx : Int, cur : Int) : Void
@@ -51,6 +52,10 @@ class Scrollbar extends Button
 		value_ = cur;
 		update_State();
 	}
+//.............................................................................
+	public dynamic function on_Scroll(pos: Int): Void
+	{}
+//.............................................................................
 //.............................................................................
 	private function update_State(): Void
 	{
@@ -84,7 +89,7 @@ class Scrollbar extends Button
 		{
 			value_ = v;
 			//flash.Lib.trace("scrollbar::set_Value(" + v + ")");
-			on_scroll_(v);
+			on_Scroll(v);
 		}
 	}
 //.............................................................................
@@ -99,7 +104,7 @@ class Scrollbar extends Button
 	{
 		//flash.Lib.trace("thumb::finish drag");
 		update_State();
-		on_scroll_(min_ - 1);
+		on_Scroll(min_ - 1);
 	}
 //.............................................................................
 	private function calc_Value(ny : Float) : Int

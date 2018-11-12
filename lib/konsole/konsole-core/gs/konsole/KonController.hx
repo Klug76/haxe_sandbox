@@ -1,6 +1,7 @@
 package gs.konsole;
 
 import gs.femto_ui.Root;
+import gs.femto_ui.Viewport;
 
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
@@ -13,9 +14,11 @@ import flash.events.KeyboardEvent;
 
 class KonController
 {
-	static public inline var VERSION: String = "0.9.0";
+	static public inline var VERSION: String = "0.9.1";
 	static private var instance_: Konsole = null;
 	static private var ruler_: Ruler = null;
+	static private var fps_view_ : Viewport = null;
+	static private var mem_view_ : Viewport = null;
 	static private var view_: DisplayObject = null;
 	static private var password_idx_: Int = 0;
 
@@ -27,6 +30,8 @@ class KonController
 
 		var k: Konsole = new Konsole(cfg);
 
+		k.register_Command("fps", cmd_Fps, "Show fps");
+		k.register_Command("mem", cmd_Mem, "Show memory usage");
 		k.register_Command("ruler", cmd_Ruler, "Show display ruler");
 
 		instance_ = k;
@@ -59,7 +64,7 @@ class KonController
 		{
 			return;
 		}
-		if (ev.keyCode == cfg.toggle_key_)
+		if (cfg.toggle_key_ == cast ev.keyCode)
 		{
 			ev.preventDefault();
 			ev.stopImmediatePropagation();
@@ -88,7 +93,7 @@ class KonController
 			password_idx_ = 0;
 			return;
 		}
-		if (ev.keyCode == cfg.toggle_key_)
+		if (cfg.toggle_key_ == cast ev.keyCode)
 		{
 			ev.preventDefault();
 			ev.stopImmediatePropagation();
@@ -124,7 +129,7 @@ class KonController
 				{
 					var r: Root = Root.instance;
 					instance_.cfg_.init_View(r.platform_, r.ui_factor_);
-					view_ = new KonsoleView(instance_);
+					view_ = new KonsoleView(instance_, true);
 				}
 				else
 				{
@@ -211,7 +216,7 @@ class KonController
 //.............................................................................
 //.............................................................................
 //.............................................................................
-	static private function cmd_Ruler(dummy: Array<String>): Void
+	static private function cmd_Ruler(_: Array<String>): Void
 	{
 		if (instance_ != null)
 		{
@@ -229,6 +234,34 @@ class KonController
 			if (view_ != null)
 				view_.visible = false;
 		}
+	}
+//.............................................................................
+	static private function cmd_Fps(_: Array<String>): Void
+	{
+		var r: Root = Root.instance;
+		if (null == fps_view_)
+		{
+			fps_view_ = new Viewport();
+			var m : FpsMonitor = new FpsMonitor(fps_view_);//TODO unite monitors creation/suspend/resume
+			fps_view_.content = m;
+			fps_view_.movesize(100 * r.ui_factor_, 100 * r.ui_factor_, m.width + r.small_tool_width_, m.height);
+			return;
+		}
+		fps_view_.visible = !fps_view_.visible;
+	}
+//.............................................................................
+	static private function cmd_Mem(_: Array<String>): Void
+	{
+		var r: Root = Root.instance;
+		if (null == mem_view_)
+		{
+			mem_view_ = new Viewport();
+			var m : MemMonitor = new MemMonitor(mem_view_);
+			mem_view_.content = m;
+			mem_view_.movesize(100 * r.ui_factor_, 120 * r.ui_factor_ + m.height, m.width + r.small_tool_width_, m.height);
+			return;
+		}
+		mem_view_.visible = !mem_view_.visible;
 	}
 //.............................................................................
 //.............................................................................

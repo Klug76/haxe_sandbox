@@ -33,7 +33,7 @@ class LabelBase extends Visel
 			return;
 		var r: Root = Root.instance;
 		var font: Font = r.font_;
-		var font_size: Int = Std.int(r.def_text_size_);
+		var font_size: Int = Std.int(r.def_font_size_);
 		var text_x: Float = 0;
 		var text_y: Float = 0;
 		var text: String = al.safe_text;

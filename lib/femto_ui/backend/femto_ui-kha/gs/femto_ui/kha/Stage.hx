@@ -24,7 +24,7 @@ class Stage extends Visel
 	override private function init_Base(): Void
 	{
 		super.init_Base();
-		Mouse.get().notify(on_Mouse_Down, on_Mouse_Up, on_Mouse_Move, null);
+		Mouse.get().notify(on_Mouse_Down, on_Mouse_Up, on_Mouse_Move, on_Mouse_Wheel);
 		Keyboard.get().notify(on_Key_Down, on_Key_Up, on_Key_Press);
 		resize_(System.windowWidth(), System.windowHeight());
 		//Window.get(0).notifyOnResize(on_Window_Resize);
@@ -38,7 +38,7 @@ class Stage extends Visel
 //.............................................................................
 	override private function destroy_Base(): Void
 	{
-		Mouse.get().remove(on_Mouse_Down, on_Mouse_Up, on_Mouse_Move, null);
+		Mouse.get().remove(on_Mouse_Down, on_Mouse_Up, on_Mouse_Move, on_Mouse_Wheel);
 		Keyboard.get().remove(on_Key_Down, on_Key_Up, on_Key_Press);
 		super.destroy_Base();
 	}
@@ -57,6 +57,14 @@ class Stage extends Visel
 	{
 		bubble_Event_By_XY(Event.MOUSE_MOVE, 0,//TODO fix me: refactor kha.Mouse to get buttonId
 			mouseX, mouseY);
+	}
+//.............................................................................
+	private function on_Mouse_Wheel(delta: Int): Void
+	{
+		var ev: Event = Event.alloc();
+		ev.code = delta;
+		bubble_Event_To(current_hover_, Event.MOUSE_WHEEL, ev);
+		Event.dispose(ev);//:wanted: RAII :(
 	}
 //.............................................................................
 //.............................................................................

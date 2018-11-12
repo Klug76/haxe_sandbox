@@ -3,11 +3,14 @@ package gs.konsole;
 
 #if (flash || openfl)
 import flash.errors.Error;
+import flash.Lib;
 #end
 #if flash
-import flash.Lib;
 import flash.utils.ByteArray;
 import flash.xml.XML;
+#end
+#if openfl
+import haxe.io.Bytes;
 #end
 
 class StrUtil
@@ -161,6 +164,11 @@ class StrUtil
 				return err.toString() + "\n" + s;
 		}
 		else
+		if (Std.is(v, Bytes))
+		{
+			return dump_Bytes(Lib.as(v, Bytes));
+		}
+		else
 #end
 		if (Std.is(v, Array))
 		{
@@ -198,6 +206,13 @@ class StrUtil
 	static private function dump_ByteArray(ba: ByteArray): String
 	{
 		return "ByteArray: position=" + ba.position + ", length=" + ba.length;
+	}
+#end
+//.............................................................................
+#if openfl
+	static private function dump_Bytes(ba: Bytes): String
+	{
+		return "Bytes: length=" + ba.length;
 	}
 #end
 //.............................................................................

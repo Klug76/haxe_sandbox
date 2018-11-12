@@ -3,6 +3,7 @@
 -cp ../lib/femto_ui/femto_ui-core
 -cp ../lib/femto_ui/backend/femto_ui-fl
 -cp ../lib/konsole/konsole-core
+-cp ../lib/konsole/backend/konsole-fl
 --macro include('gs')
 --flash-strict
 #-D swf-protected

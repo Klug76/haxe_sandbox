@@ -22,6 +22,7 @@
     <class path="..\lib\femto_ui\femto_ui-core" />
     <class path="..\lib\femto_ui\backend\femto_ui-fl" />
     <class path="..\lib\konsole\konsole-core" />
+    <class path="..\lib\konsole\backend\konsole-fl" />
     <class path="..\lib\konsole\demo" />
     <class path="Export\html5\haxe" />
   </classpaths>
@@ -32,7 +33,7 @@
     <option noInlineOnDebug="False" />
     <option mainClass="ApplicationMain" />
     <option enabledebug="False" />
-    <option additional="--macro openfl._internal.utils.ExtraParams.include()&#xA;--macro lime._internal.macros.DefineMacro.run()&#xA;--remap flash:openfl" />
+    <option additional="--macro openfl._internal.utils.ExtraParams.include()&#xA;--macro lime._internal.macros.DefineMacro.run()&#xA;--remap flash:openfl&#xA;-debug " />
   </build>
   <!-- haxelib libraries -->
   <haxelib>

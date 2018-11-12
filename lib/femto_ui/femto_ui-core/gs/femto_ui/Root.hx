@@ -28,8 +28,8 @@ class Root extends RootBase
 
 	public var ui_factor_ : Float = 1;
 	//:scaled by hi-res:
-	public var def_text_size_			: Float = 14;
-	public var input_text_size_			: Float = 18;
+	public var def_font_size_			: Float = 14;
+	public var input_font_size_			: Float = 18;
 	public var small_tool_width_		: Float = 36;
 	public var small_tool_height_		: Float = 32;
 	public var tool_width_				: Float = 48;
@@ -62,8 +62,8 @@ class Root extends RootBase
 		if (m >= 1080)
 		{
 			ui_factor_ = 2;//TODO fix me: 4K?
-			def_text_size_			*= ui_factor_;
-			input_text_size_		*= ui_factor_;
+			def_font_size_			*= ui_factor_;
+			input_font_size_		*= ui_factor_;
 			small_tool_width_		*= ui_factor_;
 			small_tool_height_		*= ui_factor_;
 			tool_width_				*= ui_factor_;

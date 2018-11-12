@@ -13,14 +13,20 @@ class Edit extends EditBase
 	public static inline var SELECTABLE : Int	= 1;
 	public static inline var TAB_ENABLED : Int	= 2;
 
-	public function new(owner: NativeUIContainer, on_Changed: String->Void, txt: String = null)
+	public function new(owner: NativeUIContainer, on_changed: String->Void, txt: String = null)
 	{
-		super(owner, on_Changed, txt);
+		super(owner, txt);
 #if debug
 		name = "edit";
 #end
+		if (on_changed != null)
+			on_Changed = on_changed;
 	}
 //.............................................................................
+//.............................................................................
+	public dynamic function on_Changed(text: String): Void
+	{
+	}
 //.............................................................................
 //.............................................................................
 //.............................................................................

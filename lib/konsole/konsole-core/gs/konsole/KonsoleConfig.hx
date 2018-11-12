@@ -3,9 +3,6 @@ package gs.konsole;
 //import com.gs.femto_ui.util.StaticAssertion;
 import gs.femto_ui.util.Util;
 
-#if flash
-import flash.text.StyleSheet;
-#end
 #if (flash || openfl)
 import flash.display.DisplayObject;
 #end
@@ -20,6 +17,7 @@ class KonsoleConfig
 	public var cmd_history_size_: Int = 64;
 
 	public var redirect_trace_		: Bool = true;
+	public var allow_command_line_	: Bool = true;
 
 	public var con_bg_alpha_		: Float = 0.9;
 	public var crosshair_alpha_		: Float = 0.75;
@@ -48,7 +46,8 @@ class KonsoleConfig
 	//:scaled by hi-res:
 	public var min_width_			: Float = 128;
 	public var min_height_			: Float = 128;
-	public var con_text_size_		: Float = 14;
+	public var con_font_size_		: Float = 14;
+	public var cmd_font_size_		: Float = 18;
 	public var cmd_height_			: Float = 32;
 	public var zoom_size_			: Float = 48;
 
@@ -62,14 +61,10 @@ class KonsoleConfig
 	public var con_font_: String = null;
 	public var cmd_font_: String = null;
 
-	public var toggle_key_: UInt = 0xC0;//'`' key
+	public var toggle_key_: Int = 0xC0;//'`' key
 	public var password_: String;
 
 	private var init_: Bool = false;
-
-#if flash
-	private var css_ : StyleSheet;
-#end
 
 	public function new()
 	{}
@@ -97,25 +92,11 @@ class KonsoleConfig
 		{
 			min_width_		*= factor;
 			min_height_		*= factor;
-			con_text_size_	*= factor;
+			con_font_size_	*= factor;
+			cmd_font_size_	*= factor;
 			cmd_height_		*= factor;
 			zoom_size_		*= factor;//TODO review
 		}
 	}
 //.............................................................................
-#if flash
-	public function get_Css() : StyleSheet
-	{
-		if (null == css_)
-		{
-			css_ = new StyleSheet();
-			css_.setStyle("p", {
-						fontFamily : font_family_,
-						fontSize : con_text_size_,
-						color : "#" + Util.toHex(con_text_color_, 6)
-					});
-		}
-		return css_;
-	}
-#end
 }

@@ -12,7 +12,6 @@ class Button extends ButtonBase
 	public var text(default, set) : String = null;
 
 	private var label_ : Label = null;
-	private var on_click_ : InfoClick->Void = null;
 	private var auto_repeat_ : Bool = false;
 	private var repeat_time_ : Float = 0;
 	private var repeat_event_ : InfoClick = null;
@@ -25,16 +24,16 @@ class Button extends ButtonBase
 	public var repeat_delay_ : Float = 400 / 1000;//:s
 	public var min_repeat_delay_ : Float = 50 / 1000;//:s
 
-	public function new(owner : NativeUIContainer, txt : String, on_Click : InfoClick->Void)
+	public function new(owner : NativeUIContainer, txt : String, handler_click : InfoClick->Void)
 	{
 		super(owner);
 #if debug
 		name = "button";
 #end
-		init_Ex(txt, on_Click);
+		init_Ex(txt, handler_click);
 	}
 //.............................................................................
-	private function init_Ex(txt : String, on_Click : InfoClick->Void) : Void
+	private function init_Ex(txt : String, handler_click : InfoClick->Void) : Void
 	{
 		hover_inflation_ = Root.instance.hover_inflation_;
 
@@ -42,10 +41,12 @@ class Button extends ButtonBase
 		if (txt != null)
 			alloc_Label();
 
-		on_click_ = on_Click;
+		if (handler_click != null)
+			on_Click = handler_click;
 
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 	}
+//.............................................................................
 //.............................................................................
 	private function alloc_Label() : Label
 	{
@@ -58,6 +59,7 @@ class Button extends ButtonBase
 		add_Child(label_);
 		return label_;
 	}
+//.............................................................................
 //.............................................................................
 	private inline function set_text(value: String): String
 	{
@@ -152,9 +154,11 @@ class Button extends ButtonBase
 		click_event_.global_y_ = globalY;
 		click_event_.local_x_ = localX;
 		click_event_.local_y_ = localY;
-		if (on_click_ != null)
-			on_click_(click_event_);
+		on_Click(click_event_);
 	}
+//.............................................................................
+	public dynamic function on_Click(click_event: InfoClick)
+	{}
 //.............................................................................
 	private function on_Enter_Frame() : Void
 	{
@@ -171,8 +175,7 @@ class Button extends ButtonBase
 				if (delay < min_repeat_delay_)
 					delay = min_repeat_delay_;
 				repeat_time_ = time + delay;
-				if (on_click_ != null)
-					on_click_(repeat_event_);
+				on_Click(repeat_event_);
 			}
 			return;
 		}

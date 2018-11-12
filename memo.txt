@@ -15,9 +15,14 @@
 	.BUG: event listeners leaks in visels
 	+.viewport: restore size after win32::window min/max resizing
 	+.test button overlap & event propagation (kha)
+. kha::ViselBase::public var alpha(default, default): Float
 . review mconsole (js printer)
-
+. ERROR: colored
+. WARNING: colored
+. unite monitors creation/suspend/resume
+. heaps: use new drawRoundRect
 . how to detect v:Dynamic is ByteArray? (ByteArray is abstract in openfl)
+. review charCodeAt: may be use fastCodeAt?
 
 . /explode var|current context? toJson?
 . zoom doesn't work with starling

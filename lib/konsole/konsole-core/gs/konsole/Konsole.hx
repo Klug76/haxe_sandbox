@@ -117,8 +117,8 @@ class Konsole extends RingBuf<LogLine>
 //.............................................................................
 	private function native_trace(s: String): Void
 	{
-#if (flash || openfl)
-			Lib.trace(s);
+#if flash//:!openfl
+		Lib.trace(s);
 #else
 		if (prev_trace_ != null)
 		{

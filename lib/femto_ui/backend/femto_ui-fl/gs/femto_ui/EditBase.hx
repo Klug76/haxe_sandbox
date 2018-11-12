@@ -4,6 +4,7 @@ import flash.events.Event;
 import flash.text.TextField;
 import flash.text.TextFieldType;
 import flash.text.TextFormat;
+import gs.femto_ui.util.Util;
 
 using gs.femto_ui.RootBase.NativeUIContainer;
 
@@ -11,13 +12,11 @@ class EditBase extends Visel
 {
 	private var tf_ : TextField = null;
 	private var text_: String;
-	private var on_changed_: String->Void;
 
-	public function new(owner: NativeUIContainer, on_Changed: String->Void, txt: String = null)
+	public function new(owner: NativeUIContainer, txt: String = null)
 	{
 		super(owner);
 		text_ = txt;
-		on_changed_ = on_Changed;
 		invalidate_Visel(Visel.INVALIDATION_FLAG_TEXT);
 	}
 //.............................................................................
@@ -50,24 +49,25 @@ class EditBase extends Visel
 #if flash
 		tf_.condenseWhite = false;
 #end
-		tf_.width = width_;
-		tf_.height = height_;
+		//:html5 crash with zero size:
+		//:HTML5GLRenderContext.hx:2545 WebGL: INVALID_VALUE: texImage2D: no canvas
+		update_Text_Field_Size();
 		invalid_flags_ &= ~Visel.INVALIDATION_FLAG_SIZE;
-
-		if (on_changed_ != null)
-			tf_.addEventListener(Event.CHANGE, on_Text_Changed);
-
+		tf_.addEventListener(Event.CHANGE, on_Text_Changed);
 		addChild(tf_);
 	}
 //.............................................................................
 	private function on_Text_Changed(ev: Event): Void
 	{
-		on_changed_(tf_.text);
+		var ed: Edit = cast this;
+		ed.on_Changed(tf_.text);
 	}
 //.............................................................................
 	private function get_Default_Text_Format(): TextFormat
 	{
-		return new TextFormat(null, Std.int(Root.instance.input_text_size_));
+		var r : Root = Root.instance;
+		return new TextFormat(null,//TODO fix me
+			Std.int(r.input_font_size_));
 	}
 //.............................................................................
 	private function get_Edit_Option(opt: Int): Bool
@@ -92,15 +92,27 @@ class EditBase extends Visel
 		}
 		if ((invalid_flags_ & Visel.INVALIDATION_FLAG_SIZE) != 0)
 		{
-			tf_.width = width_;
-			tf_.height = height_;
+			update_Text_Field_Size();
 		}
+	}
+//.............................................................................
+	function update_Text_Field_Size()
+	{
+		var r : Root = Root.instance;
+		tf_.width = Util.fmax(r.small_tool_width_, width_);
+		tf_.height = Util.fmax(r.small_tool_height_, height_);
 	}
 //.............................................................................
 	//public function set_Focus(): Void
 	//{
 		//stage.focus = tf_;
 	//}
+//.............................................................................
+	private function set_Caret_To_End() : Void
+	{
+		var len : Int = tf_.length;
+		tf_.setSelection(len, len);
+	}
 //.............................................................................
 }
 //.............................................................................

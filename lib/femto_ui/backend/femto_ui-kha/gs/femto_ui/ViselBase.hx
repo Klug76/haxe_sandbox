@@ -16,6 +16,7 @@ class ViselBase
 	private var listeners_: Array<Event->Void> = null;
 
 	public var name(default, default): String = null;
+	public var alpha(default, default): Float;//TODO fix me
 	public var hit_test_bits(default, default): Int = HIT_TEST_AUTO;//:RECT & CHILDREN
 
 	public static inline var HIT_TEST_AUTO: Int		= 0;
@@ -371,6 +372,7 @@ class ViselBase
 		}
 	}
 //.............................................................................
+#if debug
 	public function dump(): String
 	{
 		var s: String = Std.string(this);
@@ -379,4 +381,5 @@ class ViselBase
 		s += ": visible=" + visible;
 		return s;
 	}
+#end
 }
