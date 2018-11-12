@@ -364,11 +364,16 @@ class Demo
 	function add_Konsole()
 	{
 		var cfg: KonsoleConfig = new KonsoleConfig();
-		cfg.allow_command_line_ = false;
+		//cfg.allow_command_line_ = false;
+		cfg.con_font_size_ *= 1.5;
 		var k: Konsole = new Konsole(cfg);
 		instance_ = k;
 		k.log("Hello,");
 		trace("World!");
+		trace("char by 0x60='" + String.fromCharCode(0x60) + "'");
+		trace("char by 0xc0='" + String.fromCharCode(0xc0) + "'");
+		trace("'`'.code=0x" + Util.toHex('`'.code));
+		trace("'~'.code=0x" + Util.toHex('~'.code));
 	}
 
 	private var view_: KonsoleView = null;
@@ -390,7 +395,7 @@ class Demo
 					//trace("******* ENTER new KonsoleView");
 					var r: Root = Root.instance;
 					instance_.cfg_.init_View(r.platform_, r.ui_factor_);
-					trace("*******");
+					//trace("*******");
 					view_ = new KonsoleView(instance_, false);
 					//trace("******* LEAVE new KonsoleView");
 				}

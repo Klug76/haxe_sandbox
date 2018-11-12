@@ -24,7 +24,9 @@ quick & dirty:
 class TextInputLine extends Visel
 {
 	public var text(get, set): String;
-	public var restrict(default, default): String = null;
+	public var restrict(default, default): String = null;//:simple, '-' not supported
+	public var filter_key_: Array<Int> = [KeyCode.Escape, KeyCode.Tab, KeyCode.Return, KeyCode.Up, KeyCode.Down,
+		KeyCode.Alt, KeyCode.AltGr, KeyCode.Control, KeyCode.Shift, KeyCode.Win];
 
 	private var text_: String = "";
 	private var tap_id_: Int;
@@ -225,13 +227,8 @@ class TextInputLine extends Visel
 		//TODO fix me: need valid event.charCode to kill this shit.
 		if ((code >= cast KeyCode.F1) && (code <= cast KeyCode.F24))
 			return false;
-		switch(code)
-		{
-		case KeyCode.Escape, KeyCode.Tab, KeyCode.Return, KeyCode.Up, KeyCode.Down, KeyCode.Alt, KeyCode.AltGr, KeyCode.Control, KeyCode.Shift, KeyCode.Win:
-			{
-				return false;
-			}
-		}
+		if (filter_key_.indexOf(code) >= 0)
+			return false;
 		return true;
 	}
 //.............................................................................
@@ -239,13 +236,23 @@ class TextInputLine extends Visel
 	{
 		if (null == restrict)
 			return false;
+		if ((restrict.length > 0) && (restrict.charCodeAt(0) == '^'.code))
+		{//:invert logic
+			for (i in 1...restrict.length)
+			{
+				var ch: Int = restrict.charCodeAt(i);
+				if (ch == char_code)
+					return true;
+			}
+			return false;
+		}
 		for (i in 0...restrict.length)
 		{
 			var ch: Int = restrict.charCodeAt(i);
 			if (ch == char_code)
-				return true;
+				return false;
 		}
-		return false;
+		return true;
 	}
 //.............................................................................
 //.............................................................................

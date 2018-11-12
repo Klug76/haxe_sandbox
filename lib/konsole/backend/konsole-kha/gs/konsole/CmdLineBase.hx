@@ -19,8 +19,12 @@ class CmdLineBase extends Edit
 	{
 		super.alloc_TextField();
 		var cmd: CmdLine = cast this;
-		if (null == cmd.k_.cfg_.password_)
-			tf_.restrict = "^`";
+		var cfg: KonsoleConfig = cmd.k_.cfg_;
+		if (null == cfg.password_)
+		{
+			tf_.restrict = "^" + cfg.toggle_char_;
+			tf_.filter_key_.push(cfg.toggle_key_);
+		}
 		tf_.add_Listener(on_TF_Event);
 	}
 //.............................................................................
@@ -45,7 +49,7 @@ class CmdLineBase extends Edit
 //.............................................................................
 	private function on_Key_Down_Edit(ev : Event) : Void
 	{
-		trace("cmd::key down: 0x" + Util.toHex(ev.code, 2));
+		//trace("cmd::key down: 0x" + Util.toHex(ev.code, 2));
 		switch (ev.code)
 		{
 		case KeyCode.Return,
@@ -59,7 +63,7 @@ class CmdLineBase extends Edit
 //.............................................................................
 	private function on_Key_Up_Edit(ev : Event) : Void
 	{
-		trace("cmd::key up: 0x" + Util.toHex(ev.code, 2));
+		//trace("cmd::key up: 0x" + Util.toHex(ev.code, 2));
 		var cmd: CmdLine = cast this;
 		switch (ev.code)
 		{

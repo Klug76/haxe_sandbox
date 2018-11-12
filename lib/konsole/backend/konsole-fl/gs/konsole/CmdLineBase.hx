@@ -21,8 +21,9 @@ class CmdLineBase extends Edit
 		tf_.addEventListener(KeyboardEvent.KEY_DOWN, on_Key_Down_Edit, false, 1);
 		tf_.addEventListener(KeyboardEvent.KEY_UP, on_Key_Up_Edit, false, 1);
 		var cmd: CmdLine = cast this;
-		if (null == cmd.k_.cfg_.password_)
-			tf_.restrict = "^`";
+		var cfg: KonsoleConfig = cmd.k_.cfg_;
+		if (null == cfg.password_)
+			tf_.restrict = "^" + cfg.toggle_char_;
 	}
 //.............................................................................
 	override public function get_Default_Text_Format() : TextFormat

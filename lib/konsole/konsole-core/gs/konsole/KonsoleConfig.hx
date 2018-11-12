@@ -61,7 +61,8 @@ class KonsoleConfig
 	public var con_font_: String = null;
 	public var cmd_font_: String = null;
 
-	public var toggle_key_: Int = 0xC0;//'`' key
+	public var toggle_key_: Int = 0xC0;//'`' key 192, BackQuote
+	public var toggle_char_: String = "`";//:used to restrict text input
 	public var password_: String;
 
 	private var init_: Bool = false;
