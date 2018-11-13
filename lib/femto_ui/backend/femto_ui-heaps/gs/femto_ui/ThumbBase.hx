@@ -137,8 +137,8 @@ class ThumbBase extends Visel
 				var bg = alloc_Background();
 				bg.clear();
 				bg.beginFill(cl & 0xFFffFF, al);
-				//TODO bg.drawRoundRect
-				bg.drawRect(-frame, -frame, nw + 2 * frame, nh + 2 * frame);
+				//bg.drawRect( -frame, -frame, nw + 2 * frame, nh + 2 * frame);
+				bg.drawRoundedRect(-frame, -frame, width_ + 2 * frame, height_ + 2 * frame, r.round_frame_);
 				bg.endFill();
 			}
 			else
