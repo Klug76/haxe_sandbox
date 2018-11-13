@@ -8,6 +8,7 @@ import gs.femto_ui.Button;
 import gs.femto_ui.Mover;
 import gs.femto_ui.Resizer;
 import gs.femto_ui.Root;
+import gs.femto_ui.ScrollText;
 import gs.femto_ui.Scrollbar;
 import gs.femto_ui.Toolbar;
 import gs.femto_ui.Viewport;
@@ -80,7 +81,7 @@ class Main extends App
 
 		//test_Visel();
 
-		add_Text();
+		//add_Text();
 
 		hxd.Window.getInstance().addEventTarget(onEvent);
 
@@ -144,12 +145,63 @@ class Main extends App
 		btn.dummy_color = 0x202040;
 		btn.resize_Visel(120, 42);
 
-		var sc: Scrollbar = new Scrollbar(panel, function(v: Int): Void
+		//for (i in 0...3)
+		for (i in 0...1)
 		{
-			trace("Scrollbar::scroll " + v);
-		});
-		sc.movesize(panel.width - r.small_tool_width_, 10, r.small_tool_width_, panel.height - 100);
-		sc.reset(1, 15, 1);
+			var st: ScrollText = new ScrollText(panel);
+			st.set_Text_Format("", 18, 0xf0ff00);
+			st.word_wrap = true;
+			st.movesize(350 + i * 200, 10, 150, panel.height - 100);
+			st.dummy_color = 0x000097;
+			//st.text = "foo<br>bar";
+			var txt = gen_Text(i);
+			//trace(txt);
+			st.replace_Text(txt);
+
+			var sc: Scrollbar = new Scrollbar(panel, function(v: Int): Void
+			{
+				//trace("Scrollbar::scroll " + v);
+				if (v > 0)
+					st.set_ScrollV(v);
+			});
+			sc.movesize(350 + i * 200 + 150, 10, r.small_tool_width_, panel.height - 100);
+			sc.reset(1, st.get_Max_ScrollV(), 1);
+
+			st.on_text_scroll =
+			st.on_text_change = function()
+			{
+				sc.max = st.get_Max_ScrollV();
+				sc.value = st.get_ScrollV();
+			};
+
+			var m: Mover = new Mover(st);
+			m.resize_Visel(r.tool_width_, r.tool_height_);
+			m.dummy_color = 0x40000000 | r.color_movesize_;
+
+			var rz: Resizer = new Resizer(st);
+			rz.dummy_color = 0x40000000 | r.color_movesize_;
+			rz.min_width_ = r.tool_width_;
+			rz.min_height_ = r.tool_height_;
+			st.on_Resize = function()
+			{
+				//trace("scrolltext::size=" + st.width + "x" + st.height);
+				rz.movesize(st.width - r.small_tool_width_, st.height - r.small_tool_height_, r.small_tool_width_, r.small_tool_height_);
+			};
+
+			btn = new Button(tb_, "1_" + i, function(_)
+			{
+				st.append_Text("<br/>#" + debug_counter_++);
+			});
+			//btn.on_Click(null);
+			btn.dummy_color = 0x202040;
+			btn.resize_Visel(60, 42);
+			btn = new Button(tb_, "2_" + i, function(_)
+			{
+				st.append_Text("<br/>#" + debug_counter_++ + "______________ __________");
+			});
+			btn.dummy_color = 0x202040;
+			btn.resize_Visel(60, 42);
+		}
 
 		var m: Mover = new Mover(panel);
 		m.resize_Visel(r.tool_width_, r.tool_height_);
@@ -293,11 +345,11 @@ class Main extends App
 		t.x = 10;
 		t.y = 10;
 		//var s = "Haxe <font color='#ff0000'>Rocks!!!</font>";
-		var s = gen_Text();
+		var s = gen_Text0();
 		t.text = s;
 	}
 
-	function gen_Text() : String
+	function gen_Text0() : String
 	{
 		var s: StringBuf = new StringBuf();
 		for (i in 0...2048)
@@ -314,6 +366,25 @@ class Main extends App
 		}
 		return s.toString();
 	}
+
+	function gen_Text(id: Int) : String
+	{
+		var s: StringBuf = new StringBuf();
+		for (i in 0...24)
+		{
+			if ((i & 1) != 0)
+				s.add("#<font color='#ff0000'>");
+			else
+				s.add("#<font color='#0000ff'>");
+			s.add(i);
+			s.add("</font>");
+			s.add(" bla bla bla bla bla bla bla bla bla bla bla!");
+			s.add("<br/>");
+		}
+		s.add("end.");
+		return s.toString();
+	}
+
 
 	override function update(dt: Float): Void
 	{

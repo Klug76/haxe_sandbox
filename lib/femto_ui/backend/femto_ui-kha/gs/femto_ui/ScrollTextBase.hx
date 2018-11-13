@@ -289,9 +289,10 @@ class ScrollTextBase extends Visel
 		var old_soft: Int = vis_soft_line_temp_;
 		if (delta > 0)
 		{
+			var max_v: Int = get_Max_ScrollV_Base();
 			for (i in 0...delta)
 			{
-				if (get_ScrollV_Temp() >= get_Max_ScrollV_Base())
+				if (get_ScrollV_Temp() >= max_v)
 					break;//:prevent overscroll
 				if (!get_Next_Line())
 					break;
@@ -330,13 +331,19 @@ class ScrollTextBase extends Visel
 		var r: Root = Root.instance;
 		var font: Font = r.font_;
 		var font_size: Int = fsize_;
-		var text_h: Float = font.height(font_size);
-		if (text_h < 1)
+		var line_h: Float = font.height(font_size);
+		if (line_h < 1)
 			return;
-		lines_in_window_ = Util.imax(1, Math.floor(height_ / text_h));
+		lines_in_window_ = Util.imax(1, Math.floor(height_ / line_h));
+
+		wrap_zone_begin_ = hard_line_count_;
+		wrap_zone_soft_lines_ = 0;
 
 		if (!word_wrap_)
+		{
+			vis_soft_line_ = 0;
 			return;
+		}
 
 		//TODO kill chars_in_window_
 		//var arr: Array<Int> = ['W'.code];
@@ -346,8 +353,6 @@ class ScrollTextBase extends Visel
 			return;
 		chars_in_window_ = Util.imax(8, Math.floor(width_ / char_w));
 
-		wrap_zone_begin_ = hard_line_count_;
-		wrap_zone_soft_lines_ = 0;
 		if (text__.length > 0)
 		{
 			var wrap_limit: Int = Util.imax(lines_in_window_, 64);

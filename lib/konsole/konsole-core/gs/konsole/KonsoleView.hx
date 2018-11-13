@@ -325,8 +325,8 @@ class KonsoleView extends Viewport
 		var max : Int = scroll_text_.get_Max_ScrollV();
 		//trace("log::update_Controls " + max);
 		var flag : Bool = max > 1;
-		scrollbar_.value = cur;
 		scrollbar_.max = max;
+		scrollbar_.value = cur;
 		btn_scroll_up_.enabled = flag && (cur > 1);
 		btn_scroll_down_.enabled = flag && (cur < max);
 

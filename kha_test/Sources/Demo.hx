@@ -172,7 +172,6 @@ class Demo
 			});
 			btn.dummy_color = 0x202040;
 			btn.resize_Visel(60, 42);
-
 		}
 
 		var m: Mover = new Mover(panel);

@@ -109,7 +109,7 @@ class ScrollTextBase extends Visel
 		if ((null == value) || (value.length <= 0))
 			return;
 		var st: ScrollText = cast this;
-		var in_tail : Bool = st.get_ScrollV() == st.get_Max_ScrollV();
+		var in_tail : Bool = text_field_.scrollV == text_field_.maxScrollV;
 #if flash
 		var ins_idx : Int = text_field_.length;
 		aux_.htmlText = value;
@@ -123,7 +123,7 @@ class ScrollTextBase extends Visel
 		//:text_field_.htmlText += s;
 #end
 		if (in_tail)
-			st.set_ScrollV(st.get_Max_ScrollV());
+			text_field_.scrollV = text_field_.maxScrollV;
 		st.on_text_change();
 	}
 //.............................................................................
@@ -131,7 +131,6 @@ class ScrollTextBase extends Visel
 	{
 		if (value.length > 0)
 		{
-			//trace("** console::replace '" + s + "'");
 #if flash
 			var len : Int = text_field_.length;
 			aux_.htmlText = value;
@@ -147,20 +146,19 @@ class ScrollTextBase extends Visel
 		}
 		else
 		{
-			//trace("** console::clear");
 #if flash
 			var len : Int = text_field_.length;
 			if (len > 0)
 			{
 				text_field_.text = "";
-				text_field_.scrollV = 0;//:?
+				text_field_.scrollV = 1;//:If the first line displayed is the first line in the text field, scrollV is set to 1 (not 0).
 			}
 #else
 			if (text__.length > 0)
 			{
 				text__ = "";
 				text_field_.text = "";
-				text_field_.scrollV = 0;//:BUG - scrollV doesn't reset to 0 in openfl (yet, v.7,1,2)
+				text_field_.scrollV = 1;//:BUG - scrollV doesn't reset in openfl (yet, v.7,1,2)
 			}
 #end
 		}
