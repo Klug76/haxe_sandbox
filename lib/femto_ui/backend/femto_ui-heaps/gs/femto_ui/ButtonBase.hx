@@ -20,7 +20,7 @@ class ButtonBase extends Visel
 	{
 		super.init_Base();
 
-		var ni: Interactive = alloc_Interactive(Cursor.Button);
+		var ni: Interactive = alloc_Interactive(Cursor.Button, true);
 		ni.onClick = on_Mouse_Click;
 		ni.onPush = on_Mouse_Down;
 		ni.onRelease = on_Mouse_Up;
@@ -76,13 +76,13 @@ class ButtonBase extends Visel
 //.............................................................................
 	private function on_Mouse_Down(ev : Event) : Void
 	{
-		//trace("Button::" + ev.kind + ": " + ev.button + ": " + ev.touchId + ": " + ev.propagate);
+		//trace("button::" + ev.kind + ": " + ev.button + ": " + ev.touchId + ": " + ev.propagate + ": " + ev.cancel);
 		if ((state_ & Visel.STATE_DOWN) != 0)
 			return;
 		state_ |= Visel.STATE_DOWN;
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 
-		ev.propagate = false;
+		set_Event_Handled(ev);
 
 		to_Global(ev.relX, ev.relY);
 		var b: Button = cast this;
@@ -92,9 +92,10 @@ class ButtonBase extends Visel
 //.............................................................................
 	private function on_Mouse_Up(ev : Event) : Void
 	{
+		//trace("button::" + ev.kind + ": " + ev.button + ": " + ev.touchId + ": " + ev.propagate + ": " + ev.cancel);
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
-			ev.propagate = false;
+			set_Event_Handled(ev);
 
 			state_ &= ~Visel.STATE_DOWN;
 			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
@@ -104,10 +105,11 @@ class ButtonBase extends Visel
 //.............................................................................
 	private function on_Mouse_Click(ev : Event) : Void
 	{
+		//trace("button::" + ev.kind + ": " + ev.button + ": " + ev.touchId + ": " + ev.propagate + ": " + ev.cancel);
 		if (!enable_interactive_)
 			return;
 
-		ev.propagate = false;
+		set_Event_Handled(ev);
 
 		to_Global(ev.relX, ev.relY);
 		var b: Button = cast this;

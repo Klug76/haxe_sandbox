@@ -17,13 +17,15 @@ class ScrollTextBase extends Visel
 #if flash
 	private var aux_ : TextField;
 #else
-	private var text__: String = "";
+	private var html_text_: String = "";
 #end
 	private var text_field_ : TextField;
+	private var is_html_: Bool;
 
-	public function new(owner : NativeUIContainer)
+	public function new(owner : NativeUIContainer, is_html: Bool)
 	{
 		super(owner);
+		is_html_ = is_html;
 		create_Children_Ex();
 	}
 //.............................................................................
@@ -32,11 +34,14 @@ class ScrollTextBase extends Visel
 		var r : Root = Root.instance;
 
 #if flash
-		aux_ = new TextField();
-		aux_.type = TextFieldType.DYNAMIC;
-		aux_.selectable = false;
-		aux_.condenseWhite = false;
-		aux_.multiline = true;
+		if (is_html_)
+		{
+			aux_ = new TextField();
+			aux_.type = TextFieldType.DYNAMIC;
+			aux_.selectable = false;
+			aux_.condenseWhite = false;
+			aux_.multiline = true;
+		}
 #end
 
 		text_field_ = new TextField();
@@ -57,16 +62,21 @@ class ScrollTextBase extends Visel
 //.............................................................................
 	public function set_Text_Format_Base(fname: String, fsize: Int, fcolor: Int): Void
 	{
-		text_field_.defaultTextFormat = new TextFormat(fname, fsize, fcolor);
+		var tf: TextFormat = new TextFormat(fname, fsize, fcolor);
+		text_field_.defaultTextFormat = tf;
 #if flash
-		var css: StyleSheet = new StyleSheet();
-		css.setStyle("p",
+		if (is_html_)
 		{
-			fontFamily : fname,
-			fontSize : fsize,
-			color : "#" + Util.toHex(fcolor, 6)
-			});
-		aux_.styleSheet = css;
+			var css: StyleSheet = new StyleSheet();
+			css.setStyle("p",
+			{
+				fontFamily : fname,
+				fontSize : fsize,
+				color : "#" + Util.toHex(fcolor, 6)
+				//?display:'inline'//:Supported values are inline, block, and none.
+				});
+			aux_.styleSheet = css;
+		}
 #end
 	}
 //.............................................................................
@@ -110,18 +120,25 @@ class ScrollTextBase extends Visel
 			return;
 		var st: ScrollText = cast this;
 		var in_tail : Bool = text_field_.scrollV == text_field_.maxScrollV;
+		if (is_html_)
+		{
 #if flash
-		var ins_idx : Int = text_field_.length;
-		aux_.htmlText = value;
-		var temp : String = aux_.getXMLText();
-		text_field_.insertXMLText(ins_idx, ins_idx, temp, false);
-		aux_.htmlText = "";
+			var ins_idx : Int = text_field_.length;
+			aux_.htmlText = value;
+			var temp : String = aux_.getXMLText();
+			text_field_.insertXMLText(ins_idx, ins_idx, temp, false);
+			aux_.htmlText = "";
 #else
-		text__ += value;
-		text_field_.htmlText = text__;
-		//:BUGBUG: get_htmlText doesn't work in openfl (yet, v.7,1,2)
-		//:text_field_.htmlText += s;
+			html_text_ += value;
+			text_field_.htmlText = html_text_;
+			//:BUGBUG: get_htmlText doesn't work in openfl (yet, v.7,1,2)
+			//:text_field_.htmlText += s;
 #end
+		}
+		else
+		{
+			text_field_.appendText(value);
+		}
 		if (in_tail)
 			text_field_.scrollV = text_field_.maxScrollV;
 		st.on_text_change();
@@ -131,36 +148,37 @@ class ScrollTextBase extends Visel
 	{
 		if (value.length > 0)
 		{
+			if (is_html_)
+			{
 #if flash
-			var len : Int = text_field_.length;
-			aux_.htmlText = value;
-			var temp : String = aux_.getXMLText();
-			text_field_.insertXMLText(0, len, temp, false);
-			aux_.htmlText = "";
+				var len : Int = text_field_.length;
+				aux_.htmlText = value;
+				var temp : String = aux_.getXMLText();
+				text_field_.insertXMLText(0, len, temp, false);//:fastest way
+				aux_.htmlText = "";
 #else
-			text__ = value;
-			text_field_.htmlText = value;
+				html_text_ = value;
+				text_field_.htmlText = value;
 #end
+			}
+			else
+			{
+				text_field_.text = value;
+			}
 
 			text_field_.scrollV = text_field_.maxScrollV;
 		}
 		else
-		{
-#if flash
+		{//:clear
 			var len : Int = text_field_.length;
 			if (len > 0)
 			{
 				text_field_.text = "";
 				text_field_.scrollV = 1;//:If the first line displayed is the first line in the text field, scrollV is set to 1 (not 0).
-			}
-#else
-			if (text__.length > 0)
-			{
-				text__ = "";
-				text_field_.text = "";
-				text_field_.scrollV = 1;//:BUG - scrollV doesn't reset in openfl (yet, v.7,1,2)
-			}
+#if !flash
+				html_text_ = "";
 #end
+			}
 		}
 		var st: ScrollText = cast this;
 		st.on_text_change();

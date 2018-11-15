@@ -119,7 +119,7 @@ class Demo
 		//for (i in 0...3)
 		for (i in 0...1)
 		{
-			var st: ScrollText = new ScrollText(panel);
+			var st: ScrollText = new ScrollText(panel, true);
 			st.set_Text_Format("", 18, 0xf0ff00);
 			st.word_wrap = true;
 			st.movesize(350 + i * 200, 10, 150, panel.height - 100);

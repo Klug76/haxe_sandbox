@@ -131,6 +131,9 @@ class Konsole extends RingBuf<LogLine>
 #end
 	}
 //.............................................................................
+	static private var regexp_err: EReg = ~/^error/i;
+	static private var regexp_warn: EReg = ~/^warning/i;
+//.............................................................................
 	public function log(v: Dynamic) : Void
 	{
 		var s: String = StrUtil.nice_Dump(v);
@@ -138,6 +141,27 @@ class Konsole extends RingBuf<LogLine>
 			s = "";
 		native_trace(s);
 		var it: LogLine = add_Line();
+		var len = s.length;
+		if (len > 5)
+		{
+			var cc = s.charCodeAt(5);
+			if ((cc == ':'.code) && regexp_err.match(s))
+			{
+				it.html_ = "<p><font color='#" + Util.toHex(cfg_.error_color_, 6) + "'>" + s + "</font></p>";
+				it.text_ = null;
+				return;
+			}
+		}
+		if (len > 7)
+		{
+			var cc = s.charCodeAt(7);
+			if ((cc == ':'.code) && regexp_warn.match(s))
+			{
+				it.html_ = "<p><font color='#" + Util.toHex(cfg_.warning_color_, 6) + "'>" + s + "</font></p>";
+				it.text_ = null;
+				return;
+			}
+		}
 		it.html_ = null;
 		it.text_ = s;
 	}
@@ -300,7 +324,7 @@ class Konsole extends RingBuf<LogLine>
 //.............................................................................
 	private function list_All_Commands(dummy: Array<String>) : Void
 	{
-		var fnt_open: String = "<font color='#" + cfg_.con_hint_color_ + "'>";
+		var fnt_open: String = "<font color='#" + Util.toHex(cfg_.con_hint_color_, 6) + "'>";
 		var fnt_close: String = "</font>";
 		var s : String = "<p>command list:</p>";
 		var v : Array<String> = new Array<String>();
@@ -363,6 +387,7 @@ class Konsole extends RingBuf<LogLine>
 		Clipboard.generalClipboard.setData(ClipboardFormats.TEXT_FORMAT, text);
 		//:System.setClipboard(text);//:ios - doesn't work
 #else
+		//TODO if lime use setClipboard
 		trace("TODO fix me: Clipboard::copy");
 		return;
 #end

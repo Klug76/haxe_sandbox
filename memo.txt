@@ -1,11 +1,11 @@
-.BUG: heaps: TextInput: interactive.onKeyUp = function(e) onKeyUp(e);
 . refactoring
+	. add gesture
 	. remove hard-coded tool buttons (setup array in cfg?)
 	. remove hard-coded fps, mem (setup in cfg?)
-	. remove flash.* from Konsole (to KonController)
-	. add heaps backend!?
-		. lime | kha?
-	. add gesture
+	+. remove flash.* from Konsole (to KonController)
+	+. add heaps backend
+		+. kha
+		?. lime?
 	+. relax stage != null
 	. compile-time assert?
 	. replace haxe.unit (gone in haxe 4 ) with utest | munit | buddy
@@ -16,33 +16,37 @@
 	+.viewport: restore size after win32::window min/max resizing
 	+.test button overlap & event propagation (kha)
 . kha::ViselBase::public var alpha(default, default): Float
+. bigger size of ui elements for mobile
+
 . review mconsole (js printer)
-. ERROR: colored
-. WARNING: colored
 . unite monitors creation/suspend/resume
-. heaps: use new drawRoundRect
 . how to detect v:Dynamic is ByteArray? (ByteArray is abstract in openfl)
 . review charCodeAt: may be use fastCodeAt?
-
 . /explode var|current context? toJson?
 . zoom doesn't work with starling
+. bug: resize stage cause unusable size of viewports
+	.heaps
+	.kha
+. openfl bug: html5 scrollbar may be messed up after resizing
+. html5: how to copy selected text!?
+. how to properly detect desktop system!?
+. zoom: show color under mouse!? too expansive?
+
+
+-done----------------------------------------------
++. ERROR: colored
++. WARNING: colored
++. heaps: use new drawRoundRect
 +. zoom: use arrow keys to move crosshair
 +. zoom doesn't work with stage3d - fixed!!!
 	.\patched\std\flash\display3D\Context3D.hx - function drawToBitmapData(destination : flash.display.BitmapData, srcRect: flash.geom.Rectangle = null, destPoint: flash.geom.Point = null) : Void;
 +. bug: mouse click e.g. in disabled button cause underlying ui click - fixed in Viewport
 +. /objects: dump all script objects
-. bug: resize stage cause unusable size
-. custom trace callback
-. bigger size of ui elements for mobile
-. WTF: Parameter default value should be constant
-	. https://try.haxe.org/#60547
-. WTF: switch(Keyboard.BACK)
-	. https://try.haxe.org/#ae27C
-.bug: html5 scrollbar may be messed up after resizing
++. custom trace callback
 +.eval (hscript)
 +.clean-up in Fps|Mem Monitor
-.html5: how to copy selected text!?
 
+===================================================
 +.how to override flash.display.DisplayObject::x, width, etc?
 	.http://community.openfl.org/t/what-is-stupid-problem-with-getters-and-setters/7518
 	.see \lib\openfl\7,1,2\src\format\swf\instance\MovieClip.hx
@@ -57,12 +61,23 @@
 		}
 		#if (!flash) return val; #end
 	}
-.how to detect desktop system!?
-. zoom: show color under mouse!? too expansive?
+===================================================
+. WTF: Parameter default value should be constant
+	. https://try.haxe.org/#60547
+. WTF: switch(Keyboard.BACK)
+	. https://try.haxe.org/#ae27C
+===================================================
+===================================================
+===================================================
+===================================================
+===================================================
+===================================================
+===================================================
+===================================================
 .how to int *= float?
 +.how to cast like 'as'?
-.js-target has no uint, but only int. sux :(
-.haxe have no warning if function call miss () (e.g. event.preventDefault;)
+. js-target has no uint, but only int. sux :(
+. haxe have no warning if function call miss () (e.g. event.preventDefault;)
 
 @:enum
 abstract GameColors( Int ) to Int from Int {
@@ -85,7 +100,7 @@ abstract GameColors( Int ) to Int from Int {
 . how to remove haxe::Boot classes from swc!? e.g. multiple swc + boot.swc with this boilerplate code
 
 . openfl: make apk with 3d test
-+. openfl: can eat import flash.*
+. openfl: can eat import flash.*
 
 +.html5 build
 	.BlendMode.INVERT in html5

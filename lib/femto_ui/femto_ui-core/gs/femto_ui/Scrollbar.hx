@@ -67,7 +67,7 @@ class Scrollbar extends Button
 //.............................................................................
 	private function on_Area_Click(ev: InfoClick) : Void
 	{
-		//flash.Lib.trace("scrollbar::on_Area_Click " + ev.global_x_ + ":" + ev.global_y_);
+		//trace("scrollbar::on_Area_Click " + ev.global_x_ + ":" + ev.global_y_);
 		if (thumb_.is_drag_mode)
 			return;
 		var ny : Float = ev.local_y_;
@@ -88,7 +88,7 @@ class Scrollbar extends Button
 		if (value_ != v)
 		{
 			value_ = v;
-			//flash.Lib.trace("scrollbar::set_Value(" + v + ")");
+			//trace("scrollbar::set_Value(" + v + ")");
 			on_Scroll(v);
 		}
 	}
@@ -96,13 +96,13 @@ class Scrollbar extends Button
 //.............................................................................
 	public function on_Thumb_Do_Drag() : Void
 	{
-		//flash.Lib.trace("thumb::do drag, y=" + thumb_.y);
+		//trace("thumb::do drag, y=" + thumb_.y);
 		set_Value(calc_Value(thumb_.y));
 	}
 //.............................................................................
 	public function on_Thumb_Finish_Drag() : Void
 	{
-		//flash.Lib.trace("thumb::finish drag");
+		//trace("thumb::finish drag");
 		update_State();
 		on_Scroll(min_ - 1);
 	}
@@ -165,7 +165,7 @@ class Scrollbar extends Button
 		if (value_ != value)
 		{
 			value_ = value;
-			//flash.Lib.trace("scrollbar::set value = " + value + ", INVALIDATION_FLAG_DATA");
+			//trace("scrollbar::set value = " + value + ", INVALIDATION_FLAG_DATA");
 			invalidate_Visel(Visel.INVALIDATION_FLAG_DATA);
 		}
 		return value;
@@ -185,7 +185,7 @@ class Scrollbar extends Button
 	{
 		if (thumb_.is_drag_mode)
 			return;
-		//flash.Lib.trace("thumb::update pos, val = " + value_);
+		//trace("thumb::update pos, val = " + value_);
 		var df : Int = max_ - min_;
 		var dh : Float = Math.floor(height_ - thumb_.height);
 		if ((df <= 0) || (dh <= 0) || (value_ == min_))
@@ -207,7 +207,7 @@ class Scrollbar extends Button
 		{
 			return;
 		}
-		//flash.Lib.trace("thumb::update y " + thumb_.y + " => " + ny);
+		//trace("thumb::update y " + thumb_.y + " => " + ny);
 		thumb_.y = ny;
 	}
 }

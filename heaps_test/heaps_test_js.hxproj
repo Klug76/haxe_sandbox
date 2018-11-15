@@ -17,8 +17,9 @@
   <classpaths>
     <class path="src" />
     <class path="..\lib\femto_ui\femto_ui-core" />
-    <class path="..\lib\konsole\konsole-core" />
     <class path="..\lib\femto_ui\backend\femto_ui-heaps" />
+    <class path="..\lib\konsole\konsole-core" />
+    <class path="..\lib\konsole\backend\konsole-heaps" />
     <class path="..\lib\femto_ui\test" />
   </classpaths>
   <!-- Build options -->

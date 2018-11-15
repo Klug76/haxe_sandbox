@@ -129,6 +129,7 @@ class KonController
 				{
 					var r: Root = Root.instance;
 					instance_.cfg_.init_View(r.platform_, r.ui_factor_);
+					//view_ = new KonsoleView(instance_, false);
 					view_ = new KonsoleView(instance_, true);
 				}
 				else

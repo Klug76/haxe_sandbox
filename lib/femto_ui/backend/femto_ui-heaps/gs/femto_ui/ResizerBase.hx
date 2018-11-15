@@ -1,7 +1,6 @@
 package gs.femto_ui;
 
 
-import gs.femto_ui.util.Util;
 import h2d.Interactive;
 import h2d.Scene;
 import hxd.Cursor;
@@ -23,7 +22,7 @@ class ResizerBase extends Visel
 	{
 		super.init_Base();
 
-		var ni: Interactive = alloc_Interactive(Cursor.Button);
+		var ni: Interactive = alloc_Interactive(Cursor.Button, true);
 		ni.onPush = on_Mouse_Down;
 		ni.onRelease = on_Mouse_Up;
 		ni.onOver = set_Hover_State;
@@ -53,7 +52,7 @@ class ResizerBase extends Visel
 		state_ |= Visel.STATE_DOWN;
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 
-		ev.propagate = false;
+		set_Event_Handled(ev);
 
 		drag_enter_ = false;
 		cur_scene_ = Root.instance.scene_;
@@ -67,7 +66,8 @@ class ResizerBase extends Visel
 			state_ &= ~Visel.STATE_DOWN;
 			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 
-			ev.propagate = false;
+			set_Event_Handled(ev);
+
 			stop_Drag();
 		}
 	}
@@ -76,7 +76,7 @@ class ResizerBase extends Visel
 	{
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
-			ev.propagate = false;
+			set_Event_Handled(ev);
 
 			var rz: Resizer = cast this;
 			if (!drag_enter_)

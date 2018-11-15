@@ -7,9 +7,9 @@ class ScrollText extends ScrollTextBase
 {
 	public var word_wrap(get, set): Bool;
 
-	public function new(owner : NativeUIContainer)
+	public function new(owner : NativeUIContainer, is_html: Bool)
 	{
-		super(owner);
+		super(owner, is_html);
 #if debug
 		name = "scrolltext";
 #end

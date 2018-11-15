@@ -13,6 +13,11 @@ import gs.femto_ui.Scrollbar;
 import gs.femto_ui.Toolbar;
 import gs.femto_ui.Viewport;
 import gs.femto_ui.Visel;
+import gs.femto_ui.util.Util;
+import gs.konsole.Konsole;
+import gs.konsole.KonsoleConfig;
+import gs.konsole.KonsoleView;
+import h2d.TextInput;
 import hxd.Event;
 import hxd.Key;
 
@@ -76,7 +81,7 @@ class Main extends App
 		ni.onOut = function(_) b.alpha = 0.4;
 
 		add_Root();
-
+		add_Konsole();
 		add_UI();
 
 		//test_Visel();
@@ -148,7 +153,7 @@ class Main extends App
 		//for (i in 0...3)
 		for (i in 0...1)
 		{
-			var st: ScrollText = new ScrollText(panel);
+			var st: ScrollText = new ScrollText(panel, true);
 			st.set_Text_Format("", 18, 0xf0ff00);
 			st.word_wrap = true;
 			st.movesize(350 + i * 200, 10, 150, panel.height - 100);
@@ -283,47 +288,57 @@ class Main extends App
 		}
 	}
 
-	function on_Key_Down(event: Event)
+	function on_Key_Down(ev: Event)
 	{
-		switch (event.keyCode)
+		switch (ev.keyCode)
 		{
-			case Key.V:
-				v_.visible = !v_.visible;
-			case Key.A:
-				v_.dummy_alpha = if (v_.dummy_alpha < 0.5) 1. else 0.25;
-			case Key.C:
-				v_.dummy_color = v_.dummy_color ^ 0xff00ff;
-			case Key.W:
-				v_.width = 200 - v_.width;
-			case Key.H:
-				v_.height = 450 - v_.height;
-			case Key.R:
-				v_.resize_Visel(200 - v_.width, 450 - v_.height);
-			case Key.DELETE:
-				v_.destroy_Visel();
-			case Key.Q:
-				al_.h_align =
-					switch (al_.h_align)
+		case Key.V:
+			v_.visible = !v_.visible;
+		case Key.A:
+			v_.dummy_alpha = if (v_.dummy_alpha < 0.5) 1. else 0.25;
+		case Key.C:
+			v_.dummy_color = v_.dummy_color ^ 0xff00ff;
+		case Key.W:
+			v_.width = 200 - v_.width;
+		case Key.H:
+			v_.height = 450 - v_.height;
+		case Key.R:
+			v_.resize_Visel(200 - v_.width, 450 - v_.height);
+		case Key.DELETE:
+			v_.destroy_Visel();
+		case Key.Q:
+			al_.h_align =
+				switch (al_.h_align)
 				{
-					case Align.NEAR:
-						Align.CENTER;
-					case Align.CENTER:
-						Align.FAR;
-					case Align.FAR:
-						Align.NEAR;
+				case Align.NEAR:
+					Align.CENTER;
+				case Align.CENTER:
+					Align.FAR;
+				case Align.FAR:
+					Align.NEAR;
 				}
-			case Key.Z:
-				al_.v_align =
-					switch (al_.v_align)
+		case Key.Z:
+			al_.v_align =
+				switch (al_.v_align)
 				{
-					case Align.NEAR:
-						Align.CENTER;
-					case Align.CENTER:
-						Align.FAR;
-					case Align.FAR:
-						Align.NEAR;
+				case Align.NEAR:
+					Align.CENTER;
+				case Align.CENTER:
+					Align.FAR;
+				case Align.FAR:
+					Align.NEAR;
 				}
+		//default:
 		}
+		if (instance_ != null)
+		{
+			if (ev.keyCode == instance_.cfg_.toggle_key_)
+			{
+				ev.cancel = true;
+				toggle_Konsole();
+			}
+		}
+
 	}
 
 	function test_Visel()
@@ -333,23 +348,29 @@ class Main extends App
 
 	function add_Text()
 	{
+		//TODO make native input!?
+		//var inp = new TextInput(hxd.res.DefaultFont.get(), s2d);
+		//inp.x = 10;
+		//inp.y = 300;
+		//inp.backgroundColor = 0x506070;
 		var maxw = 220;
-		var mask = new h2d.Mask(maxw, 260, s2d);
-		mask.x = 10;
+		var maxh = 260;
+		var bg = new h2d.Bitmap(h2d.Tile.fromColor(0x608060, maxw, maxh), s2d);
+		bg.x = 410;
+		bg.y = 300;
+		var mask = new h2d.Mask(maxw, maxh, s2d);
+		mask.x = 410;
 		mask.y = 300;
 		var t = new h2d.HtmlText(hxd.res.DefaultFont.get(), mask);
 		//var t = new h2d.Text(hxd.res.DefaultFont.get(), s2d);
+		//t.textAlign = h2d.Text.Align.Center;
+		//t.condenseWhite = false;//TODO fix me!
 		t.maxWidth = maxw;
-		//t.
-		//t.scale(10);
-		t.x = 10;
-		t.y = 10;
-		//var s = "Haxe <font color='#ff0000'>Rocks!!!</font>";
 		var s = gen_Text0();
 		t.text = s;
 	}
 
-	function gen_Text0() : String
+	function gen_Text00() : String
 	{
 		var s: StringBuf = new StringBuf();
 		for (i in 0...2048)
@@ -362,11 +383,39 @@ class Main extends App
 			s.add("</font>");
 			s.add(" bla bla bla bla bla bla bla bla bla bla bla!");
 			s.add("<br/>");
-			//s.add("\n");
 		}
 		return s.toString();
 	}
 
+	function gen_Text0() : String
+	{
+		var s: StringBuf = new StringBuf();
+		s.add("start:");
+		/*
+		for (i in 0...2)
+		{
+			//if ((i & 1) != 0)
+				//s.add("#<font color='#ff0000'>");
+			//else
+				//s.add("#<font color='#0000ff'>");
+			//s.add(i);
+			//s.add("</font>");
+			if ((i & 1) != 0)
+				s.add("<p align='center'>bla bla bla bla bla bla bla bla bla bla bla!</p>");
+			else
+				s.add("<p>bla bla bla bla bla bla bla bla bla bla bla!</p>");
+		}
+		*/
+		s.add("<p>1 &gt; 0 &lt;    1</p>");
+		s.add("<p>2&amp;lt;2</p>");
+		s.add("end.");
+		return s.toString();
+	}
+/*
+		h.set("amp", "&");
+		h.set("quot", '"');
+		h.set("apos", "'");
+*/
 	function gen_Text(id: Int) : String
 	{
 		var s: StringBuf = new StringBuf();
@@ -385,6 +434,77 @@ class Main extends App
 		return s.toString();
 	}
 
+	function add_Konsole()
+	{
+		var cfg: KonsoleConfig = new KonsoleConfig();
+		//cfg.allow_command_line_ = false;
+		var k: Konsole = new Konsole(cfg);
+		instance_ = k;
+		k.log("Hello,");
+		trace("World!");
+		trace("char by 0x60='" + String.fromCharCode(0x60) + "'");
+		trace("char by 0xc0='" + String.fromCharCode(0xc0) + "'");
+		trace("'`'.code=0x" + Util.toHex('`'.code));
+		trace("'~'.code=0x" + Util.toHex('~'.code));
+
+		var dbg: String = "false";
+#if debug
+		dbg = "<font color='#FFFF00'>true</font>";
+#end
+		var info: String = "<p><b>Welcome to ";
+		info								+= "konsole-heaps";
+		info += ", debug=";
+		info								+= dbg;
+		info += "</b></p>";
+		k.log_Html(info);
+
+	}
+
+	private var instance_: Konsole = null;
+ 	private var view_: KonsoleView = null;
+
+	function get_Visible(): Bool
+	{
+		if (view_ != null)
+			return view_.visible;
+		return false;
+	}
+	function set_Visible(value: Bool): Bool
+	{
+		if (instance_ != null)
+		{
+			if (value)
+			{
+				if (null == view_)
+				{
+					//trace("******* ENTER new KonsoleView");
+					var r: Root = Root.instance;
+					instance_.cfg_.init_View(r.platform_, r.ui_factor_);
+					//trace("*******");
+					//view_ = new KonsoleView(instance_, false);
+					view_ = new KonsoleView(instance_, true);
+					//trace("******* LEAVE new KonsoleView");
+				}
+				else
+				{
+					view_.visible = true;
+				}
+				instance_.signal_show_.fire();
+				//trace("******* Konsole::signal_show_.fire()");
+			}
+			else
+			{
+				if (view_ != null)
+					view_.visible = false;
+			}
+		}
+		return value;
+	}
+
+	function toggle_Konsole()
+	{
+		set_Visible(!get_Visible());
+	}
 
 	override function update(dt: Float): Void
 	{

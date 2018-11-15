@@ -1,6 +1,6 @@
 package gs.femto_ui.util;
 
-#if (flash)
+#if flash
 import flash.Vector;//:faster, no casting
 #else
 import haxe.ds.Vector;

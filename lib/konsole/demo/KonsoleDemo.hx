@@ -449,5 +449,8 @@ class KonsoleDemo extends Visel
 		var ob: Dynamic = Json.parse('{"key1":[{"key2":5},67,null,"test"],"key3":[true,false]}');
 		Log("Object:");
 		Log(ob);
+
+		Log("WARNING: test");
+		Log("ERROR: test");
 	}
 }

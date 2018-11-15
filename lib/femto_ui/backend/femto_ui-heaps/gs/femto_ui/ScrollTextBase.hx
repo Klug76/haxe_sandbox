@@ -3,14 +3,11 @@ package gs.femto_ui;
 import h2d.Font;
 import h2d.Interactive;
 import h2d.Mask;
+import h2d.Text;
 import h2d.HtmlText;
 import gs.femto_ui.util.Util;
 import hxd.Cursor;
 import hxd.Event;
-
-#if flash
-import flash.text.StyleSheet;
-#end
 
 using gs.femto_ui.RootBase.NativeUIContainer;
 
@@ -18,13 +15,15 @@ class ScrollTextBase extends Visel
 {
 	private var font_: Font;
 	private var mask_: Mask;
-	private var text_field_: HtmlText;
+	private var text_field_: Text;
 	private var word_wrap_: Bool = false;
+	private var is_html_: Bool = false;
 
 	private var lines_in_window_: Int = 0;
 
-	public function new(owner : NativeUIContainer)
+	public function new(owner : NativeUIContainer, is_html: Bool)
 	{
+		is_html_ = is_html;
 		super(owner);
 	}
 //.............................................................................
@@ -38,7 +37,11 @@ class ScrollTextBase extends Visel
 		var r : Root = Root.instance;
 		mask_ = new Mask(Math.round(r.small_tool_width_), Math.round(r.small_tool_height_), this);
 		font_ = hxd.res.DefaultFont.get();//TODO fix me
-		text_field_ = new HtmlText(font_, mask_);
+		//trace("*********** is_html_=" + is_html_);
+		if (is_html_)
+			text_field_ = new HtmlText(font_, mask_);//:very memory-expensive
+		else
+			text_field_ = new Text(font_, mask_);
 	}
 //.............................................................................
 	public function set_Text_Format_Base(fname: String, fsize: Int, fcolor: Int): Void
@@ -108,7 +111,7 @@ class ScrollTextBase extends Visel
 					flag = true;
 				}
 			}
-			recalc_Line_Wrap();
+			recalc_Wrap_Params();
 			flag = flag || (old_lines != lines_in_window_);
 		}
 		if (flag)
@@ -123,7 +126,7 @@ class ScrollTextBase extends Visel
 		}
 	}
 //.............................................................................
-	function recalc_Line_Wrap()
+	function recalc_Wrap_Params()
 	{
 		var line_h: Int = font_.lineHeight;
 		lines_in_window_ = Util.imax(1, Math.floor(height_ / line_h));
@@ -138,7 +141,7 @@ class ScrollTextBase extends Visel
 		var in_tail : Bool = st.get_ScrollV() == st.get_Max_ScrollV();
 		text_field_.text += value;
 		if (0 == lines_in_window_)
-			recalc_Line_Wrap();
+			recalc_Wrap_Params();
 		if (in_tail)
 			st.set_ScrollV(st.get_Max_ScrollV());
 		st.on_text_change();
@@ -148,7 +151,7 @@ class ScrollTextBase extends Visel
 	{
 		var st: ScrollText = cast this;
 		if (0 == lines_in_window_)
-			recalc_Line_Wrap();
+			recalc_Wrap_Params();
 		if (value.length > 0)
 		{
 			text_field_.text = value;
@@ -169,7 +172,7 @@ class ScrollTextBase extends Visel
 	public inline function get_Max_ScrollV_Base() : Int
 	{
 		if (0 == lines_in_window_)
-			recalc_Line_Wrap();
+			recalc_Wrap_Params();
 		var text_h: Int = text_field_.textHeight;
 		var line_h: Int = font_.lineHeight;
 		var result: Int = 2 - lines_in_window_;//:= 1 - lines_in_window_ + 1
@@ -183,7 +186,7 @@ class ScrollTextBase extends Visel
 	{
 		var line_h: Int = font_.lineHeight;
 		var text_y: Float = text_field_.y;
-		var result: Int = Math.floor(-text_field_.y / line_h);
+		var result: Int = Math.floor(-text_y / line_h);
 		++result;
 		return Util.imax(1, result);
 	}

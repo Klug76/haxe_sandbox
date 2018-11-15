@@ -23,7 +23,7 @@ class MoverBase extends Visel
 	{
 		super.init_Base();
 
-		var ni: Interactive = alloc_Interactive(Cursor.Button);
+		var ni: Interactive = alloc_Interactive(Cursor.Button, true);
 		ni.onPush = on_Mouse_Down;
 		ni.onRelease = on_Mouse_Up;
 		ni.onOver = set_Hover_State;
@@ -48,12 +48,13 @@ class MoverBase extends Visel
 //.............................................................................
 	private function on_Mouse_Down(ev : Event) : Void
 	{
+		//trace("mover::" + ev.kind + ": " + ev.button + ": " + ev.touchId + ": " + ev.propagate + ": " + ev.cancel);
 		if ((state_ & Visel.STATE_DOWN) != 0)
 			return;
 		state_ |= Visel.STATE_DOWN;
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 
-		ev.propagate = false;
+		set_Event_Handled(ev);
 
 		drag_enter_ = false;
 		cur_scene_ = Root.instance.scene_;
@@ -62,12 +63,14 @@ class MoverBase extends Visel
 //.............................................................................
 	private function on_Mouse_Up(ev : Event) : Void
 	{
+		//trace("mover::" + ev.kind + ": " + ev.button + ": " + ev.touchId + ": " + ev.propagate + ": " + ev.cancel);
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
 			state_ &= ~Visel.STATE_DOWN;
 			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 
-			ev.propagate = false;
+			set_Event_Handled(ev);
+
 			stop_Drag();
 		}
 	}
@@ -76,7 +79,7 @@ class MoverBase extends Visel
 	{
 		if ((state_ & Visel.STATE_DOWN) != 0)
 		{
-			ev.propagate = false;
+			set_Event_Handled(ev);
 
 			var m: Mover = cast this;
 			if (!drag_enter_)

@@ -38,6 +38,7 @@ class ViewportBase extends Visel
 	private function add_Listeners() : Void
 	{
 		//stage.addEventListener(Event.RESIZE, on_Stage_Resize);
+		//Root.instance.scene_.
 	}
 //.............................................................................
 	private function remove_Listeners() : Void
@@ -45,25 +46,25 @@ class ViewportBase extends Visel
 		//stage.removeEventListener(Event.RESIZE, on_Stage_Resize);
 	}
 //.............................................................................
-	private function on_Mouse_Down_Phase0(_): Void
-	{
+	//private function on_Mouse_Down_Phase0(_): Void
+	//{
 		//trace("Viewport::on_Mouse_Down_Phase0, target=" + ev.target);
-		activate();
-	}
+		//activate();
+	//}
 //.............................................................................
 	private function on_Mouse_Down(ev : Event): Void
 	{
-		//trace("Viewport::" + ev.kind + ": " + ev.button + ": " + ev.touchId + ": " + ev.propagate);
-		ev.propagate = false;
+		//trace("viewport::" + ev.kind + ": " + ev.button + ": " + ev.touchId + ": " + ev.propagate);
+		set_Event_Handled(ev);
 		activate();
 	}
 //.............................................................................
 //.............................................................................
-	private function on_Stage_Resize(_): Void
-	{
+	//private function on_Stage_Resize(_): Void
+	//{
 		//TODO fix me
-		invalidate_Visel(Visel.INVALIDATION_FLAG_STAGE_SIZE);
-	}
+		//invalidate_Visel(Visel.INVALIDATION_FLAG_STAGE_SIZE);
+	//}
 //.............................................................................
 //.............................................................................
 //.............................................................................

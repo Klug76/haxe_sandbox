@@ -27,9 +27,10 @@ class ScrollTextBase extends Visel
 	private var fcolor_: Int = 0;
 	private var word_wrap_: Bool = false;
 
-	public function new(owner : NativeUIContainer)
+	public function new(owner : NativeUIContainer, is_html: Bool)
 	{
 		super(owner);
+		//NOTE: no html support yet.
 	}
 //.............................................................................
 	public inline function set_Text_Format_Base(fname: String, fsize: Int, fcolor: Int) : Void

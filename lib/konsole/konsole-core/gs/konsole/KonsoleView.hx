@@ -24,7 +24,7 @@ class KonsoleView extends Viewport
 	private var start_head_: Int = 0;
 	private var last_seen_head_ : Int = 0;
 	private var last_seen_tail_ : Int = 0;
-	private var is_html_: Bool = false;//TODO kill
+	private var is_html_: Bool = false;//TODO kill?
 
 	public function new(k : Konsole, is_html: Bool)
 	{
@@ -46,7 +46,7 @@ class KonsoleView extends Viewport
 		dummy_color = k_.cfg_.con_bg_color_;
 		alpha = k_.cfg_.con_bg_alpha_;
 
-		scroll_text_ = new ScrollText(this);
+		scroll_text_ = new ScrollText(this, is_html_);
 		scroll_text_.set_Text_Format(k_.cfg_.con_font_, Std.int(k_.cfg_.con_font_size_), k_.cfg_.con_text_color_);
 		scroll_text_.word_wrap = true;
 		scroll_text_.dummy_color = 0x40604060;
@@ -349,7 +349,6 @@ class KonsoleView extends Viewport
 	{
 		if (0 == v)
 		{//:drag finish
-			//flash.Lib.trace("drag finish");
 			invalidate_Visel(Visel.INVALIDATION_FLAG_SCROLL);
 			return;
 		}

@@ -26,6 +26,8 @@ class KonsoleConfig
 	public var con_bg_color_		: Int = 0x000080;
 	public var con_text_color_		: Int = 0xFFff80;//TODO fix me: how to set selection color!?
 	public var con_hint_color_		: Int = 0xFFffCA;
+	public var warning_color_		: Int = 0xFFFFFF;
+	public var error_color_			: Int = 0xFF4020;
 	public var cmd_text_color_		: Int = 0xFFff80;
 	public var cmd_bg_color_		: Int = 0x0070A6;
 	public var btn_copy_color_		: Int = 0x009688;
@@ -62,7 +64,7 @@ class KonsoleConfig
 	public var cmd_font_: String = null;
 
 	public var toggle_key_: Int = 0xC0;//'`' but key 192, BackQuote
-	public var toggle_char_: String = "`";//:used to restrict text input
+	public var toggle_char_: String = "`";//.code == 0x60. used to restrict text input
 	public var password_: String;
 
 	private var init_: Bool = false;

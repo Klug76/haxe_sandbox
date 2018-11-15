@@ -26,7 +26,8 @@ class ThumbBase extends Visel
 	{
 		super.init_Base();
 
-		var ni: Interactive = alloc_Interactive(Cursor.Button);
+		var ni: Interactive = alloc_Interactive(Cursor.Button, false);
+		//ni.onClick = on_Mouse_Click;
 		ni.onPush = on_Mouse_Down;
 		ni.onRelease = on_Mouse_Up;
 		ni.onOver = set_Hover_State;
@@ -51,13 +52,13 @@ class ThumbBase extends Visel
 //.............................................................................
 	private function on_Mouse_Down(ev : Event) : Void
 	{
-		//trace("thumb::" + ev.kind + ": " + ev.button + ": " + ev.touchId + ": " + ev.propagate);
+		//trace("thumb::" + ev.kind + ": " + ev.button + ": " + ev.touchId + ": " + ev.propagate + ": " + ev.cancel);
 		if ((state_ & Visel.STATE_DRAG) != 0)
 			return;
 		state_ |= Visel.STATE_DRAG;
 		invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 
-		ev.propagate = false;
+		set_Event_Handled(ev);
 
 		drag_enter_ = false;
 		cur_scene_ = Root.instance.scene_;
@@ -66,12 +67,14 @@ class ThumbBase extends Visel
 //.............................................................................
 	private function on_Mouse_Up(ev : Event) : Void
 	{
+		//trace("thumb::" + ev.kind + ": " + ev.button + ": " + ev.touchId + ": " + ev.propagate + ": " + ev.cancel);
 		if ((state_ & Visel.STATE_DRAG) != 0)
 		{
 			state_ &= ~Visel.STATE_DRAG;
 			invalidate_Visel(Visel.INVALIDATION_FLAG_STATE);
 
-			ev.propagate = false;
+			set_Event_Handled(ev);
+
 			stop_Drag();
 
 			if (parent != null)
@@ -86,7 +89,7 @@ class ThumbBase extends Visel
 	{
 		if ((state_ & Visel.STATE_DRAG) != 0)
 		{
-			ev.propagate = false;
+			set_Event_Handled(ev);
 
 			if (parent != null)
 			{
@@ -108,6 +111,12 @@ class ThumbBase extends Visel
 			}
 		}
 	}
+//.............................................................................
+	//private function on_Mouse_Click(ev : Event) : Void
+	//{
+		//trace("thumb::" + ev.kind + ": " + ev.button + ": " + ev.touchId + ": " + ev.propagate + ": " + ev.cancel);
+		//set_Event_Handled(ev);
+	//}
 //.............................................................................
 //.............................................................................
 //.............................................................................

@@ -4,6 +4,7 @@ import h2d.Graphics;
 import h2d.Object;
 import h2d.Interactive;
 import hxd.Cursor;
+import hxd.Event;
 
 using gs.femto_ui.RootBase.NativeUIObject;
 using gs.femto_ui.RootBase.NativeUIContainer;
@@ -272,10 +273,13 @@ class ViselBase extends Object
 		return ni;
 	}
 //.............................................................................
-	//public function create_Interactive() : Interactive
-	//{
-		//return alloc_Interactive(Cursor.Button);
-	//}
+	inline private function set_Event_Handled(ev: Event): Void
+	{
+		//TODO fix me: here is no way to mark event as handled :( (heaps 1.5.0)
+		//no event bubbling too
+		ev.propagate = false;//:cause bug: viewport can not see events of child
+		//ev.cancel = true;?
+	}
 //.............................................................................
 //.............................................................................
 	private function alloc_Background(): Graphics
