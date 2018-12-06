@@ -64,7 +64,10 @@ class RootBase
 	{
 		frame_signal_.fire();
 		if (stage_ != null)
+		{
+			gr.opacity = 1;
 			stage_.render_To(gr, 0, 0);
+		}
 	}
 
 }

@@ -166,6 +166,7 @@ class Demo
 			btn.on_Click(null);
 			btn.dummy_color = 0x202040;
 			btn.resize_Visel(60, 42);
+			btn.alpha = .5;
 			btn = new Button(tb_, "2_" + i, function(_)
 			{
 				st.append_Text("#" + debug_counter_++ + "______________ __________\n");

@@ -95,12 +95,8 @@ class ButtonBase extends Visel
 //.............................................................................
 //.............................................................................
 //.............................................................................
-	override public function render_To(gr: Graphics, nx: Float, ny: Float): Void
+	override function render_Base(gr: Graphics, nx: Float, ny: Float): Void
 	{
-		if (!visible)
-			return;
-		nx += x;
-		ny += y;
 		render_Button_Background(gr, nx, ny);
 		render_Children(gr, nx, ny);
 	}

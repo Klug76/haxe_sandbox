@@ -15,7 +15,7 @@
 	.BUG: event listeners leaks in visels
 	+.viewport: restore size after win32::window min/max resizing
 	+.test button overlap & event propagation (kha)
-. kha::ViselBase::public var alpha(default, default): Float
++. kha::ViselBase::public var alpha(default, default): Float = 1
 . bigger size of ui elements for mobile
 
 . review mconsole (js printer)

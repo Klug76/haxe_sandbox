@@ -16,7 +16,7 @@ class ViselBase
 	private var listeners_: Array<Event->Void> = null;
 
 	public var name(default, default): String = null;
-	public var alpha(default, default): Float;//TODO fix me
+	public var alpha(default, default): Float = 1.;
 	public var hit_test_bits(default, default): Int = HIT_TEST_AUTO;//:RECT & CHILDREN
 
 	public static inline var HIT_TEST_AUTO: Int		= 0;
@@ -239,8 +239,14 @@ class ViselBase
 	{
 		if (!visible)
 			return;
-		nx += x;
-		ny += y;
+		var old = gr.opacity;
+		gr.opacity = old * alpha;
+		render_Base(gr, nx + x, ny + y);
+		gr.opacity = old;
+	}
+//.............................................................................
+	private function render_Base(gr: Graphics, nx: Float, ny: Float) : Void
+	{
 		render_Base_Background(gr, nx, ny);
 		render_Children(gr, nx, ny);
 	}
