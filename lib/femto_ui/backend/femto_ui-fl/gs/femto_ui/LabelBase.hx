@@ -9,10 +9,11 @@ using gs.femto_ui.RootBase.NativeUIContainer;
 
 class LabelBase extends Visel
 {
-	private var text_field_ : TextField;
+	private var text_field_ : TextField = null;
 	private var text_size_valid_for_ : Float = 0;
 	private var text_width_ : Float = 0;
 	private var text_height_ : Float = 0;
+	private var tf_: TextFormat = null;
 
 	public function new(owner : NativeUIContainer)
 	{
@@ -21,15 +22,27 @@ class LabelBase extends Visel
 		tabEnabled = false;
 	}
 //.............................................................................
+	public function set_Text_Format_Base(fname: String, fsize: Int, fcolor: Int): Void
+	{
+		if ((null == tf_) || (tf_.font != fname) || (tf_.size != fsize) || (tf_.color != fcolor))
+		{
+			tf_ = new TextFormat(fname, fsize, fcolor);
+			if (text_field_ != null)
+				text_field_.defaultTextFormat = tf_;
+		}
+	}
+//.............................................................................
 	private function init_Text_Field() : Void
 	{
 		var r : Root = Root.instance;
+		if (null == tf_)
+			set_Text_Format_Base(r.font_, Std.int(r.def_font_size_), r.color_ui_text_);
 		text_field_ = new TextField();
 		text_field_.type = TextFieldType.DYNAMIC;
-		text_field_.defaultTextFormat = new TextFormat(null, Std.int(r.def_font_size_), r.color_ui_text_);
+		text_field_.defaultTextFormat = tf_;
 		text_field_.selectable = false;
-		//text_field_.background = true;
-		//text_field_.backgroundColor = 0xc080f0;
+		//:text_field_.background = true;
+		//:text_field_.backgroundColor = 0xc080f0;
 		addChild(text_field_);
 	}
 //.............................................................................
@@ -48,7 +61,7 @@ class LabelBase extends Visel
 		}
 		if (null == text_field_)
 			return;
-		if ((text_size_valid_for_ != width_) && (al.align_ != 0))
+		if (text_size_valid_for_ != width_)
 		{
 			text_size_valid_for_ = width_;
 			text_field_.width = width_;

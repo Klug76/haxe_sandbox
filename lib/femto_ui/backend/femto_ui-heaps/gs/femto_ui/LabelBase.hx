@@ -7,17 +7,36 @@ using gs.femto_ui.RootBase.NativeUIContainer;
 class LabelBase extends Visel
 {
 	private var text_field_ : Text;
+	private var fsize_: Int = 0;
+	private var fcolor_: Int = 0;
 
 	public function new(owner : NativeUIContainer)
 	{
 		super(owner);
 	}
 //.............................................................................
+	public function set_Text_Format_Base(fname: String, fsize: Int, fcolor: Int): Void
+	{
+		//TODO fix me
+		fsize_ = fsize;
+		fcolor_ = fcolor;
+		if (text_field_ != null)
+		{
+			text_field_.textColor = fcolor_;
+		}
+	}
+//.............................................................................
 	private function init_Text_Field() : Void
 	{
-		//var r : Root = Root.instance;
+		var r : Root = Root.instance;
+		if (0 == fsize_)
+		{
+			fsize_ = Std.int(r.def_font_size_);
+			fcolor_ = r.color_ui_text_;
+		}
 		//var al: Label = cast this;
 		text_field_ = new Text(hxd.res.DefaultFont.get(), this);
+		text_field_.textColor = fcolor_;
 		//TODO fix me: alloc font!?
 		//text_field_.defaultTextFormat = new TextFormat(null, Std.int(r.def_text_size_), r.color_ui_text_);
 	}

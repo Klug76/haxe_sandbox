@@ -5,6 +5,7 @@ using gs.femto_ui.RootBase.NativeUIContainer;
 @:allow(gs.femto_ui.LabelBase)
 class Label extends LabelBase
 {
+	//@:extern
 	public var text(get, set) : String;
 	public var safe_text(get, never) : String;
 	public var h_align(get, set) : Align;
@@ -22,16 +23,23 @@ class Label extends LabelBase
 		text = txt;//:call setter
 	}
 //.............................................................................
+	public function set_Text_Format(fname: String, fsize: Int, fcolor: Int): Void
+	{
+		set_Text_Format_Base(fname, fsize, fcolor);
+	}
+//.............................................................................
 //.............................................................................
 	private function get_safe_text() : String
 	{
 		return if (text_ != null) text_ else "";
 	}
 //.............................................................................
+	//@:getter(text)
 	private function get_text() : String
 	{
 		return text_;
 	}
+	//@:setter(text)
 	private function set_text(value : String) : String
 	{
 		if (text_ != value)

@@ -6,7 +6,7 @@
 -cp ../lib/konsole/backend/konsole-fl
 --macro include('gs')
 --flash-strict
-#-D swf-protected
+#-D swf-protected - cause problems with getters/setters e.g. Label.text
 --each
 
 --next
@@ -22,5 +22,11 @@
 -swf bin/hxcon-release.swc
 
 --next
+-D fdb
+-debug
+-D advanced-telemetry
+-swf bin/hxcon-swf-v10-debug.swc
+
+--next
 -D native-trace
--swf bin/hxcon-swf-v10.swc
+-swf bin/hxcon-swf-v10-release.swc

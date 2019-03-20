@@ -18,7 +18,11 @@ import flash.ui.Keyboard;
 import flash.utils.ByteArray;
 import gs.femto_ui.Button;
 import gs.femto_ui.InfoClick;
+import gs.femto_ui.Label;
+import gs.femto_ui.Picture;
+import gs.femto_ui.PictureMode;
 import gs.femto_ui.Root;
+import gs.femto_ui.grid.ScrollGrid;
 import gs.femto_ui.Toolbar;
 import gs.femto_ui.Visel;
 import gs.femto_ui.util.Util;
@@ -35,6 +39,7 @@ import openfl.utils.Assets;
 #end
 
 #if flash
+import flash.display.Bitmap;
 import flash.net.URLRequest;
 import flash.xml.XML;
 #end
@@ -45,6 +50,7 @@ class KonsoleDemo extends Visel
 {
 	private var tb_: Toolbar;
 	private var aux_: TextField;
+	private var pic_: Picture;
 	private var counter_: Int = 0;
 	private var arr_: Array<Int>;
 	private var asset_: Loader;
@@ -59,6 +65,8 @@ class KonsoleDemo extends Visel
 		//cfg.con_bg_color_ = 0xFF000000;
 		//cfg.con_text_color_ = 0x77BB77;
 		//cfg.con_text_size_ = 18;
+		//cfg.preload_ = true;
+		cfg.redirect_trace_ = false;
 
 		KonController.start(owner, cfg);
 		//KonController.start(owner.stage, cfg);
@@ -90,10 +98,16 @@ class KonsoleDemo extends Visel
 
 		aux_ = new TextField();
 		aux_.autoSize = TextFieldAutoSize.LEFT;
-		aux_.defaultTextFormat = new TextFormat(null, Std.int(r.def_font_size_));
+		aux_.defaultTextFormat = new TextFormat(r.font_, Std.int(r.def_font_size_));
+
+		pic_ = new Picture(this);
+		pic_.movesize(200, 100, 200, 128);
+		pic_.dummy_color = 0xd0d0d0;
+		pic_.mode = PictureMode.KEEP_ASPECT;
 
 		add_Bitmap_Asset();
 		add_Box();
+		add_Grid();
 
 		tb_ = new Toolbar(this);
 		tb_.spacing_ = 6;
@@ -117,6 +131,13 @@ class KonsoleDemo extends Visel
 		stage.addEventListener(Event.ACTIVATE, on_Stage_Activate);
 		stage.addEventListener(Event.DEACTIVATE, on_Stage_Deactivate);
 		addEventListener(MouseEvent.CLICK, on_Click);
+
+		//TODO fix me: multiline, wrap, font
+		//var al = new Label(this, "bla bla bla bla bla bla bla bla\n bla bla bla bla bla bla");
+		//al.set_Text_Format(null, 24, 0x202000);
+		//al.dummy_color = 0xc0c0c0;
+		//al.movesize(100, 50, 320, 200);
+
 
  		on_Stage_Resize(null);
 	}
@@ -143,11 +164,11 @@ class KonsoleDemo extends Visel
 
 	private function add_Bitmap_Asset(): Void
 	{
-		#if (openfl)
+#if (openfl)
 		var bitmapData = Assets.getBitmapData("assets/steam1.jpg");
         var bitmap = new Bitmap(bitmapData);
         place_Asset(bitmap);
-		#else
+#else
 		var uri: String = "https://fishgame.staticgs.com/thumb/collect/steam1.jpg";
 		asset_ = new Loader();
 		asset_.contentLoaderInfo.addEventListener(Event.COMPLETE, load_Complete_Handler);
@@ -155,7 +176,7 @@ class KonsoleDemo extends Visel
 		asset_.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, load_Error_Handler);
 		var rq: URLRequest = new URLRequest(uri);
 		asset_.load(rq);
-		#end
+#end
 	}
 
 
@@ -163,15 +184,13 @@ class KonsoleDemo extends Visel
 	{
 		//k.add("OK");
 		asset_Cleanup();
-		var b: DisplayObject = asset_.content;
+		var b: Bitmap = cast asset_.content;
 		place_Asset(b);
 	}
 
-	private function place_Asset(b: DisplayObject) : Void
+	private function place_Asset(b: Bitmap) : Void
 	{
-		b.x = 250;
-		b.y = 100;
-		addChild(b);
+		pic_.bitmap = b;
 	}
 
 	private function load_Error_Handler(e: Event): Void
@@ -185,6 +204,17 @@ class KonsoleDemo extends Visel
 		asset_.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, load_Error_Handler);
 		asset_.contentLoaderInfo.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, load_Error_Handler);
 	}
+
+	private function add_Grid(): Void
+	{
+		var grid: ScrollGrid = new ScrollGrid(this);
+		grid.dummy_color = 0xd0d0d0;
+		grid.movesize(10, 300, 620, 120);
+		var list = new DummyItemList();
+		list.item_count_ = 7;
+		grid.item_list_ = list;
+	}
+
 
 	function toggle_Konsole(_): Void
 	{
@@ -266,39 +296,19 @@ class KonsoleDemo extends Visel
 		Log("1 < 2 & 6\n  4 > 1 & 0");
 		Log("\n");
 		Log('');
-		foo(Keyboard.ESCAPE);
-#if (flash >= 10.2)
-		foo(Keyboard.BACK);
-		foo(Keyboard.BACK);
-#end
-#if (flash >= 10.1)
-		foo(Keyboard.A);
-#end
 		Log('');
-		Timer.delay(append_Test1, 100);
-
-		var s: String = KonController.get_Text();
-		if (null == s)
-			s = "";
-		Log("text.length=" + s.length);
-	}
-
-	private function foo(u: UInt): Void
-	{
-		Log(u);
-		switch(u)
+		Log('Тест');
+		for (i in 0...2048)
 		{
-		case Keyboard.ESCAPE:
-			Log("Esc");
-#if (flash >= 10.2)
-		case Keyboard.BACK:
-			Log("Back");
-#end
+			Log("[" + i + "]");
+			//Log("[" + i + "]");
 		}
-#if (flash >= 10.2)
-		if (u == Keyboard.BACK)
-			Log("*Back");
-#end
+		//Timer.delay(append_Test1, 100);
+
+		//var s: String = KonController.get_Text();
+		//if (null == s)
+			//s = "";
+		//Log("text.length=" + s.length);
 	}
 
 

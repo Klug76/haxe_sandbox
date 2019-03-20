@@ -22,8 +22,8 @@ class ScrollTextBase extends Visel
 	private var chars_in_window_: Int = 8;
 	private var wrap_zone_begin_: Int = 0;
 	private var wrap_zone_soft_lines_: Int = 0;
-	private var fname_: String = null;
-	private var fsize_: Int = 18;
+	private var fname_: String = null;//TODO fix me
+	private var fsize_: Int = 0;
 	private var fcolor_: Int = 0;
 	private var word_wrap_: Bool = false;
 
@@ -83,8 +83,13 @@ class ScrollTextBase extends Visel
 		if ((text__.length <= 0) || (width_ < 2) || (height_ < 2))
 			return;
 		var r: Root = Root.instance;
-		var font: Font = r.font_;
+		var font: Font = r.font_;//TODO fix me
 		var font_size: Int = fsize_;
+		if (0 == font_size)
+		{
+			font_size = Std.int(r.def_font_size_);
+			fcolor_ = r.color_ui_text_;
+		}
 		var text_h: Float = font.height(font_size);
 		if (text_h < 1)
 			return;

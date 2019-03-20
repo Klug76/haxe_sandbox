@@ -13,11 +13,10 @@ class RootBase
 {
 	public var frame_signal_ : Signal = new Signal();
 
-	public var is_touch_supported_ : Bool = false;
-	public var platform_: String = null;
-
+	//:public var owner_: NativeUIContainer;
 	public var stage_: Stage = null;
-	public var font_: Font = null;
+
+	public var font_: Font = null;//TODO fix me: need 4 font mapper
 
 	public function new(owner: NativeUIContainer)
 	{
@@ -26,10 +25,9 @@ class RootBase
 //.............................................................................
 	private function init() : Void
 	{
+		var r: Root = cast this;
 		stage_ = new Stage();
 		//is_touch_supported_ = ?;//TODO fix me
-		platform_ = "PC";//TODO fix me
-		var r: Root = cast this;
 		r.init_Ex();
 	}
 //.............................................................................

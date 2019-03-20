@@ -13,9 +13,6 @@ class RootBase
 {
 	public var frame_signal_ : Signal = new Signal();
 
-	public var is_touch_supported_ : Bool = false;
-	public var platform_: String = null;
-
 	public var owner_: NativeUIContainer;
 	public var scene_: Scene;
 
@@ -28,21 +25,20 @@ class RootBase
 //.............................................................................
 	private function init() : Void
 	{
-		is_touch_supported_ = System.getValue(SystemValue.IsTouch);
-		platform_ = switch(System.platform)
+		var r: Root = cast this;
+		if (System.getValue(SystemValue.IsTouch))
+			r.platform_ |= PlatformFlags.FLAG_TOUCH;
+		switch(System.platform)
 		{
 		case Platform.IOS:
-			platform_ = "IOS";
+			r.platform_ |= PlatformFlags.FLAG_IOS;
 		case Platform.Android:
-			platform_ = "Android";
-		case Platform.PC:
-			platform_ = "PC";
+			r.platform_ |= PlatformFlags.FLAG_ANDROID;
 		case Platform.WebGL:
-			platform_ = "WEB";
+			r.platform_ |= PlatformFlags.FLAG_WEB;
 		default:
-			platform_ = "???";//TODO fix me
+			//TODO fix me
 		};
-		var r: Root = cast this;
 		r.init_Ex();
 	}
 //.............................................................................

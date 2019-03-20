@@ -293,6 +293,7 @@ class Demo
 		switch(ev.type)
 		{
 		case Event.KEY_DOWN:
+			//trace('DOWN keyCode: 0x' + StringTools.hex(ev.code, 2));
 			on_Key_Down(ev);
 		case Event.KEY_UP:
 			on_Key_Up(ev);
@@ -393,8 +394,7 @@ class Demo
 				if (null == view_)
 				{
 					//trace("******* ENTER new KonsoleView");
-					var r: Root = Root.instance;
-					instance_.cfg_.init_View(r.platform_, r.ui_factor_);
+					instance_.cfg_.init_View();
 					//trace("*******");
 					view_ = new KonsoleView(instance_, false);
 					//trace("******* LEAVE new KonsoleView");

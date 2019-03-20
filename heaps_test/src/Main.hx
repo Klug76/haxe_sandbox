@@ -81,6 +81,7 @@ class Main extends App
 		ni.onOut = function(_) b.alpha = 0.4;
 
 		add_Root();
+
 		add_Konsole();
 		add_UI();
 
@@ -180,7 +181,7 @@ class Main extends App
 			};
 
 			var m: Mover = new Mover(st);
-			m.resize_Visel(r.tool_width_, r.tool_height_);
+			m.resize_Visel(r.medium_tool_width_, r.tool_height_);
 			m.dummy_color = 0x40000000 | r.color_movesize_;
 
 			var rz: Resizer = new Resizer(st);
@@ -209,7 +210,7 @@ class Main extends App
 		}
 
 		var m: Mover = new Mover(panel);
-		m.resize_Visel(r.tool_width_, r.tool_height_);
+		m.resize_Visel(r.medium_tool_width_, r.tool_height_);
 		m.dummy_color = r.color_movesize_;
 
 		var rz: Resizer = new Resizer(panel);
@@ -292,6 +293,8 @@ class Main extends App
 	{
 		switch (ev.keyCode)
 		{
+		case Key.F2:
+			instance_.log_Html(gen_Text0());
 		case Key.V:
 			v_.visible = !v_.visible;
 		case Key.A:
@@ -390,7 +393,7 @@ class Main extends App
 	function gen_Text0() : String
 	{
 		var s: StringBuf = new StringBuf();
-		s.add("start:");
+		s.add("<p>start:");
 		/*
 		for (i in 0...2)
 		{
@@ -408,7 +411,14 @@ class Main extends App
 		*/
 		s.add("<p>1 &gt; 0 &lt;    1</p>");
 		s.add("<p>2&amp;lt;2</p>");
-		s.add("end.");
+		s.add("<p align='center'>This is a paragraph.</p>");
+		s.add("<p align='right'>This is a paragraph.</p>");
+		s.add("<p align='left'>This is a paragraph.</p>");
+		s.add("zzz<br/>");
+		s.add("<p>This is a paragraph.</p>");
+		s.add("<p></p><p></p>");
+		s.add("<p align='left'>left<p align='center'>inner center</p></p>");
+		s.add("end.</p>");
 		return s.toString();
 	}
 /*
@@ -478,8 +488,7 @@ class Main extends App
 				if (null == view_)
 				{
 					//trace("******* ENTER new KonsoleView");
-					var r: Root = Root.instance;
-					instance_.cfg_.init_View(r.platform_, r.ui_factor_);
+					instance_.cfg_.init_View();
 					//trace("*******");
 					//view_ = new KonsoleView(instance_, false);
 					view_ = new KonsoleView(instance_, true);

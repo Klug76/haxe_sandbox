@@ -30,7 +30,7 @@ class Viewport extends ViewportBase
 
 		mover_ = new Mover(this);
 
-		mover_.resize_Visel(r.tool_width_, r.tool_height_);
+		mover_.resize_Visel(r.medium_tool_width_, r.tool_height_);
 		mover_.dummy_color = r.color_movesize_;
 
 		resizer_ = new Resizer(this);

@@ -37,7 +37,7 @@ class ScrollTextBase extends Visel
 		var r : Root = Root.instance;
 		mask_ = new Mask(Math.round(r.small_tool_width_), Math.round(r.small_tool_height_), this);
 		font_ = hxd.res.DefaultFont.get();//TODO fix me
-		//trace("*********** is_html_=" + is_html_);
+		//flash.Lib.trace("*********** is_html_=" + is_html_);
 		if (is_html_)
 			text_field_ = new HtmlText(font_, mask_);//:very memory-expensive
 		else
@@ -47,6 +47,7 @@ class ScrollTextBase extends Visel
 	public function set_Text_Format_Base(fname: String, fsize: Int, fcolor: Int): Void
 	{
 		//TODO fix me
+		text_field_.textColor = fcolor;
 	}
 //.............................................................................
 //.............................................................................
@@ -128,7 +129,7 @@ class ScrollTextBase extends Visel
 //.............................................................................
 	function recalc_Wrap_Params()
 	{
-		var line_h: Int = font_.lineHeight;
+		var line_h: Float = font_.lineHeight;
 		lines_in_window_ = Util.imax(1, Math.floor(height_ / line_h));
 	}
 //.............................................................................
@@ -140,6 +141,7 @@ class ScrollTextBase extends Visel
 		var st: ScrollText = cast this;
 		var in_tail : Bool = st.get_ScrollV() == st.get_Max_ScrollV();
 		text_field_.text += value;
+		//flash.Lib.trace("append text '" + value + "'");
 		if (0 == lines_in_window_)
 			recalc_Wrap_Params();
 		if (in_tail)
@@ -173,18 +175,20 @@ class ScrollTextBase extends Visel
 	{
 		if (0 == lines_in_window_)
 			recalc_Wrap_Params();
-		var text_h: Int = text_field_.textHeight;
-		var line_h: Int = font_.lineHeight;
+		var text_h: Float = text_field_.textHeight;
+		var line_h: Float = font_.lineHeight;
 		var result: Int = 2 - lines_in_window_;//:= 1 - lines_in_window_ + 1
-		result += Math.floor(text_h / line_h);
-		if ((text_h % line_h) != 0)
+		var dv: Float = text_h / line_h;
+		var idv: Int = Math.floor(text_h / line_h);
+		result += idv;
+		if (dv - idv > 0.1)//TODO review
 			++result;
 		return Util.imax(1, result);
 	}
 //.............................................................................
 	public inline function get_ScrollV_Base() : Int
 	{
-		var line_h: Int = font_.lineHeight;
+		var line_h: Float = font_.lineHeight;
 		var text_y: Float = text_field_.y;
 		var result: Int = Math.floor(-text_y / line_h);
 		++result;
@@ -194,7 +198,7 @@ class ScrollTextBase extends Visel
 	public inline function set_ScrollV_Base(value: Int) : Void
 	{
 		value = Util.imax(0, value - 1);
-		var line_h: Int = font_.lineHeight;
+		var line_h: Float = font_.lineHeight;
 		text_field_.y = -value * line_h;
 	}
 }

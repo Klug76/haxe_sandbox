@@ -1,6 +1,8 @@
 package gs.konsole;
 
 //import com.gs.femto_ui.util.StaticAssertion;
+import gs.femto_ui.PlatformFlags;
+import gs.femto_ui.Root;
 import gs.femto_ui.util.Util;
 
 #if (flash || openfl)
@@ -18,6 +20,7 @@ class KonsoleConfig
 
 	public var redirect_trace_		: Bool = true;
 	public var allow_command_line_	: Bool = true;
+	public var preload_				: Bool = false;
 
 	public var con_bg_alpha_		: Float = 0.9;
 	public var crosshair_alpha_		: Float = 0.75;
@@ -45,12 +48,11 @@ class KonsoleConfig
 	public var con_w_factor_		: Float = .8;//* stage.stageWidth
 	public var con_h_factor_		: Float = .75;//* stage.stageHeight
 
-	//:scaled by hi-res:
+	//:scaled by ui_factor_:
+	public var con_font_size_		: Float = 18;
+	public var cmd_font_size_		: Float = 18;
 	public var min_width_			: Float = 128;
 	public var min_height_			: Float = 128;
-	public var con_font_size_		: Float = 14;
-	public var cmd_font_size_		: Float = 18;
-	public var cmd_height_			: Float = 32;
 	public var zoom_size_			: Float = 48;
 
 	public var zoom_factor_			: Int = 4;
@@ -59,45 +61,48 @@ class KonsoleConfig
 	public var zoom_root_: DisplayObject = null;
 #end
 
-	public var font_family_: String = "Helvetica,Arial,_sans";
 	public var con_font_: String = null;
 	public var cmd_font_: String = null;
 
 	public var toggle_key_: Int = 0xC0;//'`' but key 192, BackQuote
 	public var toggle_char_: String = "`";//.code == 0x60. used to restrict text input
-	public var password_: String;
+	public var password_: String = null;
 
 	private var init_: Bool = false;
 
 	public function new()
 	{}
 //.............................................................................
-	public function init_View(platform: String, ui_factor: Float): Void
+	public function init_View(): Void
 	{
 		if (init_)
 			return;
 		init_ = true;
-		if ((platform == "WIN") || (platform == "WEB"))//TODO fix me: !Mac::HTML5
+		var r: Root = Root.instance;
+		if (null == con_font_)
 		{
-			if (null == con_font_)
+			if ((r.platform_ & PlatformFlags.FLAG_WIN) != 0)
 			{
 				con_font_ = "Consolas";
-				font_family_ = con_font_;
 			}
-			if (null == cmd_font_)
+			else
 			{
-				cmd_font_ = con_font_;
+				//TODO fix me
+				con_font_ = "Helvetica";
 			}
 		}
+		if (null == cmd_font_)
+		{
+			cmd_font_ = con_font_;
+		}
 
-		var factor : Float = ui_factor;
+		var factor : Float = r.ui_factor_;
 		if (factor != 1)
 		{
 			min_width_		*= factor;
 			min_height_		*= factor;
 			con_font_size_	*= factor;
 			cmd_font_size_	*= factor;
-			cmd_height_		*= factor;
 			zoom_size_		*= factor;//TODO review
 		}
 	}

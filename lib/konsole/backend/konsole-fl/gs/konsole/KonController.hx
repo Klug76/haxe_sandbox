@@ -48,6 +48,12 @@ class KonController
 		var r: Root = Root.instance;
 		r.owner_.removeEventListener(Event.ADDED_TO_STAGE, on_Added_To_Stage);
 		add_Stage_Listeners(r.owner_.stage);
+
+		if (instance_.cfg_.preload_)
+		{
+			alloc_View();
+			view_.visible = false;
+		}
 	}
 //.............................................................................
 	static private function add_Stage_Listeners(stage: Stage) : Void
@@ -127,10 +133,7 @@ class KonController
 			{
 				if (null == view_)
 				{
-					var r: Root = Root.instance;
-					instance_.cfg_.init_View(r.platform_, r.ui_factor_);
-					//view_ = new KonsoleView(instance_, false);
-					view_ = new KonsoleView(instance_, true);
+					alloc_View();
 				}
 				else
 				{
@@ -146,6 +149,14 @@ class KonController
 		}
 		return value;
 	}
+
+	static function alloc_View()
+	{
+		instance_.cfg_.init_View();
+		//view_ = new KonsoleView(instance_, false);
+		view_ = new KonsoleView(instance_, true);
+	}
+
 	static public function toggle(): Void
 	{
 		set_Visible(!get_Visible());

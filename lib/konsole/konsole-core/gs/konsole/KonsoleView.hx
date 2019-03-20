@@ -18,13 +18,15 @@ class KonsoleView extends Viewport
 	private var toolbar_ : Toolbar;
 	private var btn_copy_ : Button;
 	private var btn_clear_ : Button;
-	private var cmdline_ : CmdLine = null;
+	private var cmdline_ : CmdLine;
 
 	private var k_: Konsole;
 	private var start_head_: Int = 0;
 	private var last_seen_head_ : Int = 0;
 	private var last_seen_tail_ : Int = 0;
 	private var is_html_: Bool = false;//TODO kill?
+
+	private var frame_counter_: Int = 0;
 
 	public function new(k : Konsole, is_html: Bool)
 	{
@@ -79,14 +81,15 @@ class KonsoleView extends Viewport
 
 		toolbar_ = new Toolbar(this);
 		toolbar_.spacing_ = r.tool_spacing_;
-		toolbar_.width = width_ - r.small_tool_width_ * 2 - r.spacing_;
+		toolbar_.width = width_ - r.small_tool_width_ - r.medium_tool_width_ - r.tool_spacing_ - r.spacing_;
 		toolbar_.height = r.tool_height_;
-		toolbar_.x = r.tool_width_ + r.tool_spacing_;
+		toolbar_.x = r.medium_tool_width_ + r.tool_spacing_;
+		//toolbar_.dummy_color = 0xc000c0;
 
 		inline function spawn_Button(text: String, callback: InfoClick->Void, color: UInt = 0)
 		{
 			var b : Button = new Button(toolbar_, text, callback);
-			b.resize_Visel(r.btn_width_, r.tool_height_);
+			b.resize_Visel(r.tool_width_, r.tool_height_);
 			b.dummy_color = (color != 0) ? color : k_.cfg_.btn_tool_color_;
 			return b;
 		}
@@ -109,15 +112,17 @@ class KonsoleView extends Viewport
 		btn_clear_ = spawn_Button("clear", on_Clear_Click, k_.cfg_.btn_clear_color_);
 
 		var scroll_text_h: Float = height_ - r.tool_height_;
+
+		cmdline_ = new CmdLine(this, k_);
 		if (k_.cfg_.allow_command_line_)
-		{
-			cmdline_ = new CmdLine(this, k_);
-			cmdline_.height = k_.cfg_.cmd_height_;
-			scroll_text_h -= k_.cfg_.cmd_height_;
-		}
+			scroll_text_h -= r.small_tool_height_;
+		else
+			cmdline_.visible = false;
+		cmdline_.height = r.small_tool_height_;
+
 		scroll_text_.resize_Visel(width_ - r.small_tool_width_, scroll_text_h);
 
-		mover_.resize_Visel(r.tool_width_, r.tool_height_);
+		mover_.resize_Visel(r.medium_tool_width_, r.tool_height_);
 		mover_.dummy_color = r.color_movesize_;
 
 		min_content_width_ =
@@ -128,6 +133,7 @@ class KonsoleView extends Viewport
 		if (visible)
 		{
 			add_Signals();
+			//?on_Enter_Frame();
 			invalidate_Visel(Visel.INVALIDATION_FLAG_SCROLL);
 		}
 	}
@@ -213,16 +219,17 @@ class KonsoleView extends Viewport
 			scrollbar_.x = width_ - r.small_tool_width_;
 			scrollbar_.height = height_ - r.small_tool_height_ * 4 - r.spacing_ * 4;
 
-			toolbar_.width = width_ - r.small_tool_width_ * 2 - r.spacing_;
+			toolbar_.width = width_ - r.small_tool_width_ - r.medium_tool_width_ - r.tool_spacing_ - r.spacing_;
 
 			var scroll_text_h: Float = height_ - r.tool_height_;
 
-			if (cmdline_ != null)
+			if (k_.cfg_.allow_command_line_)
 			{
-				cmdline_.y = height_ - k_.cfg_.cmd_height_;
+				cmdline_.y = height_ - r.small_tool_height_;
 				cmdline_.width = width_ - r.small_tool_width_ - r.spacing_;
-				scroll_text_h -= k_.cfg_.cmd_height_;
+				scroll_text_h -= r.small_tool_height_;
 			}
+			cmdline_.visible = k_.cfg_.allow_command_line_;
 
 			scroll_text_.resize_Visel(width_ - r.small_tool_width_, scroll_text_h);
 			//trace("******** text size=" + scroll_text_.width + "x" + scroll_text_.height);
@@ -241,6 +248,8 @@ class KonsoleView extends Viewport
 //.............................................................................
 	private function on_Enter_Frame() : Void
 	{
+		if (frame_counter_ < 32)
+			++frame_counter_;
 		refresh();
 		if (invalid_flags_ != 0)
 		{
@@ -258,11 +267,21 @@ class KonsoleView extends Viewport
 	//.............................................................................
 	private function refresh() : Void
 	{
+		if (frame_counter_ < 2)
+			return;//:avoid adding text on first frame of flash::TextField (may cause freezing)
+		//if (frame_counter_ < 10)
+		//{
+			////scroll_text_.debug_Fix();
+			//var str: String = "refresh " + width_ + "x" + height_ + ":" + scroll_text_.debug_Dump();
+			//untyped __global__["trace"](str);
+		//}
+
 		var cmd : Int = k_.query_Update(last_seen_head_, last_seen_tail_);
 		if (0 == cmd)
 		{//:nop
 			return;
 		}
+
 		var s : String;
 		if (Konsole.APPEND == cmd)
 		{

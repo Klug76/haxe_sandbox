@@ -35,7 +35,7 @@ class MemMonitor extends Graph
 	{
 		var r : Root = Root.instance;
 
-		var fmt: TextFormat = new TextFormat(null, Std.int(r.def_font_size_), r.color_ui_text_);
+		var fmt: TextFormat = new TextFormat(r.font_, Std.int(r.def_font_size_), r.color_ui_text_);
 
 		tf_		= add_Text_Field("0000.00 Kb", "0", fmt);
 		tf_min_	= add_Text_Field("0000.00 Kb", "0", fmt);

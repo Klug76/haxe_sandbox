@@ -85,7 +85,7 @@ class Ruler extends Visel
 		tap_shape_ = new Shape();
 		bg_.addChild(tap_shape_);
 
-		var fmt: TextFormat = new TextFormat(null, Std.int(r.def_font_size_), k_.cfg_.ruler_text_color_, true);
+		var fmt: TextFormat = new TextFormat(r.font_, Std.int(r.def_font_size_), k_.cfg_.ruler_text_color_, true);
 
 		label_dist_info_ = TextField.create_AutoSize_Text_Field("0", fmt);
 		label_dist_info_.backgroundColor = k_.cfg_.ruler_bg_color_;

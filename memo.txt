@@ -1,3 +1,14 @@
+. bigger size of ui elements, spacing for mobile
+. BUG: ui button left in hover state on android
+	. BUG review STATE_HOVER & touch
+. Kha BUG: no keyboard events in browser (Chrome, IE)
+. heaps: PR <p align> tag in HtmlText
+. review small_tool_width vs tool_width vs btn_width (why we need it); small_tool_height vs tool_height
+
+. Label: 
+	.word wrap
+	.clip text
+
 . refactoring
 	. add gesture
 	. remove hard-coded tool buttons (setup array in cfg?)
@@ -16,8 +27,11 @@
 	+.viewport: restore size after win32::window min/max resizing
 	+.test button overlap & event propagation (kha)
 +. kha::ViselBase::public var alpha(default, default): Float = 1
-. bigger size of ui elements for mobile
+. log before creating console - what to do? throw error? add?
+. refactor Visel flags as enum abstract?
 
+. review https://github.com/RblSb/khm.imgui.git
+	. https://github.com/RblSb/khm.imgui/blob/master/src/khm/Screen.hx
 . review mconsole (js printer)
 . unite monitors creation/suspend/resume
 . how to detect v:Dynamic is ByteArray? (ByteArray is abstract in openfl)

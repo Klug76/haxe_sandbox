@@ -66,8 +66,7 @@ class EditBase extends Visel
 	private function get_Default_Text_Format(): TextFormat
 	{
 		var r : Root = Root.instance;
-		return new TextFormat(null,//TODO fix me
-			Std.int(r.input_font_size_));
+		return new TextFormat(r.font_, Std.int(r.input_font_size_));
 	}
 //.............................................................................
 	private function get_Edit_Option(opt: Int): Bool

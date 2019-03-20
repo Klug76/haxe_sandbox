@@ -15,7 +15,7 @@ using gs.femto_ui.RootBase.NativeUIContainer;
 class ScrollTextBase extends Visel
 {
 #if flash
-	private var aux_ : TextField;
+	private var aux_ : TextField = null;
 #else
 	private var html_text_: String = "";
 #end
@@ -31,8 +31,6 @@ class ScrollTextBase extends Visel
 //.............................................................................
 	private function create_Children_Ex() : Void
 	{
-		var r : Root = Root.instance;
-
 #if flash
 		if (is_html_)
 		{
@@ -52,21 +50,38 @@ class ScrollTextBase extends Visel
 #if flash
 		text_field_.condenseWhite = false;
 #end
-
-		text_field_.width = Util.fmax(r.small_tool_width_, width_);//:avoid bug in openfl
-		text_field_.height = Util.fmax(r.small_tool_height_, height_);
+		update_Tf_Size();
 		addChild(text_field_);
-		//text_field_.addEventListener(Event.CHANGE, on_Text_Change);
+		//?text_field_.addEventListener(Event.CHANGE, on_Text_Change);
 		text_field_.addEventListener(Event.SCROLL, on_Text_Scroll);
+	}
+//.............................................................................
+	private function update_Tf_Size(): Void
+	{
+		var r : Root = Root.instance;
+
+		var tw: Float = Util.fmax(r.small_tool_width_, width_);
+		var th: Float = Util.fmax(r.small_tool_height_, height_);
+
+#if flash
+		if (aux_ != null)
+		{
+			aux_.width = tw;
+			aux_.height = th;
+		}
+#end
+		text_field_.width = tw;//:avoid bug in openfl
+		text_field_.height = th;
 	}
 //.............................................................................
 	public function set_Text_Format_Base(fname: String, fsize: Int, fcolor: Int): Void
 	{
 		var tf: TextFormat = new TextFormat(fname, fsize, fcolor);
 		text_field_.defaultTextFormat = tf;
+		//??text_field_.setTextFormat(tf);
 #if flash
 		if (is_html_)
-		{
+		{//:assume aux_ != null
 			var css: StyleSheet = new StyleSheet();
 			css.setStyle("p",
 			{
@@ -106,12 +121,15 @@ class ScrollTextBase extends Visel
 		super.draw_Visel();
 		if ((invalid_flags_ & Visel.INVALIDATION_FLAG_SIZE) != 0)
 		{
+			update_Tf_Size();
 			//trace("******** text size=" + width_ + "x" + height_);
-			var r : Root = Root.instance;
-			text_field_.width = Util.fmax(r.small_tool_width_, width_);//:avoid bug in openfl
-			text_field_.height = Util.fmax(r.small_tool_height_, height_);
 		}
 	}
+//.............................................................................
+	//public function debug_Dump(): String
+	//{
+		//return ":scrolltext:" + width_ + "x" + height_ + "::tf:" + text_field_.width + "x" + text_field_.height + "::aux:" + aux_.width + "x" + aux_.height;
+	//}
 //.............................................................................
 //.............................................................................
 	public inline function append_Text_Base(value: String) : Void
