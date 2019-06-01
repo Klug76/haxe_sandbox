@@ -2,7 +2,7 @@ package;
 
 
 import KonsoleDemo;
-import gs.femto_ui.util.DumpDefines;
+
 import flash.display.Sprite;
 
 //TODO review: \Pictures\bug_bug.png

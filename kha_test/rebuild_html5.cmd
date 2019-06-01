@@ -1,2 +1,2 @@
-node e:\HaxeToolkit\haxe\lib\kha\git\make html5
+node e:\Haxe4_5\lib\kha\git\make html5
 @pause

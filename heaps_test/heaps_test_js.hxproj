@@ -16,11 +16,6 @@
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
     <class path="src" />
-    <class path="..\lib\femto_ui\femto_ui-core" />
-    <class path="..\lib\femto_ui\backend\femto_ui-heaps" />
-    <class path="..\lib\konsole\konsole-core" />
-    <class path="..\lib\konsole\backend\konsole-heaps" />
-    <class path="..\lib\femto_ui\test" />
   </classpaths>
   <!-- Build options -->
   <build>
@@ -35,7 +30,12 @@
   <haxelib>
     <library name="heaps" />
     <library name="hscript" />
-    <library name="buddy" />
+    <library name="konsole-core" />
+    <library name="konsole-fl" />
+    <library name="konsole-demo" />
+    <library name="femto_ui-core" />
+    <library name="femto_ui-fl" />
+    <library name="gs" />
   </haxelib>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>

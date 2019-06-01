@@ -5,14 +5,16 @@
 	<app main="Main" path="Export" file="OpenflTest" />
 
 	<source path="Source" />
-	<source path="../lib/femto_ui/femto_ui-core" />
-	<source path="../lib/femto_ui/backend/femto_ui-fl" />
-	<source path="../lib/konsole/konsole-core" />
-	<source path="../lib/konsole/backend/konsole-fl" />
-	<source path="../lib/konsole/demo" />
 
 	<haxelib name="openfl" />
 	<haxelib name="hscript" />
+	<haxelib name="gs" />
+	<haxelib name="json5mod" />
+	<haxelib name="femto_ui-core" />
+	<haxelib name="femto_ui-fl" />
+	<haxelib name="konsole-core" />
+	<haxelib name="konsole-fl" />
+	<haxelib name="konsole-demo" />
 
 	<assets path="Assets" rename="assets" />
 

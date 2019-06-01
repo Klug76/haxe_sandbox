@@ -1,9 +1,16 @@
+. cmd hint
+	. focus in/out
+	. detect limits in Konsole::get_Command_Hints
+	. targets
+	. objects::members
+	. x y position (need layout!?)
 . bigger size of ui elements, spacing for mobile
 . BUG: ui button left in hover state on android
 	. BUG review STATE_HOVER & touch
 . Kha BUG: no keyboard events in browser (Chrome, IE)
 . heaps: PR <p align> tag in HtmlText
 . review small_tool_width vs tool_width vs btn_width (why we need it); small_tool_height vs tool_height
+. <br> vs <br/>
 
 . Label: 
 	.word wrap

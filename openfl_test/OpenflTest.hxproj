@@ -15,20 +15,22 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="E:\HaxeToolkit\haxe\lib\openfl\8,7,0\src" />
-    <class path="E:\HaxeToolkit\haxe\lib\lime\7,2,0\src" />
-    <class path="E:\HaxeToolkit\haxe\lib\hscript\2,3,0" />
+    <class path="C:\HaxeToolkit\lib\openfl\8,9,1\src" />
+    <class path="C:\HaxeToolkit\lib\lime\7,5,0\src" />
+    <class path="C:\HaxeToolkit\lib\hscript\2,3,0" />
+    <class path="E:\Flash\haxe_work\dev_lib\shared" />
+    <class path="E:\Flash\haxe_work\dev_lib\json5mod\src" />
+    <class path="E:\Flash\haxe_work\dev_lib\femto_ui\femto_ui-core" />
+    <class path="E:\Flash\haxe_work\dev_lib\femto_ui\backend\femto_ui-fl" />
+    <class path="E:\Flash\haxe_work\dev_lib\konsole\konsole-core" />
+    <class path="E:\Flash\haxe_work\dev_lib\konsole\backend\konsole-fl" />
+    <class path="E:\Flash\haxe_work\dev_lib\konsole\demo" />
     <class path="Source" />
-    <class path="..\lib\femto_ui\femto_ui-core" />
-    <class path="..\lib\femto_ui\backend\femto_ui-fl" />
-    <class path="..\lib\konsole\konsole-core" />
-    <class path="..\lib\konsole\backend\konsole-fl" />
-    <class path="..\lib\konsole\demo" />
     <class path="Export\html5\haxe" />
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="openfl=8.7.0&#xA;lime=7.2.0&#xA;hscript=2.3.0&#xA;AIR_SDK=e:\Flash\SDK_Air290&#xA;tools=7.2.0&#xA;lime-canvas&#xA;howlerjs&#xA;no-compilation&#xA;openfl-html5&#xA;lime-webgl&#xA;lime-dom&#xA;lime-howlerjs&#xA;lime-html5&#xA;html5&#xA;web&#xA;html5" />
+    <option directives="openfl=8.9.1&#xA;lime=7.5.0&#xA;hscript=2.3.0&#xA;gs=0.0.0&#xA;json5mod=0.0.1&#xA;femto_ui-core=0.0.0&#xA;femto_ui-fl=0.0.0&#xA;konsole-core=0.0.0&#xA;konsole-fl=0.0.0&#xA;konsole-demo=0.0.0&#xA;AIR_SDK=e:\Flash\SDK_Air290&#xA;tools=7.5.0&#xA;lime-canvas&#xA;howlerjs&#xA;no-compilation&#xA;openfl-html5&#xA;lime-webgl&#xA;lime-dom&#xA;lime-howlerjs&#xA;lime-html5&#xA;openfl-disable-handle-error&#xA;fdb&#xA;html5&#xA;web&#xA;html5" />
     <option flashStrict="False" />
     <option noInlineOnDebug="False" />
     <option mainClass="ApplicationMain" />

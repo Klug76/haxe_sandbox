@@ -13,7 +13,7 @@ import gs.femto_ui.Scrollbar;
 import gs.femto_ui.Toolbar;
 import gs.femto_ui.Viewport;
 import gs.femto_ui.Visel;
-import gs.femto_ui.util.Util;
+import gs.utils.Util;
 import gs.konsole.Konsole;
 import gs.konsole.KonsoleConfig;
 import gs.konsole.KonsoleView;
@@ -346,7 +346,7 @@ class Main extends App
 
 	function test_Visel()
 	{
-		Test1.run_All();
+		//Test1.run_All();
 	}
 
 	function add_Text()

@@ -1,2 +1,2 @@
-node e:\HaxeToolkit\haxe\lib\kha\git\make flash
+node e:\Haxe4_5\lib\kha\git\make flash
 @pause

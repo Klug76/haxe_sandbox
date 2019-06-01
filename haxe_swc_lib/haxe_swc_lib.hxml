@@ -1,10 +1,10 @@
 -lib hscript
--cp src
--cp ../lib/femto_ui/femto_ui-core
--cp ../lib/femto_ui/backend/femto_ui-fl
--cp ../lib/konsole/konsole-core
--cp ../lib/konsole/backend/konsole-fl
---macro include('gs')
+-lib gs
+-lib femto_ui-core
+-lib femto_ui-fl
+-lib konsole-core
+-lib konsole-fl
+--macro include('gs.konsole')
 --flash-strict
 #-D swf-protected - cause problems with getters/setters e.g. Label.text
 --each
